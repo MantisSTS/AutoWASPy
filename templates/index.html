@@ -33,16 +33,16 @@
                             </span>
                         </div>
                         
-                        <h3 class="text-lg font-medium text-gray-900 mb-2">{{ project.name }}</h3>
+                        <h3 class="text-lg font-medium text-gray-900 mb-2">{{ project.name | e }}</h3>
                         <p class="text-sm text-gray-600 mb-2">
-                            <i class="fas fa-building mr-1"></i>{{ project.client_name }}
+                            <i class="fas fa-building mr-1"></i>{{ project.client_name | e }}
                         </p>
                         <p class="text-sm text-gray-500 mb-4">
                             <i class="fas fa-calendar mr-1"></i>{{ project.created_date.strftime('%Y-%m-%d') }}
                         </p>
                         
                         {% if project.description %}
-                            <p class="text-sm text-gray-600 mb-4 line-clamp-2">{{ project.description }}</p>
+                            <p class="text-sm text-gray-600 mb-4 line-clamp-2">{{ project.description | e }}</p>
                         {% endif %}
 
                         <!-- Progress indicator -->
@@ -64,10 +64,17 @@
                             <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
                                 {% if project.job_type == 'web' %}WSTG{% else %}MSTG{% endif %}
                             </span>
-                            <a href="{{ url_for('project_detail', project_id=project.id) }}" class="inline-flex items-center text-sm font-medium text-primary-600 hover:text-primary-900">
-                                View Details
-                                <i class="fas fa-arrow-right ml-1"></i>
-                            </a>
+                            <div class="flex items-center space-x-2">
+                                <a href="{{ url_for('project_detail', project_id=project.id) }}" class="inline-flex items-center text-sm font-medium text-primary-600 hover:text-primary-900">
+                                    View Details
+                                    <i class="fas fa-arrow-right ml-1"></i>
+                                </a>
+                                <button onclick="confirmProjectDelete({{ project.id }}, this)" 
+                                        data-project-name="{{ project.name | e }}"
+                                        class="inline-flex items-center text-sm font-medium text-red-600 hover:text-red-900 ml-2">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -153,4 +160,30 @@
     </div>
 </div>
 {% endif %}
+
+<script>
+function confirmProjectDelete(projectId, buttonElement) {
+    const projectName = buttonElement.getAttribute('data-project-name');
+    if (confirm(`⚠️ Are you sure you want to delete "${projectName}"?\n\nThis action will permanently delete:\n• The project and all its settings\n• All test items and results\n• All evidence and notes\n\nThis cannot be undone!`)) {
+        // Create and submit delete form
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = `/project/${projectId}/delete`;
+        
+        // Add CSRF token if available
+        const csrfToken = document.querySelector('meta[name="csrf-token"]');
+        if (csrfToken) {
+            const csrfField = document.createElement('input');
+            csrfField.type = 'hidden';
+            csrfField.name = 'csrf_token';
+            csrfField.value = csrfToken.getAttribute('content');
+            form.appendChild(csrfField);
+        }
+        
+        document.body.appendChild(form);
+        form.submit();
+    }
+}
+</script>
+
 {% endblock %}
