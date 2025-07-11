@@ -1,0 +1,156 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="px-4 sm:px-0">
+    <div class="flex justify-between items-center mb-8">
+        <div>
+            <h1 class="text-3xl font-bold text-gray-900">Projects Dashboard</h1>
+            <p class="mt-2 text-gray-600">Manage your penetration testing projects with OWASP WSTG and MSTG checklists</p>
+        </div>
+        <a href="{{ url_for('new_project') }}" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
+            <i class="fas fa-plus mr-2"></i>New Project
+        </a>
+    </div>
+
+    {% if projects %}
+        <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {% for project in projects %}
+                <div class="bg-white overflow-hidden shadow rounded-lg hover:shadow-lg transition-shadow duration-200">
+                    <div class="p-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex-shrink-0">
+                                {% if project.job_type == 'web' %}
+                                    <i class="fas fa-globe text-blue-500 text-2xl"></i>
+                                {% elif project.job_type == 'mobile_ios' %}
+                                    <i class="fab fa-apple text-gray-700 text-2xl"></i>
+                                {% elif project.job_type == 'mobile_android' %}
+                                    <i class="fab fa-android text-green-500 text-2xl"></i>
+                                {% endif %}
+                            </div>
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium 
+                                {% if project.status == 'active' %}bg-green-100 text-green-800{% elif project.status == 'completed' %}bg-blue-100 text-blue-800{% else %}bg-gray-100 text-gray-800{% endif %}">
+                                {{ project.status.title() }}
+                            </span>
+                        </div>
+                        
+                        <h3 class="text-lg font-medium text-gray-900 mb-2">{{ project.name }}</h3>
+                        <p class="text-sm text-gray-600 mb-2">
+                            <i class="fas fa-building mr-1"></i>{{ project.client_name }}
+                        </p>
+                        <p class="text-sm text-gray-500 mb-4">
+                            <i class="fas fa-calendar mr-1"></i>{{ project.created_date.strftime('%Y-%m-%d') }}
+                        </p>
+                        
+                        {% if project.description %}
+                            <p class="text-sm text-gray-600 mb-4 line-clamp-2">{{ project.description }}</p>
+                        {% endif %}
+
+                        <!-- Progress indicator -->
+                        {% set total_tests = project.test_items|length %}
+                        {% set completed_tests = project.test_items|selectattr('is_tested')|list|length %}
+                        {% if total_tests > 0 %}
+                            <div class="mb-4">
+                                <div class="flex justify-between text-sm text-gray-600 mb-1">
+                                    <span>Progress</span>
+                                    <span>{{ completed_tests }}/{{ total_tests }}</span>
+                                </div>
+                                <div class="w-full bg-gray-200 rounded-full h-2">
+                                    <div class="bg-primary-600 h-2 rounded-full" style="width: {{ (completed_tests / total_tests * 100)|round|int }}%"></div>
+                                </div>
+                            </div>
+                        {% endif %}
+
+                        <div class="flex justify-between items-center">
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                                {% if project.job_type == 'web' %}WSTG{% else %}MSTG{% endif %}
+                            </span>
+                            <a href="{{ url_for('project_detail', project_id=project.id) }}" class="inline-flex items-center text-sm font-medium text-primary-600 hover:text-primary-900">
+                                View Details
+                                <i class="fas fa-arrow-right ml-1"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="text-center py-12">
+            <i class="fas fa-folder-open text-gray-400 text-6xl mb-4"></i>
+            <h3 class="text-lg font-medium text-gray-900 mb-2">No projects yet</h3>
+            <p class="text-gray-600 mb-6">Get started by creating your first penetration testing project</p>
+            <a href="{{ url_for('new_project') }}" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-primary-600 hover:bg-primary-700">
+                <i class="fas fa-plus mr-2"></i>Create Project
+            </a>
+        </div>
+    {% endif %}
+</div>
+
+<!-- Quick Stats -->
+{% if projects %}
+<div class="mt-12 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+    <div class="bg-white overflow-hidden shadow rounded-lg">
+        <div class="p-5">
+            <div class="flex items-center">
+                <div class="flex-shrink-0">
+                    <i class="fas fa-project-diagram text-primary-600 text-xl"></i>
+                </div>
+                <div class="ml-5 w-0 flex-1">
+                    <dl>
+                        <dt class="text-sm font-medium text-gray-500 truncate">Total Projects</dt>
+                        <dd class="text-lg font-medium text-gray-900">{{ projects|length }}</dd>
+                    </dl>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="bg-white overflow-hidden shadow rounded-lg">
+        <div class="p-5">
+            <div class="flex items-center">
+                <div class="flex-shrink-0">
+                    <i class="fas fa-globe text-blue-600 text-xl"></i>
+                </div>
+                <div class="ml-5 w-0 flex-1">
+                    <dl>
+                        <dt class="text-sm font-medium text-gray-500 truncate">Web Projects</dt>
+                        <dd class="text-lg font-medium text-gray-900">{{ projects|selectattr('job_type', 'equalto', 'web')|list|length }}</dd>
+                    </dl>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="bg-white overflow-hidden shadow rounded-lg">
+        <div class="p-5">
+            <div class="flex items-center">
+                <div class="flex-shrink-0">
+                    <i class="fas fa-mobile-alt text-green-600 text-xl"></i>
+                </div>
+                <div class="ml-5 w-0 flex-1">
+                    <dl>
+                        <dt class="text-sm font-medium text-gray-500 truncate">Mobile Projects</dt>
+                        <dd class="text-lg font-medium text-gray-900">{{ projects|selectattr('job_type', 'in', ['mobile_ios', 'mobile_android'])|list|length }}</dd>
+                    </dl>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="bg-white overflow-hidden shadow rounded-lg">
+        <div class="p-5">
+            <div class="flex items-center">
+                <div class="flex-shrink-0">
+                    <i class="fas fa-check-circle text-green-600 text-xl"></i>
+                </div>
+                <div class="ml-5 w-0 flex-1">
+                    <dl>
+                        <dt class="text-sm font-medium text-gray-500 truncate">Active Projects</dt>
+                        <dd class="text-lg font-medium text-gray-900">{{ projects|selectattr('status', 'equalto', 'active')|list|length }}</dd>
+                    </dl>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

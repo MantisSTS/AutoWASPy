@@ -1,0 +1,290 @@
+{% extends "base.html" %}
+
+{% block title %}Auto Test Results - {{ project.name }} - AutoWASPy{% endblock %}
+
+{% block content %}
+<div class="px-4 sm:px-0">
+    <!-- Header -->
+    <div class="mb-8">
+        <div class="flex items-center mb-4">
+            <a href="{{ url_for('project_detail', project_id=project.id) }}" class="text-primary-600 hover:text-primary-900 mr-4">
+                <i class="fas fa-arrow-left"></i>
+            </a>
+            <div>
+                <h1 class="text-3xl font-bold text-gray-900">Automated Test Results</h1>
+                <p class="text-gray-600 mt-2">{{ project.name }} - {{ project.client_name }}</p>
+            </div>
+        </div>
+    </div>
+
+    {% if results %}
+        <!-- Summary Stats -->
+        <div class="mb-8 grid grid-cols-1 gap-5 sm:grid-cols-4">
+            {% set passed_results = results|selectattr('result', 'equalto', 'pass')|list|length %}
+            {% set failed_results = results|selectattr('result', 'equalto', 'fail')|list|length %}
+            {% set informational_results = results|selectattr('result', 'equalto', 'informational')|list|length %}
+            {% set error_results = results|selectattr('result', 'equalto', 'error')|list|length %}
+
+            <div class="bg-white overflow-hidden shadow rounded-lg">
+                <div class="p-5">
+                    <div class="flex items-center">
+                        <div class="flex-shrink-0">
+                            <i class="fas fa-check-circle text-green-600 text-xl"></i>
+                        </div>
+                        <div class="ml-5 w-0 flex-1">
+                            <dl>
+                                <dt class="text-sm font-medium text-gray-500">Passed Tests</dt>
+                                <dd class="text-lg font-medium text-gray-900">{{ passed_results }}</dd>
+                            </dl>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white overflow-hidden shadow rounded-lg">
+                <div class="p-5">
+                    <div class="flex items-center">
+                        <div class="flex-shrink-0">
+                            <i class="fas fa-exclamation-triangle text-red-600 text-xl"></i>
+                        </div>
+                        <div class="ml-5 w-0 flex-1">
+                            <dl>
+                                <dt class="text-sm font-medium text-gray-500">Failed Tests</dt>
+                                <dd class="text-lg font-medium text-gray-900">{{ failed_results }}</dd>
+                            </dl>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white overflow-hidden shadow rounded-lg">
+                <div class="p-5">
+                    <div class="flex items-center">
+                        <div class="flex-shrink-0">
+                            <i class="fas fa-info-circle text-yellow-600 text-xl"></i>
+                        </div>
+                        <div class="ml-5 w-0 flex-1">
+                            <dl>
+                                <dt class="text-sm font-medium text-gray-500">Informational</dt>
+                                <dd class="text-lg font-medium text-gray-900">{{ informational_results }}</dd>
+                            </dl>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white overflow-hidden shadow rounded-lg">
+                <div class="p-5">
+                    <div class="flex items-center">
+                        <div class="flex-shrink-0">
+                            <i class="fas fa-times-circle text-orange-600 text-xl"></i>
+                        </div>
+                        <div class="ml-5 w-0 flex-1">
+                            <dl>
+                                <dt class="text-sm font-medium text-gray-500">Errors</dt>
+                                <dd class="text-lg font-medium text-gray-900">{{ error_results }}</dd>
+                            </dl>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Test Results -->
+        <div class="bg-white shadow overflow-hidden sm:rounded-md">
+            <ul class="divide-y divide-gray-200">
+                {% for result in results %}
+                    <li class="px-6 py-4 border-l-4 
+                        {% if result.result == 'pass' %}border-green-500 bg-green-50
+                        {% elif result.result == 'fail' %}border-red-500 bg-red-50
+                        {% elif result.result == 'informational' %}border-yellow-500 bg-yellow-50
+                        {% elif result.result == 'error' %}border-orange-500 bg-orange-50
+                        {% else %}border-gray-300 bg-gray-50{% endif %}">
+                        <div class="flex items-center justify-between">
+                            <div class="flex-1">
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center">
+                                        <!-- Status Icon -->
+                                        <div class="flex-shrink-0 mr-3">
+                                            {% if result.result == 'pass' %}
+                                                <div class="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
+                                                    <i class="fas fa-check text-green-600"></i>
+                                                </div>
+                                            {% elif result.result == 'fail' %}
+                                                <div class="w-8 h-8 bg-red-100 rounded-full flex items-center justify-center">
+                                                    <i class="fas fa-times text-red-600"></i>
+                                                </div>
+                                            {% elif result.result == 'informational' %}
+                                                <div class="w-8 h-8 bg-yellow-100 rounded-full flex items-center justify-center">
+                                                    <i class="fas fa-info text-yellow-600"></i>
+                                                </div>
+                                            {% elif result.result == 'error' %}
+                                                <div class="w-8 h-8 bg-orange-100 rounded-full flex items-center justify-center">
+                                                    <i class="fas fa-exclamation-triangle text-orange-600"></i>
+                                                </div>
+                                            {% else %}
+                                                <div class="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center">
+                                                    <i class="fas fa-question text-gray-500"></i>
+                                                </div>
+                                            {% endif %}
+                                        </div>
+                                        
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium 
+                                            {% if result.result == 'pass' %}bg-green-100 text-green-800
+                                            {% elif result.result == 'fail' %}bg-red-100 text-red-800
+                                            {% elif result.result == 'informational' %}bg-yellow-100 text-yellow-800
+                                            {% elif result.result == 'error' %}bg-orange-100 text-orange-800
+                                            {% else %}bg-gray-100 text-gray-800{% endif %}">
+                                            {% if result.result == 'pass' %}
+                                                <i class="fas fa-check mr-1"></i>PASS
+                                            {% elif result.result == 'fail' %}
+                                                <i class="fas fa-times mr-1"></i>FAIL
+                                            {% elif result.result == 'informational' %}
+                                                <i class="fas fa-info mr-1"></i>INFO
+                                            {% elif result.result == 'error' %}
+                                                <i class="fas fa-exclamation-triangle mr-1"></i>ERROR
+                                            {% else %}
+                                                <i class="fas fa-question mr-1"></i>UNKNOWN
+                                            {% endif %}
+                                        </span>
+                                        <h3 class="ml-3 text-sm font-medium text-gray-900">{{ result.test_name }}</h3>
+                                    </div>
+                                    <div class="text-sm text-gray-500">
+                                        <i class="fas fa-clock mr-1"></i>
+                                        {{ result.created_date.strftime('%Y-%m-%d %H:%M') }}
+                                    </div>
+                                </div>
+                                
+                                <div class="mt-2">
+                                    <p class="text-sm text-gray-600">
+                                        <i class="fas fa-link mr-1"></i>
+                                        <strong>URL:</strong> {{ result.url_tested }}
+                                    </p>
+                                </div>
+                                
+                <div class="mt-3">
+                    <h4 class="text-sm font-medium text-gray-900 mb-2">Evidence:</h4>
+                    <div class="rounded-lg p-4 border-l-4 
+                        {% if result.result == 'pass' %}border-green-500 bg-green-50
+                        {% elif result.result == 'fail' %}border-red-500 bg-red-50
+                        {% elif result.result == 'informational' %}border-yellow-500 bg-yellow-50
+                        {% elif result.result == 'error' %}border-orange-500 bg-orange-50
+                        {% else %}border-gray-500 bg-gray-50{% endif %}">
+                        <pre class="text-sm 
+                            {% if result.result == 'pass' %}text-green-800
+                            {% elif result.result == 'fail' %}text-red-800
+                            {% elif result.result == 'informational' %}text-yellow-800
+                            {% elif result.result == 'error' %}text-orange-800
+                            {% else %}text-gray-700{% endif %} 
+                            whitespace-pre-wrap font-mono">{{ result.evidence }}</pre>
+                    </div>
+                </div>
+                                
+                {% if result.request_data and result.response_data %}
+                    <div class="mt-4">
+                        <button type="button" onclick="toggleDetails('{{ result.id }}')" class="inline-flex items-center text-sm text-primary-600 hover:text-primary-900 font-medium">
+                            <i class="fas fa-code mr-2"></i>View HTTP Request/Response Details
+                        </button>
+                        
+                        <div id="details-{{ result.id }}" class="hidden mt-3 space-y-4">
+                            <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                                <div>
+                                    <h5 class="text-sm font-semibold text-blue-900 mb-2 flex items-center">
+                                        <i class="fas fa-arrow-up mr-2"></i>HTTP Request
+                                    </h5>
+                                    <div class="bg-blue-50 border border-blue-200 rounded-lg p-3 max-h-64 overflow-y-auto">
+                                        <pre class="text-xs text-blue-900 whitespace-pre-wrap font-mono leading-relaxed">{{ result.request_data }}</pre>
+                                    </div>
+                                </div>
+                                <div>
+                                    <h5 class="text-sm font-semibold text-green-900 mb-2 flex items-center">
+                                        <i class="fas fa-arrow-down mr-2"></i>HTTP Response
+                                        <span class="ml-2 text-xs bg-green-100 text-green-800 px-2 py-1 rounded">Highlighted sections show relevant security headers</span>
+                                    </h5>
+                                    <div class="bg-green-50 border border-green-200 rounded-lg p-3 max-h-64 overflow-y-auto">
+                                        <pre class="text-xs text-green-900 whitespace-pre-wrap font-mono leading-relaxed response-content">{{ result.response_data }}</pre>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="mt-3 p-3 bg-yellow-50 border-l-4 border-yellow-400 rounded-md">
+                                <div class="flex">
+                                    <div class="ml-3">
+                                        <p class="text-sm text-yellow-800">
+                                            <strong>💡 Tip:</strong> Lines marked with ">>>" and "[HIGHLIGHTED]" contain security-relevant headers that were specifically analyzed in this test.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+                            </div>
+                        </div>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+    {% else %}
+        <div class="text-center py-12">
+            <i class="fas fa-flask text-gray-400 text-6xl mb-4"></i>
+            <h3 class="text-lg font-medium text-gray-900 mb-2">No automated test results yet</h3>
+            <p class="text-gray-600 mb-6">Run automated tests from the project detail page to see results here</p>
+            <a href="{{ url_for('project_detail', project_id=project.id) }}" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-primary-600 hover:bg-primary-700">
+                <i class="fas fa-arrow-left mr-2"></i>Back to Project
+            </a>
+        </div>
+    {% endif %}
+</div>
+
+<script>
+function toggleDetails(resultId) {
+    const details = document.getElementById('details-' + resultId);
+    const button = event.target.closest('button');
+    const icon = button.querySelector('i');
+    const textContent = button.querySelector('span') || button.childNodes[button.childNodes.length - 1];
+    
+    if (details.classList.contains('hidden')) {
+        details.classList.remove('hidden');
+        icon.className = 'fas fa-code-slash mr-2';
+        if (textContent.nodeType === Node.TEXT_NODE) {
+            textContent.textContent = 'Hide HTTP Request/Response Details';
+        } else {
+            button.innerHTML = '<i class="fas fa-code-slash mr-2"></i>Hide HTTP Request/Response Details';
+        }
+    } else {
+        details.classList.add('hidden');
+        icon.className = 'fas fa-code mr-2';
+        if (textContent.nodeType === Node.TEXT_NODE) {
+            textContent.textContent = 'View HTTP Request/Response Details';
+        } else {
+            button.innerHTML = '<i class="fas fa-code mr-2"></i>View HTTP Request/Response Details';
+        }
+    }
+}
+
+// Add CSS for highlighting
+document.addEventListener('DOMContentLoaded', function() {
+    const style = document.createElement('style');
+    style.textContent = `
+        .response-content {
+            line-height: 1.4;
+        }
+        
+        .response-content:contains(">>> ") {
+            background-color: #fef3cd;
+        }
+        
+        /* Highlight lines containing >>> markers */
+        .response-content {
+            background-image: linear-gradient(
+                to right,
+                transparent 0%,
+                transparent 100%
+            );
+        }
+    `;
+    document.head.appendChild(style);
+});
+</script>
+{% endblock %}

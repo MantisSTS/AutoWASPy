@@ -1,0 +1,319 @@
+{% extends "base.html" %}
+
+{% block title %}{{ project.name }} - AutoWASPy{% endblock %}
+
+{% block content %}
+<div class="px-4 sm:px-0">
+    <!-- Project Header -->
+    <div class="mb-8">
+        <div class="flex items-center justify-between mb-4">
+            <div class="flex items-center">
+                <a href="{{ url_for('index') }}" class="text-primary-600 hover:text-primary-900 mr-4">
+                    <i class="fas fa-arrow-left"></i>
+                </a>
+                <div>
+                    <h1 class="text-3xl font-bold text-gray-900">{{ project.name }}</h1>
+                    <div class="flex items-center mt-2 space-x-4">
+                        <span class="text-gray-600">
+                            <i class="fas fa-building mr-1"></i>{{ project.client_name }}
+                        </span>
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                            {% if project.job_type == 'web' %}
+                                <i class="fas fa-globe mr-1"></i>WSTG
+                            {% elif project.job_type == 'mobile_ios' %}
+                                <i class="fab fa-apple mr-1"></i>MSTG iOS
+                            {% elif project.job_type == 'mobile_android' %}
+                                <i class="fab fa-android mr-1"></i>MSTG Android
+                            {% endif %}
+                        </span>
+                        <span class="text-sm text-gray-500">
+                            <i class="fas fa-calendar mr-1"></i>{{ project.created_date.strftime('%Y-%m-%d') }}
+                        </span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="flex space-x-3">
+                {% if project.job_type == 'web' and project.urls %}
+                    <button onclick="runAutoTests()" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-green-600 hover:bg-green-700">
+                        <i class="fas fa-play mr-2"></i>Run Auto Tests
+                    </button>
+                    <a href="{{ url_for('autotest_results', project_id=project.id) }}" class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
+                        <i class="fas fa-chart-line mr-2"></i>Auto Test Results
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+
+        {% if project.description %}
+            <p class="text-gray-600">{{ project.description }}</p>
+        {% endif %}
+
+        <!-- Progress Summary -->
+        {% set total_tests = project.test_items|length %}
+        {% set completed_tests = project.test_items|selectattr('is_tested')|list|length %}
+        {% set passed_tests = project.test_items|selectattr('finding_status', 'equalto', 'pass')|list|length %}
+        {% set failed_tests = project.test_items|selectattr('finding_status', 'equalto', 'fail')|list|length %}
+        {% set informational_tests = project.test_items|selectattr('finding_status', 'equalto', 'informational')|list|length %}
+        {% set error_tests = project.test_items|selectattr('finding_status', 'equalto', 'error')|list|length %}
+        
+        <div class="mt-6 grid grid-cols-1 gap-5 sm:grid-cols-5">
+            <div class="bg-white overflow-hidden shadow rounded-lg">
+                <div class="p-5">
+                    <div class="flex items-center">
+                        <div class="flex-shrink-0">
+                            <i class="fas fa-list-check text-primary-600 text-xl"></i>
+                        </div>
+                        <div class="ml-5 w-0 flex-1">
+                            <dl>
+                                <dt class="text-sm font-medium text-gray-500">Total Tests</dt>
+                                <dd class="text-lg font-medium text-gray-900">{{ total_tests }}</dd>
+                            </dl>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white overflow-hidden shadow rounded-lg">
+                <div class="p-5">
+                    <div class="flex items-center">
+                        <div class="flex-shrink-0">
+                            <i class="fas fa-check-circle text-green-600 text-xl"></i>
+                        </div>
+                        <div class="ml-5 w-0 flex-1">
+                            <dl>
+                                <dt class="text-sm font-medium text-gray-500">Passed</dt>
+                                <dd class="text-lg font-medium text-gray-900">{{ passed_tests }}</dd>
+                            </dl>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white overflow-hidden shadow rounded-lg">
+                <div class="p-5">
+                    <div class="flex items-center">
+                        <div class="flex-shrink-0">
+                            <i class="fas fa-shield-exclamation text-red-600 text-xl"></i>
+                        </div>
+                        <div class="ml-5 w-0 flex-1">
+                            <dl>
+                                <dt class="text-sm font-medium text-gray-500">Failed</dt>
+                                <dd class="text-lg font-medium text-gray-900">{{ failed_tests }}</dd>
+                            </dl>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white overflow-hidden shadow rounded-lg">
+                <div class="p-5">
+                    <div class="flex items-center">
+                        <div class="flex-shrink-0">
+                            <i class="fas fa-info-circle text-yellow-600 text-xl"></i>
+                        </div>
+                        <div class="ml-5 w-0 flex-1">
+                            <dl>
+                                <dt class="text-sm font-medium text-gray-500">Informational</dt>
+                                <dd class="text-lg font-medium text-gray-900">{{ informational_tests }}</dd>
+                            </dl>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white overflow-hidden shadow rounded-lg">
+                <div class="p-5">
+                    <div class="flex items-center">
+                        <div class="flex-shrink-0">
+                            <i class="fas fa-exclamation-triangle text-orange-600 text-xl"></i>
+                        </div>
+                        <div class="ml-5 w-0 flex-1">
+                            <dl>
+                                <dt class="text-sm font-medium text-gray-500">Errors</dt>
+                                <dd class="text-lg font-medium text-gray-900">{{ error_tests }}</dd>
+                            </dl>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Progress Bar -->
+        {% if total_tests > 0 %}
+            {% set tests_with_status = passed_tests + failed_tests + informational_tests + error_tests %}
+            <div class="mt-6">
+                <div class="flex justify-between text-sm text-gray-600 mb-2">
+                    <span>Overall Progress</span>
+                    <span>{{ tests_with_status }}/{{ total_tests }} ({{ (tests_with_status / total_tests * 100)|round|int }}%)</span>
+                </div>
+                <div class="w-full bg-gray-200 rounded-full h-3">
+                    <div class="bg-primary-600 h-3 rounded-full transition-all duration-300" style="width: {{ (tests_with_status / total_tests * 100)|round|int }}%"></div>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- Test Categories -->
+    {% for category, items in categories.items() %}
+        <div class="mb-8">
+            <div class="bg-white shadow rounded-lg">
+                <div class="px-6 py-4 border-b border-gray-200">
+                    <h3 class="text-lg font-medium text-gray-900 flex items-center">
+                        <i class="fas fa-folder-open mr-2 text-primary-600"></i>
+                        {{ category }}
+                        <span class="ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                            {{ items|length }} tests
+                        </span>
+                    </h3>
+                </div>
+                
+                <div class="divide-y divide-gray-200">
+                    {% for item in items %}
+                        <div class="p-6 border-l-4 rounded-lg shadow-md mb-4 transition-all duration-200 hover:shadow-lg
+                            {% if item.finding_status == 'pass' %}border-green-500 bg-green-50 hover:bg-green-100
+                            {% elif item.finding_status == 'fail' %}border-red-500 bg-red-50 hover:bg-red-100
+                            {% elif item.finding_status == 'informational' %}border-yellow-500 bg-yellow-50 hover:bg-yellow-100
+                            {% elif item.finding_status == 'error' %}border-orange-500 bg-orange-50 hover:bg-orange-100
+                            {% else %}border-gray-300 bg-gray-50 hover:bg-gray-100{% endif %}">
+                            <div class="flex items-start justify-between">
+                                <div class="flex-1">
+                                    <div class="flex items-center mb-2">
+                                        <!-- Status Icon -->
+                                        <div class="flex-shrink-0 mr-3">
+                                            {% if item.finding_status == 'pass' %}
+                                                <div class="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
+                                                    <i class="fas fa-check text-green-600"></i>
+                                                </div>
+                                            {% elif item.finding_status == 'fail' %}
+                                                <div class="w-8 h-8 bg-red-100 rounded-full flex items-center justify-center">
+                                                    <i class="fas fa-times text-red-600"></i>
+                                                </div>
+                                            {% elif item.finding_status == 'informational' %}
+                                                <div class="w-8 h-8 bg-yellow-100 rounded-full flex items-center justify-center">
+                                                    <i class="fas fa-info text-yellow-600"></i>
+                                                </div>
+                                            {% elif item.finding_status == 'error' %}
+                                                <div class="w-8 h-8 bg-orange-100 rounded-full flex items-center justify-center">
+                                                    <i class="fas fa-exclamation-triangle text-orange-600"></i>
+                                                </div>
+                                            {% else %}
+                                                <div class="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center">
+                                                    <i class="fas fa-clock text-gray-500"></i>
+                                                </div>
+                                            {% endif %}
+                                        </div>
+                                        
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary-100 text-primary-800 mr-3">
+                                            {{ item.owasp_id }}
+                                        </span>
+                                        <h4 class="text-md font-medium text-gray-900">{{ item.title }}</h4>
+                                        
+                                        <!-- Status Badge -->
+                                        <span class="ml-3 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
+                                            {% if item.finding_status == 'pass' %}bg-green-100 text-green-800
+                                            {% elif item.finding_status == 'fail' %}bg-red-100 text-red-800
+                                            {% elif item.finding_status == 'informational' %}bg-yellow-100 text-yellow-800
+                                            {% elif item.finding_status == 'error' %}bg-orange-100 text-orange-800
+                                            {% else %}bg-gray-100 text-gray-800{% endif %}">
+                                            {% if item.finding_status == 'pass' %}PASS
+                                            {% elif item.finding_status == 'fail' %}FAIL
+                                            {% elif item.finding_status == 'informational' %}INFO
+                                            {% elif item.finding_status == 'error' %}ERROR
+                                            {% else %}NOT TESTED{% endif %}
+                                        </span>
+                                        
+                                        {% if item.is_tested %}
+                                            <i class="fas fa-check-circle text-green-500 ml-2" title="Test completed"></i>
+                                        {% endif %}
+                                    </div>
+                                    
+                                    <p class="text-sm text-gray-600 mb-4">{{ item.description }}</p>
+                                    
+                                    <form method="POST" action="{{ url_for('update_test_item', project_id=project.id, test_id=item.id) }}" class="space-y-4">
+                                        <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                                            <div>
+                                                <label class="block text-sm font-medium text-gray-700 mb-2">Finding Status</label>
+                                                <select name="finding_status" class="block w-full border-gray-300 rounded-md shadow-sm focus:ring-primary-500 focus:border-primary-500 sm:text-sm">
+                                                    <option value="not_tested" {% if item.finding_status == 'not_tested' %}selected{% endif %}>Not Tested</option>
+                                                    <option value="pass" {% if item.finding_status == 'pass' %}selected{% endif %}>Pass</option>
+                                                    <option value="fail" {% if item.finding_status == 'fail' %}selected{% endif %}>Fail</option>
+                                                    <option value="informational" {% if item.finding_status == 'informational' %}selected{% endif %}>Informational</option>
+                                                    <option value="error" {% if item.finding_status == 'error' %}selected{% endif %}>Error</option>
+                                                </select>
+                                            </div>
+                                            
+                                            <div>
+                                                <label class="block text-sm font-medium text-gray-700 mb-2">Risk Level</label>
+                                                <select name="risk_level" class="block w-full border-gray-300 rounded-md shadow-sm focus:ring-primary-500 focus:border-primary-500 sm:text-sm">
+                                                    <option value="">Not Applicable</option>
+                                                    <option value="low" {% if item.risk_level == 'low' %}selected{% endif %}>Low</option>
+                                                    <option value="medium" {% if item.risk_level == 'medium' %}selected{% endif %}>Medium</option>
+                                                    <option value="high" {% if item.risk_level == 'high' %}selected{% endif %}>High</option>
+                                                    <option value="critical" {% if item.risk_level == 'critical' %}selected{% endif %}>Critical</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 mb-2">Evidence</label>
+                                            <textarea name="evidence" rows="4" class="block w-full border-gray-300 rounded-md shadow-sm focus:ring-primary-500 focus:border-primary-500 sm:text-sm" placeholder="Enter your evidence, screenshots, request/response data, etc...">{{ item.evidence or '' }}</textarea>
+                                        </div>
+                                        
+                                        <div class="flex items-center justify-between">
+                                            <div class="flex items-center">
+                                                <input type="checkbox" name="is_tested" id="tested_{{ item.id }}" {% if item.is_tested %}checked{% endif %} class="focus:ring-primary-500 h-4 w-4 text-primary-600 border-gray-300 rounded">
+                                                <label for="tested_{{ item.id }}" class="ml-2 block text-sm text-gray-900">Mark as tested</label>
+                                            </div>
+                                            
+                                            <button type="submit" class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
+                                                <i class="fas fa-save mr-1"></i>Update
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+</div>
+
+<script>
+function runAutoTests() {
+    if (confirm('This will run automated security tests on the configured URLs. Continue?')) {
+        // Show loading state
+        const button = event.target;
+        const originalText = button.innerHTML;
+        button.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Running Tests...';
+        button.disabled = true;
+        
+        // Submit form to run auto tests
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = '{{ url_for("run_auto_tests", project_id=project.id) }}';
+        document.body.appendChild(form);
+        form.submit();
+    }
+}
+
+// Auto-save functionality
+document.addEventListener('DOMContentLoaded', function() {
+    const forms = document.querySelectorAll('form[action*="update_test_item"]');
+    
+    forms.forEach(function(form) {
+        const inputs = form.querySelectorAll('input, select, textarea');
+        inputs.forEach(function(input) {
+            input.addEventListener('change', function() {
+                // Auto-save after a short delay
+                setTimeout(function() {
+                    form.submit();
+                }, 500);
+            });
+        });
+    });
+});
+</script>
+{% endblock %}

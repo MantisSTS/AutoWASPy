@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}AutoWASPy - OWASP Testing Tool{% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            50: '#eff6ff',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-lg border-b border-gray-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex">
+                    <div class="flex-shrink-0 flex items-center">
+                        <i class="fas fa-shield-alt text-primary-600 text-2xl mr-2"></i>
+                        <span class="font-bold text-xl text-gray-900">AutoWASPy</span>
+                        <span class="ml-2 px-2 py-1 text-xs bg-primary-100 text-primary-800 rounded-full">CHECK Team</span>
+                    </div>                <div class="hidden sm:ml-6 sm:flex sm:space-x-8">
+                    <a href="{{ url_for('index') }}" class="border-primary-500 text-gray-900 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
+                        <i class="fas fa-home mr-2"></i>Projects
+                    </a>
+                    <a href="{{ url_for('refresh_owasp_data') }}" class="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
+                        <i class="fas fa-sync mr-2"></i>Refresh OWASP
+                    </a>
+                </div>
+                </div>
+                <div class="hidden sm:ml-6 sm:flex sm:items-center">
+                    <span class="text-sm text-gray-500">Penetration Testing Tool</span>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }} mb-4 p-4 rounded-md {% if category == 'success' %}bg-green-50 border border-green-200 text-green-800{% elif category == 'error' %}bg-red-50 border border-red-200 text-red-800{% else %}bg-blue-50 border border-blue-200 text-blue-800{% endif %}">
+                        <div class="flex">
+                            <div class="flex-shrink-0">
+                                {% if category == 'success' %}
+                                    <i class="fas fa-check-circle text-green-400"></i>
+                                {% elif category == 'error' %}
+                                    <i class="fas fa-exclamation-circle text-red-400"></i>
+                                {% else %}
+                                    <i class="fas fa-info-circle text-blue-400"></i>
+                                {% endif %}
+                            </div>
+                            <div class="ml-3">
+                                <p class="text-sm font-medium">{{ message }}</p>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-gray-200 mt-12">
+        <div class="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center">
+                <p class="text-sm text-gray-500">
+                    © 2025 AutoWASPy - OWASP Testing Tool for CHECK Team Leaders
+                </p>
+                <p class="text-sm text-gray-500">
+                    OWASP WSTG & MSTG Integration
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Auto-hide flash messages after 5 seconds
+        setTimeout(function() {
+            const alerts = document.querySelectorAll('.alert');
+            alerts.forEach(function(alert) {
+                alert.style.transition = 'opacity 0.5s';
+                alert.style.opacity = '0';
+                setTimeout(function() {
+                    alert.remove();
+                }, 500);
+            });
+        }, 5000);
+    </script>
+</body>
+</html>

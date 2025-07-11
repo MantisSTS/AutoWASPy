@@ -1,0 +1,175 @@
+{% extends "base.html" %}
+
+{% block title %}Refresh OWASP Data - AutoWASPy{% endblock %}
+
+{% block content %}
+<div class="px-4 sm:px-0">
+    <div class="mb-8">
+        <div class="flex items-center mb-4">
+            <a href="{{ url_for('index') }}" class="text-primary-600 hover:text-primary-900 mr-4">
+                <i class="fas fa-arrow-left"></i>
+            </a>
+            <h1 class="text-3xl font-bold text-gray-900">Refresh OWASP Checklists</h1>
+        </div>
+        <p class="text-gray-600">Fetch the latest OWASP WSTG and MSTG checklists from official repositories</p>
+    </div>
+
+    <div class="bg-white shadow rounded-lg p-6">
+        <div class="mb-6">
+            <div class="flex items-center p-4 mb-4 text-blue-800 border border-blue-300 rounded-lg bg-blue-50">
+                <i class="fas fa-info-circle mr-3"></i>
+                <div class="text-sm">
+                    <span class="font-medium">Information:</span>
+                    This will fetch the latest OWASP Web Security Testing Guide (WSTG) and Mobile Security Testing Guide (MSTG) 
+                    checklists directly from the official OWASP GitHub repositories. Any new test cases will be automatically 
+                    added to existing projects.
+                </div>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+            <div class="border rounded-lg p-4">
+                <div class="flex items-center justify-between mb-3">
+                    <div class="flex items-center">
+                        <i class="fas fa-globe text-blue-600 text-2xl mr-3"></i>
+                        <div>
+                            <h3 class="text-lg font-medium text-gray-900">OWASP WSTG</h3>
+                            <p class="text-sm text-gray-500">Web Security Testing Guide</p>
+                        </div>
+                    </div>
+                    {% if cache_info.wstg.last_updated %}
+                        <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium 
+                            {% if cache_info.wstg.source == 'github' %}bg-green-100 text-green-800{% else %}bg-yellow-100 text-yellow-800{% endif %}">
+                            {% if cache_info.wstg.source == 'github' %}
+                                <i class="fab fa-github mr-1"></i>GitHub
+                            {% else %}
+                                <i class="fas fa-hdd mr-1"></i>Fallback
+                            {% endif %}
+                        </span>
+                    {% endif %}
+                </div>
+                <p class="text-sm text-gray-600 mb-3">
+                    Comprehensive framework for testing web application security. Covers information gathering, 
+                    configuration testing, authentication, session management, input validation, and more.
+                </p>
+                {% if cache_info.wstg.last_updated %}
+                    <div class="text-xs text-gray-500 mb-2">
+                        <i class="fas fa-clock mr-1"></i>
+                        Last updated: {{ cache_info.wstg.last_updated.strftime('%Y-%m-%d %H:%M UTC') }}
+                    </div>
+                    <div class="text-xs text-gray-500 mb-2">
+                        <i class="fas fa-list mr-1"></i>
+                        Test cases: {{ cache_info.wstg.count }}
+                    </div>
+                {% endif %}
+                <div class="text-xs text-gray-500">
+                    <i class="fab fa-github mr-1"></i>
+                    Source: github.com/OWASP/wstg
+                </div>
+            </div>
+
+            <div class="border rounded-lg p-4">
+                <div class="flex items-center justify-between mb-3">
+                    <div class="flex items-center">
+                        <i class="fas fa-mobile-alt text-green-600 text-2xl mr-3"></i>
+                        <div>
+                            <h3 class="text-lg font-medium text-gray-900">OWASP MSTG</h3>
+                            <p class="text-sm text-gray-500">Mobile Security Testing Guide</p>
+                        </div>
+                    </div>
+                    {% if cache_info.mstg.last_updated %}
+                        <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium 
+                            {% if cache_info.mstg.source == 'github' %}bg-green-100 text-green-800{% else %}bg-yellow-100 text-yellow-800{% endif %}">
+                            {% if cache_info.mstg.source == 'github' %}
+                                <i class="fab fa-github mr-1"></i>GitHub
+                            {% else %}
+                                <i class="fas fa-hdd mr-1"></i>Fallback
+                            {% endif %}
+                        </span>
+                    {% endif %}
+                </div>
+                <p class="text-sm text-gray-600 mb-3">
+                    Complete guide for mobile application security testing. Covers iOS and Android security 
+                    requirements including architecture, data storage, cryptography, authentication, and platform interactions.
+                </p>
+                {% if cache_info.mstg.last_updated %}
+                    <div class="text-xs text-gray-500 mb-2">
+                        <i class="fas fa-clock mr-1"></i>
+                        Last updated: {{ cache_info.mstg.last_updated.strftime('%Y-%m-%d %H:%M UTC') }}
+                    </div>
+                    <div class="text-xs text-gray-500 mb-2">
+                        <i class="fas fa-list mr-1"></i>
+                        Test cases: {{ cache_info.mstg.count }}
+                    </div>
+                {% endif %}
+                <div class="text-xs text-gray-500">
+                    <i class="fab fa-github mr-1"></i>
+                    Source: github.com/OWASP/owasp-mstg
+                </div>
+            </div>
+        </div>
+
+        <div class="border-t pt-6">
+            <h3 class="text-lg font-medium text-gray-900 mb-4">Refresh Process</h3>
+            <div class="space-y-3 mb-6">
+                <div class="flex items-center text-sm text-gray-600">
+                    <i class="fas fa-download text-blue-500 mr-3"></i>
+                    Fetch latest checklist data from OWASP GitHub repositories
+                </div>
+                <div class="flex items-center text-sm text-gray-600">
+                    <i class="fas fa-sync text-green-500 mr-3"></i>
+                    Parse and process test cases with categories and descriptions
+                </div>
+                <div class="flex items-center text-sm text-gray-600">
+                    <i class="fas fa-plus text-purple-500 mr-3"></i>
+                    Add new test cases to existing projects (preserves existing evidence)
+                </div>
+                <div class="flex items-center text-sm text-gray-600">
+                    <i class="fas fa-shield-alt text-orange-500 mr-3"></i>
+                    Maintain backwards compatibility with current projects
+                </div>
+            </div>
+
+            <div class="bg-yellow-50 border border-yellow-200 rounded-md p-4 mb-6">
+                <div class="flex">
+                    <div class="flex-shrink-0">
+                        <i class="fas fa-exclamation-triangle text-yellow-400"></i>
+                    </div>
+                    <div class="ml-3">
+                        <h3 class="text-sm font-medium text-yellow-800">Important Notes</h3>
+                        <div class="mt-2 text-sm text-yellow-700">
+                            <ul class="list-disc pl-5 space-y-1">
+                                <li>This process requires internet connectivity to access OWASP repositories</li>
+                                <li>Existing test evidence and findings will be preserved</li>
+                                <li>If GitHub is unavailable, fallback data will be used</li>
+                                <li>The process may take 30-60 seconds to complete</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <form method="POST" class="space-y-4">
+                <div class="flex justify-end space-x-3">
+                    <a href="{{ url_for('index') }}" class="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
+                        Cancel
+                    </a>
+                    <button type="submit" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
+                        <i class="fas fa-sync mr-2"></i>Refresh OWASP Data
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+// Show loading state when form is submitted
+document.querySelector('form').addEventListener('submit', function() {
+    const button = this.querySelector('button[type="submit"]');
+    const originalText = button.innerHTML;
+    button.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Refreshing...';
+    button.disabled = true;
+});
+</script>
+{% endblock %}
