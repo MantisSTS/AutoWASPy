@@ -444,9 +444,6 @@ This tool is designed for CHECK Team Leaders. Contributions should focus on:
 - Better evidence management features
 - Export/reporting functionality
 
-## 📞 Support
-
-For issues or feature requests, please refer to your organization's internal development processes.
 
 ---
 
