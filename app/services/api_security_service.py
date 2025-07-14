@@ -24,6 +24,12 @@ class APISecurityService:
         except Exception as e:
             print(f"GitHub fetch failed: {e}, using fallback data")
             return APISecurityService._get_fallback_data()
+
+    @staticmethod
+    def get_cached_api_security_data():
+        """Get API Security data from cache/fallback without fetching from GitHub"""
+        print("Using cached/fallback API Security data for project creation...")
+        return APISecurityService._get_fallback_data()
     
     @staticmethod
     def _fetch_from_github():
@@ -231,9 +237,6 @@ class APISecurityService:
         else:
             return 'medium'
     
-    @staticmethod
-    def _get_fallback_data():
-        """Fallback data if GitHub fetch fails"""
     @staticmethod
     def _get_fallback_data():
         """Fallback data if GitHub fetch fails"""

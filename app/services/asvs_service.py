@@ -22,6 +22,12 @@ class ASVSService:
         except Exception as e:
             print(f"GitHub fetch failed: {e}, using fallback data")
             return ASVSService._get_fallback_data()
+
+    @staticmethod
+    def get_cached_asvs_data():
+        """Get ASVS data from cache/fallback without fetching from GitHub"""
+        print("Using cached/fallback ASVS data for project creation...")
+        return ASVSService._get_fallback_data()
     
     @staticmethod
     def _fetch_from_github():

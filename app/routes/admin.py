@@ -15,18 +15,45 @@ def refresh_owasp_data():
     """Refresh OWASP testing data from remote sources"""
     if request.method == 'POST':
         try:
-            # Use comprehensive service to refresh all frameworks
-            flash('Refreshing all OWASP testing frameworks...', 'info')
-            results = ComprehensiveOWASPService.refresh_all_frameworks()
+            # Refresh each framework individually from GitHub
+            flash('Refreshing OWASP testing frameworks from GitHub...', 'info')
             
-            # Report results
-            for framework_key, result in results.items():
-                if result['success']:
-                    flash(f"✅ {framework_key.upper()}: {result['message']}", 'success')
-                else:
-                    flash(f"❌ {framework_key.upper()}: {result['message']}", 'error')
+            # WSTG refresh
+            try:
+                wstg_tests = OWASPService.fetch_wstg_data()
+                flash(f"✅ WSTG: Successfully refreshed {len(wstg_tests)} test cases", 'success')
+            except Exception as e:
+                flash(f"❌ WSTG: Failed to refresh - {str(e)}", 'error')
             
-            flash('All frameworks have been refreshed!', 'success')
+            # MASTG refresh
+            try:
+                mastg_tests = OWASPService.fetch_mstg_data()
+                flash(f"✅ MASTG: Successfully refreshed {len(mastg_tests)} test cases", 'success')
+            except Exception as e:
+                flash(f"❌ MASTG: Failed to refresh - {str(e)}", 'error')
+            
+            # API Security refresh
+            try:
+                api_tests = APISecurityService.fetch_api_security_data()
+                flash(f"✅ API Security: Successfully refreshed {len(api_tests)} test cases", 'success')
+            except Exception as e:
+                flash(f"❌ API Security: Failed to refresh - {str(e)}", 'error')
+            
+            # IoT Security refresh
+            try:
+                iot_tests = IoTSecurityService.fetch_iot_security_data()
+                flash(f"✅ IoT Security: Successfully refreshed {len(iot_tests)} test cases", 'success')
+            except Exception as e:
+                flash(f"❌ IoT Security: Failed to refresh - {str(e)}", 'error')
+            
+            # ASVS refresh
+            try:
+                asvs_tests = ASVSService.fetch_asvs_data()
+                flash(f"✅ ASVS: Successfully refreshed {len(asvs_tests)} test cases", 'success')
+            except Exception as e:
+                flash(f"❌ ASVS: Failed to refresh - {str(e)}", 'error')
+            
+            flash('Framework refresh completed! New projects will use cached data for fast creation.', 'info')
             return redirect(url_for('admin.refresh_owasp_data'))
             
         except Exception as e:

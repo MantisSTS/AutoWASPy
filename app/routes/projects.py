@@ -26,23 +26,25 @@ def new_project():
         db.session.commit()
         
         # Initialize test items based on job type
+        # Using cached/fallback data for fast project creation
+        # Use Admin > Refresh OWASP Data to update from GitHub
         if project.job_type == 'web':
-            tests = OWASPService.fetch_wstg_data()
+            tests = OWASPService.get_cached_wstg_data()
             test_type = 'wstg'
         elif project.job_type in ['mobile_ios', 'mobile_android']:
-            tests = OWASPService.fetch_mstg_data()
+            tests = OWASPService.get_cached_mstg_data()
             test_type = 'mstg'
         elif project.job_type == 'api_security':
-            tests = APISecurityService.fetch_api_security_data()
+            tests = APISecurityService.get_cached_api_security_data()
             test_type = 'api_security'
         elif project.job_type == 'iot_security':
-            tests = IoTSecurityService.fetch_iot_security_data()
+            tests = IoTSecurityService.get_cached_iot_security_data()
             test_type = 'iot_security'
         elif project.job_type == 'asvs_verification':
-            tests = ASVSService.fetch_asvs_data()
+            tests = ASVSService.get_cached_asvs_data()
             test_type = 'asvs'
         # elif project.job_type == 'cloud_security':
-        #     tests = CloudSecurityService.fetch_cloud_security_data()
+        #     tests = CloudSecurityService.get_cached_cloud_security_data()
         #     test_type = 'cloud_security'
         else:
             tests = []

@@ -26,6 +26,12 @@ class IoTSecurityService:
         except Exception as e:
             print(f"GitHub fetch failed: {e}, using fallback data")
             return IoTSecurityService._get_fallback_data()
+
+    @staticmethod
+    def get_cached_iot_security_data():
+        """Get IoT Security data from cache/fallback without fetching from GitHub"""
+        print("Using cached/fallback IoT Security data for project creation...")
+        return IoTSecurityService._get_fallback_data()
     
     @staticmethod
     def _fetch_from_github():

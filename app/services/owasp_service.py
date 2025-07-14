@@ -1488,42 +1488,34 @@ class OWASPService:
 
     @staticmethod
     def get_cache_info():
-        """Get cache information for display"""
+        """Get cache information for all OWASP data types"""
         from app.models import OWASPDataCache
         
-        wstg_cache = OWASPDataCache.query.filter_by(data_type='wstg').first()
-        mstg_cache = OWASPDataCache.query.filter_by(data_type='mstg').first()
-        api_security_cache = OWASPDataCache.query.filter_by(data_type='api_security').first()
-        iot_security_cache = OWASPDataCache.query.filter_by(data_type='iot_security').first()
-        asvs_cache = OWASPDataCache.query.filter_by(data_type='asvs').first()
+        cache_info = {}
+        for data_type in ['wstg', 'mstg']:
+            cache_entry = OWASPDataCache.query.filter_by(data_type=data_type).first()
+            if cache_entry:
+                cache_info[data_type] = {
+                    'last_updated': cache_entry.last_updated,
+                    'data_source': cache_entry.data_source,
+                    'test_count': cache_entry.test_count
+                }
+            else:
+                cache_info[data_type] = None
         
-        return {
-            'wstg': {
-                'last_updated': wstg_cache.last_updated if wstg_cache else None,
-                'source': wstg_cache.data_source if wstg_cache else 'unknown',
-                'count': wstg_cache.test_count if wstg_cache else 0
-            },
-            'mstg': {
-                'last_updated': mstg_cache.last_updated if mstg_cache else None,
-                'source': mstg_cache.data_source if mstg_cache else 'unknown',
-                'count': mstg_cache.test_count if mstg_cache else 0
-            },
-            'api_security': {
-                'last_updated': api_security_cache.last_updated if api_security_cache else None,
-                'source': api_security_cache.data_source if api_security_cache else 'unknown',
-                'count': api_security_cache.test_count if api_security_cache else 0
-            },
-            'iot_security': {
-                'last_updated': iot_security_cache.last_updated if iot_security_cache else None,
-                'source': iot_security_cache.data_source if iot_security_cache else 'unknown',
-                'count': iot_security_cache.test_count if iot_security_cache else 0
-            },
-            'asvs': {
-                'last_updated': asvs_cache.last_updated if asvs_cache else None,
-                'source': asvs_cache.data_source if asvs_cache else 'unknown',
-                'count': asvs_cache.test_count if asvs_cache else 0
-            }
-        }
+        return cache_info
+
+    @staticmethod
+    def get_cached_wstg_data():
+        """Get WSTG data from cache/fallback without fetching from GitHub"""
+        print("Using cached/fallback WSTG data for project creation...")
+        return OWASPService._get_fallback_wstg_data()
+
+    @staticmethod
+    def get_cached_mstg_data():
+        """Get MASTG data from cache/fallback without fetching from GitHub"""
+        print("Using cached/fallback MASTG data for project creation...")
+        return OWASPService._get_fallback_mstg_data()
 
     @staticmethod
     def _fetch_wstg_from_checklist():
