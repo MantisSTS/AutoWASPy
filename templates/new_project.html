@@ -6,7 +6,7 @@
 <div class="px-4 sm:px-0">
     <div class="mb-8">
         <div class="flex items-center mb-4">
-            <a href="{{ url_for('index') }}" class="text-primary-600 hover:text-primary-900 mr-4">
+            <a href="{{ url_for('main.index') }}" class="text-primary-600 hover:text-primary-900 mr-4">
                 <i class="fas fa-arrow-left"></i>
             </a>
             <h1 class="text-3xl font-bold text-gray-900">Create New Project</h1>
@@ -85,31 +85,80 @@
                             </div>
                         </label>
                     </div>
+                    
+                    <div class="flex items-center">
+                        <input type="radio" name="job_type" id="api_security" value="api_security" 
+                               class="focus:ring-primary-500 h-4 w-4 text-primary-600 border-gray-300">
+                        <label for="api_security" class="ml-3 flex items-center">
+                            <i class="fas fa-code text-purple-500 mr-2"></i>
+                            <div>
+                                <div class="text-sm font-medium text-gray-900">API Security Testing</div>
+                                <div class="text-sm text-gray-500">OWASP API Security Top 10 2023 checklist</div>
+                            </div>
+                        </label>
+                    </div>
+                    
+                    <div class="flex items-center">
+                        <input type="radio" name="job_type" id="iot_security" value="iot_security" 
+                               class="focus:ring-primary-500 h-4 w-4 text-primary-600 border-gray-300">
+                        <label for="iot_security" class="ml-3 flex items-center">
+                            <i class="fas fa-microchip text-indigo-500 mr-2"></i>
+                            <div>
+                                <div class="text-sm font-medium text-gray-900">IoT Device Security</div>
+                                <div class="text-sm text-gray-500">OWASP IoT Security Testing Guide checklist</div>
+                            </div>
+                        </label>
+                    </div>
+                    
+                    <div class="flex items-center">
+                        <input type="radio" name="job_type" id="asvs_verification" value="asvs_verification" 
+                               class="focus:ring-primary-500 h-4 w-4 text-primary-600 border-gray-300">
+                        <label for="asvs_verification" class="ml-3 flex items-center">
+                            <i class="fas fa-shield-alt text-red-500 mr-2"></i>
+                            <div>
+                                <div class="text-sm font-medium text-gray-900">Application Security Verification</div>
+                                <div class="text-sm text-gray-500">OWASP ASVS 5.0 verification checklist</div>
+                            </div>
+                        </label>
+                    </div>
+                    
+                    <div class="flex items-center">
+                        <input type="radio" name="job_type" id="cloud_security" value="cloud_security" 
+                               class="focus:ring-primary-500 h-4 w-4 text-primary-600 border-gray-300">
+                        <label for="cloud_security" class="ml-3 flex items-center">
+                            <i class="fas fa-cloud text-indigo-600 mr-2"></i>
+                            <div>
+                                <div class="text-sm font-medium text-gray-900">Cloud Security Testing</div>
+                                <div class="text-sm text-gray-500">Cloud Security Testing Guide based on industry best practices</div>
+                            </div>
+                        </label>
+                    </div>
                 </div>
             </div>
 
             <!-- URLs for Web Testing -->
             <div id="web-urls-section" class="border-b border-gray-200 pb-6">
-                <h3 class="text-lg font-medium text-gray-900 mb-4">Target URLs (Web Testing Only)</h3>
-                <p class="text-sm text-gray-600 mb-4">Enter the URLs you'll be testing. These will be used for automated security checks.</p>
+                <h3 class="text-lg font-medium text-gray-900 mb-4">Target URLs</h3>
+                <p class="text-sm text-gray-600 mb-4">Enter the URLs or endpoints you'll be testing. These will be used for automated security checks.</p>
                 
                 <div>
-                    <label for="urls" class="block text-sm font-medium text-gray-700">URLs (one per line)</label>
+                    <label for="urls" class="block text-sm font-medium text-gray-700">URLs/Endpoints (one per line)</label>
                     <textarea name="urls" id="urls" rows="4" 
                               class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-primary-500 focus:border-primary-500 sm:text-sm"
                               placeholder="https://example.com
 https://app.example.com
-https://api.example.com"></textarea>
+https://api.example.com/v1
+https://device.example.com:8080"></textarea>
                     <p class="mt-2 text-sm text-gray-500">
                         <i class="fas fa-info-circle mr-1"></i>
-                        These URLs will be used for automated testing of HSTS headers, cookie security, and other common vulnerabilities
+                        <span id="url-help-text">These URLs will be used for automated testing of HSTS headers, cookie security, and other common vulnerabilities</span>
                     </p>
                 </div>
             </div>
 
             <!-- Submit Button -->
             <div class="flex justify-end space-x-3">
-                <a href="{{ url_for('index') }}" class="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
+                <a href="{{ url_for('main.index') }}" class="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
                     Cancel
                 </a>
                 <button type="submit" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
@@ -125,11 +174,24 @@ https://api.example.com"></textarea>
 document.addEventListener('DOMContentLoaded', function() {
     const radioButtons = document.querySelectorAll('input[name="job_type"]');
     const urlsSection = document.getElementById('web-urls-section');
+    const urlHelpText = document.getElementById('url-help-text');
+    
+    const helpTexts = {
+        'web': 'These URLs will be used for automated testing of HSTS headers, cookie security, and other common vulnerabilities',
+        'mobile_ios': 'URLs are not typically required for mobile app testing',
+        'mobile_android': 'URLs are not typically required for mobile app testing',
+        'api_security': 'API endpoints will be tested for authentication, authorization, rate limiting, and other API-specific vulnerabilities',
+        'iot_security': 'Device endpoints, management interfaces, and communication protocols will be tested for IoT-specific vulnerabilities',
+        'asvs_verification': 'Application URLs will be tested against ASVS verification requirements for comprehensive security assessment',
+        'cloud_security': 'Cloud service endpoints, management interfaces, and APIs will be tested for cloud-specific security vulnerabilities'
+    };
     
     function toggleUrlsSection() {
         const selectedType = document.querySelector('input[name="job_type"]:checked').value;
-        if (selectedType === 'web') {
+        
+        if (['web', 'api_security', 'iot_security', 'asvs_verification', 'cloud_security'].includes(selectedType)) {
             urlsSection.style.display = 'block';
+            urlHelpText.textContent = helpTexts[selectedType];
         } else {
             urlsSection.style.display = 'none';
         }

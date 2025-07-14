@@ -5,9 +5,9 @@
     <div class="flex justify-between items-center mb-8">
         <div>
             <h1 class="text-3xl font-bold text-gray-900">Projects Dashboard</h1>
-            <p class="mt-2 text-gray-600">Manage your penetration testing projects with OWASP WSTG and MSTG checklists</p>
+            <p class="mt-2 text-gray-600">Manage your penetration testing projects with OWASP security frameworks and checklists</p>
         </div>
-        <a href="{{ url_for('new_project') }}" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
+        <a href="{{ url_for('projects.new_project') }}" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
             <i class="fas fa-plus mr-2"></i>New Project
         </a>
     </div>
@@ -25,6 +25,14 @@
                                     <i class="fab fa-apple text-gray-700 text-2xl"></i>
                                 {% elif project.job_type == 'mobile_android' %}
                                     <i class="fab fa-android text-green-500 text-2xl"></i>
+                                {% elif project.job_type == 'api_security' %}
+                                    <i class="fas fa-code text-purple-500 text-2xl"></i>
+                                {% elif project.job_type == 'iot_security' %}
+                                    <i class="fas fa-microchip text-indigo-500 text-2xl"></i>
+                                {% elif project.job_type == 'asvs_verification' %}
+                                    <i class="fas fa-shield-alt text-red-500 text-2xl"></i>
+                                {% else %}
+                                    <i class="fas fa-cog text-gray-500 text-2xl"></i>
                                 {% endif %}
                             </div>
                             <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium 
@@ -62,10 +70,22 @@
 
                         <div class="flex justify-between items-center">
                             <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
-                                {% if project.job_type == 'web' %}WSTG{% else %}MSTG{% endif %}
+                                {% if project.job_type == 'web' %}
+                                    WSTG
+                                {% elif project.job_type in ['mobile_ios', 'mobile_android'] %}
+                                    MSTG
+                                {% elif project.job_type == 'api_security' %}
+                                    API Security
+                                {% elif project.job_type == 'iot_security' %}
+                                    IoT Security
+                                {% elif project.job_type == 'asvs_verification' %}
+                                    ASVS
+                                {% else %}
+                                    Unknown
+                                {% endif %}
                             </span>
                             <div class="flex items-center space-x-2">
-                                <a href="{{ url_for('project_detail', project_id=project.id) }}" class="inline-flex items-center text-sm font-medium text-primary-600 hover:text-primary-900">
+                                <a href="{{ url_for('projects.project_detail', project_id=project.id) }}" class="inline-flex items-center text-sm font-medium text-primary-600 hover:text-primary-900">
                                     View Details
                                     <i class="fas fa-arrow-right ml-1"></i>
                                 </a>
@@ -85,7 +105,7 @@
             <i class="fas fa-folder-open text-gray-400 text-6xl mb-4"></i>
             <h3 class="text-lg font-medium text-gray-900 mb-2">No projects yet</h3>
             <p class="text-gray-600 mb-6">Get started by creating your first penetration testing project</p>
-            <a href="{{ url_for('new_project') }}" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-primary-600 hover:bg-primary-700">
+            <a href="{{ url_for('projects.new_project') }}" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-primary-600 hover:bg-primary-700">
                 <i class="fas fa-plus mr-2"></i>Create Project
             </a>
         </div>

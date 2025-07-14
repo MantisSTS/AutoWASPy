@@ -34,10 +34,10 @@
                         <span class="font-bold text-xl text-gray-900">AutoWASPy</span>
                         <span class="ml-2 px-2 py-1 text-xs bg-primary-100 text-primary-800 rounded-full">CHECK Team</span>
                     </div>                <div class="hidden sm:ml-6 sm:flex sm:space-x-8">
-                    <a href="{{ url_for('index') }}" class="border-primary-500 text-gray-900 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
+                    <a href="{{ url_for('main.index') }}" class="border-primary-500 text-gray-900 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
                         <i class="fas fa-home mr-2"></i>Projects
                     </a>
-                    <a href="{{ url_for('refresh_owasp_data') }}" class="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
+                    <a href="{{ url_for('admin.refresh_owasp_data') }}" class="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
                         <i class="fas fa-sync mr-2"></i>Refresh OWASP
                     </a>
                 </div>
