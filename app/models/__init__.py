@@ -41,6 +41,7 @@ def create_models(database):
         owasp_id = database.Column(database.String(20), nullable=False)
         title = database.Column(database.String(200), nullable=False)
         description = database.Column(database.Text)
+        full_description = database.Column(database.Text)  # For storing full markdown content
         category = database.Column(database.String(100))
         test_type = database.Column(database.String(20), nullable=False)  # 'wstg', 'mstg', 'api_security', 'iot_security', 'asvs'
         is_tested = database.Column(database.Boolean, default=False)

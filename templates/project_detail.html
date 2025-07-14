@@ -371,22 +371,35 @@
                                     
                                     <!-- Enhanced Description with Collapsible Sections -->
                                     <div class="mb-4">
-                                        {% set lines = item.description.split('\n') %}
-                                        {% set main_desc = lines[0] %}
-                                        {% set has_detailed_sections = item.description and '▼' in item.description %}
+                                        <!-- Show short description as summary -->
+                                        <p class="text-sm text-gray-600 mb-2">{{ item.description | safe_escape }}</p>
                                         
-                                        <p class="text-sm text-gray-600 mb-2">{{ main_desc }}</p>
-                                        
-                                        {% if has_detailed_sections %}
+                                        <!-- Always show collapsible full description for MASTG tests -->
+                                        {% if item.full_description and item.full_description != item.description %}
                                             <button type="button" onclick="toggleDescription('desc-{{ item.id }}')" 
                                                     class="inline-flex items-center px-3 py-1 border border-gray-300 shadow-sm text-xs font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-all duration-200">
                                                 <svg class="w-3 h-3 mr-1 transform transition-transform duration-200" id="desc-arrow-{{ item.id }}" fill="currentColor" viewBox="0 0 20 20">
                                                     <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
                                                 </svg>
-                                                View Testing Guide
+                                                <span id="desc-text-{{ item.id }}">View Full Testing Guide</span>
                                             </button>
                                             
-                                            <div id="desc-{{ item.id }}" class="hidden mt-3 p-4 test-guide-section rounded-lg border border-gray-200 shadow-sm">
+                                            <div id="desc-{{ item.id }}" class="hidden mt-3 p-4 bg-slate-50 rounded-lg border border-gray-200 shadow-sm">
+                                                <div class="text-sm prose prose-sm max-w-none">
+                                                    {{ item.full_description | markdown }}
+                                                </div>
+                                            </div>
+                                        {% elif item.description and '▼' in item.description %}
+                                            <!-- Fallback for legacy formatted descriptions -->
+                                            <button type="button" onclick="toggleDescription('desc-{{ item.id }}')" 
+                                                    class="inline-flex items-center px-3 py-1 border border-gray-300 shadow-sm text-xs font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-all duration-200">
+                                                <svg class="w-3 h-3 mr-1 transform transition-transform duration-200" id="desc-arrow-{{ item.id }}" fill="currentColor" viewBox="0 0 20 20">
+                                                    <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
+                                                </svg>
+                                                <span id="desc-text-{{ item.id }}">View Testing Guide</span>
+                                            </button>
+                                            
+                                            <div id="desc-{{ item.id }}" class="hidden mt-3 p-4 bg-slate-50 rounded-lg border border-gray-200 shadow-sm">
                                                 <div class="text-sm description-content test-description whitespace-pre-line">
                                                     {{ item.description | safe_format_description }}
                                                 </div>
@@ -490,13 +503,20 @@ function collapseAllCategories() {
 function toggleDescription(elementId) {
     const element = document.getElementById(elementId);
     const arrow = document.getElementById('desc-arrow-' + elementId.split('-')[1]);
+    const buttonText = document.getElementById('desc-text-' + elementId.split('-')[1]);
     
     if (element.classList.contains('hidden')) {
         element.classList.remove('hidden');
         arrow.style.transform = 'rotate(90deg)';
+        if (buttonText) {
+            buttonText.textContent = 'Hide Testing Guide';
+        }
     } else {
         element.classList.add('hidden');
         arrow.style.transform = 'rotate(0deg)';
+        if (buttonText) {
+            buttonText.textContent = 'View Full Testing Guide';
+        }
     }
 }
 

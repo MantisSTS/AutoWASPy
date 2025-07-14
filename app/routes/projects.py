@@ -5,7 +5,7 @@ from flask import Blueprint, render_template, request, redirect, url_for, flash
 from app import db
 from app.models import Project, TestItem
 from app.services import OWASPService, APISecurityService, IoTSecurityService, ASVSService
-from app.services.cloud_security_service import CloudSecurityService
+# from app.services.cloud_security_service import CloudSecurityService
 from app.utils import utc_now
 
 bp = Blueprint('projects', __name__, url_prefix='/project')
@@ -41,9 +41,9 @@ def new_project():
         elif project.job_type == 'asvs_verification':
             tests = ASVSService.fetch_asvs_data()
             test_type = 'asvs'
-        elif project.job_type == 'cloud_security':
-            tests = CloudSecurityService.fetch_cloud_security_data()
-            test_type = 'cloud_security'
+        # elif project.job_type == 'cloud_security':
+        #     tests = CloudSecurityService.fetch_cloud_security_data()
+        #     test_type = 'cloud_security'
         else:
             tests = []
             test_type = 'unknown'
@@ -54,6 +54,7 @@ def new_project():
                 owasp_id=test_data['id'],
                 title=test_data['title'],
                 description=test_data['description'],
+                full_description=test_data.get('full_description', test_data['description']),
                 category=test_data['category'],
                 test_type=test_type
             )

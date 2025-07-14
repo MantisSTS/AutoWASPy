@@ -122,6 +122,7 @@
                         </label>
                     </div>
                     
+                    <!-- Cloud Security Testing temporarily commented out
                     <div class="flex items-center">
                         <input type="radio" name="job_type" id="cloud_security" value="cloud_security" 
                                class="focus:ring-primary-500 h-4 w-4 text-primary-600 border-gray-300">
@@ -133,6 +134,7 @@
                             </div>
                         </label>
                     </div>
+                    -->
                 </div>
             </div>
 
@@ -182,14 +184,14 @@ document.addEventListener('DOMContentLoaded', function() {
         'mobile_android': 'URLs are not typically required for mobile app testing',
         'api_security': 'API endpoints will be tested for authentication, authorization, rate limiting, and other API-specific vulnerabilities',
         'iot_security': 'Device endpoints, management interfaces, and communication protocols will be tested for IoT-specific vulnerabilities',
-        'asvs_verification': 'Application URLs will be tested against ASVS verification requirements for comprehensive security assessment',
-        'cloud_security': 'Cloud service endpoints, management interfaces, and APIs will be tested for cloud-specific security vulnerabilities'
+        'asvs_verification': 'Application URLs will be tested against ASVS verification requirements for comprehensive security assessment'
+        // 'cloud_security': 'Cloud service endpoints, management interfaces, and APIs will be tested for cloud-specific security vulnerabilities'
     };
     
     function toggleUrlsSection() {
         const selectedType = document.querySelector('input[name="job_type"]:checked').value;
         
-        if (['web', 'api_security', 'iot_security', 'asvs_verification', 'cloud_security'].includes(selectedType)) {
+        if (['web', 'api_security', 'iot_security', 'asvs_verification'].includes(selectedType)) {  // cloud_security commented out
             urlsSection.style.display = 'block';
             urlHelpText.textContent = helpTexts[selectedType];
         } else {

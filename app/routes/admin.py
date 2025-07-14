@@ -5,7 +5,7 @@ from flask import Blueprint, render_template, request, redirect, url_for, flash,
 from app import db
 from app.models import OWASPDataCache
 from app.services import OWASPService, APISecurityService, IoTSecurityService, ASVSService
-from app.services.cloud_security_service import CloudSecurityService
+# from app.services.cloud_security_service import CloudSecurityService
 from app.services.comprehensive_owasp_service import ComprehensiveOWASPService
 
 bp = Blueprint('admin', __name__, url_prefix='/admin')

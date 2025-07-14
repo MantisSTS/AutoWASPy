@@ -169,48 +169,126 @@ class OWASPService:
 
     @staticmethod
     def fetch_mstg_data():
-        """Fetch OWASP MSTG checklist data from GitHub repository"""
+        """Fetch OWASP MASTG (Mobile Application Security Testing Guide) checklist data from GitHub repository"""
         try:
-            print("Fetching MSTG data from GitHub...")
-            # OWASP MSTG GitHub API endpoint
-            api_url = "https://api.github.com/repos/OWASP/owasp-mstg/contents/Document/0x90-Appendix-B_References.md"
+            print("Fetching MASTG data from GitHub...")
+            # Try the new MASTG test structure first
+            mastg_tests = []
+            
+            # Fetch tests from both Android and iOS directories
+            test_apis = [
+                "https://api.github.com/repos/OWASP/owasp-mastg/contents/tests/android",
+                "https://api.github.com/repos/OWASP/owasp-mastg/contents/tests/ios"
+            ]
+            
             headers = {'Accept': 'application/vnd.github.v3+json'}
             
-            # Try to fetch the main MSTG checklist file
-            response = requests.get(api_url, headers=headers, timeout=30)
+            for api_url in test_apis:
+                try:
+                    response = requests.get(api_url, headers=headers, timeout=30)
+                    if response.status_code == 200:
+                        platform_dirs = response.json()
+                        for platform_dir in platform_dirs:
+                            if platform_dir['type'] == 'dir':
+                                # Get test files from each category directory
+                                cat_response = requests.get(platform_dir['url'], headers=headers, timeout=30)
+                                if cat_response.status_code == 200:
+                                    test_files = cat_response.json()
+                                    for test_file in test_files:
+                                        if test_file['type'] == 'file' and test_file['name'].endswith('.md'):
+                                            test_data = OWASPService._parse_mastg_test_file(test_file, headers)
+                                            if test_data:
+                                                mastg_tests.append(test_data)
+                except Exception as e:
+                    print(f"Error fetching from {api_url}: {e}")
+                    continue
             
+            if len(mastg_tests) >= 50:  # Lower threshold since individual test files
+                print(f"Successfully fetched {len(mastg_tests)} MASTG tests from new structure")
+                OWASPService._update_cache('mstg', 'github', len(mastg_tests))
+                return sorted(mastg_tests, key=lambda x: x['id'])
+            
+            # Fallback: try old checklist approach
+            checklist_url = "https://raw.githubusercontent.com/OWASP/owasp-mastg/master/checklists/MASTG-checklist.md"
+            response = requests.get(checklist_url, timeout=30)
             if response.status_code == 200:
-                file_info = response.json()
-                content_response = requests.get(file_info['download_url'], timeout=15)
-                
-                if content_response.status_code == 200:
-                    content = content_response.text
-                    mstg_tests = OWASPService._parse_mstg_content(content)
-                    
-                    if len(mstg_tests) >= 5:
-                        OWASPService._update_cache('mstg', 'github', len(mstg_tests))
-                        print(f"Successfully fetched {len(mstg_tests)} MSTG tests from GitHub")
-                        return mstg_tests
-            
-            # Fallback: try alternative approach
-            print("Trying alternative MSTG fetch method...")
-            alternative_data = OWASPService._fetch_mstg_alternative()
-            if len(alternative_data) >= 5:
-                OWASPService._update_cache('mstg', 'github', len(alternative_data))
-                print(f"Successfully fetched {len(alternative_data)} MSTG tests via alternative method")
-                return alternative_data
-            
-            # Use fallback data
-            print("GitHub fetch returned insufficient data, using fallback MSTG data")
-            fallback_data = OWASPService._get_fallback_mstg_data()
+                content = response.text
+                fallback_tests = OWASPService._parse_mastg_checklist(content)
+                mastg_tests.extend(fallback_tests)
+                print(f"MASTG checklist items found: {len(fallback_tests)}")
+                if len(fallback_tests) > 0:
+                    print("Sample MASTG items:")
+                    for item in fallback_tests[:5]:
+                        print(item)
+            # If not enough, try other sources
+            if len(mastg_tests) < 150:
+                urls_to_try = [
+                    "https://api.github.com/repos/OWASP/owasp-mastg/contents/Document",
+                    "https://raw.githubusercontent.com/OWASP/owasp-mastg/master/Document/0x04a-Mobile-App-Taxonomy.md",
+                    "https://raw.githubusercontent.com/OWASP/owasp-mastg/master/Document/0x04b-Mobile-App-Security-Testing.md",
+                ]
+                for url in urls_to_try:
+                    try:
+                        if 'api.github.com' in url and '/contents' in url:
+                            headers = {'Accept': 'application/vnd.github.v3+json'}
+                            resp = requests.get(url, headers=headers, timeout=30)
+                            if resp.status_code == 200:
+                                contents = resp.json()
+                                tests = OWASPService._parse_mastg_directory(contents)
+                                mastg_tests.extend(tests)
+                        else:
+                            resp = requests.get(url, timeout=15)
+                            if resp.status_code == 200:
+                                content = resp.text
+                                tests = OWASPService._parse_mastg_content(content)
+                                mastg_tests.extend(tests)
+                    except Exception as e:
+                        print(f"Failed to fetch from {url}: {e}")
+                        continue
+            # Deduplicate
+            unique_tests = []
+            seen_ids = set()
+            for test in mastg_tests:
+                if test['id'] not in seen_ids:
+                    seen_ids.add(test['id'])
+                    unique_tests.append(test)
+            if len(unique_tests) >= 150:
+                OWASPService._update_cache('mstg', 'github', len(unique_tests))
+                print(f"Successfully fetched {len(unique_tests)} MASTG tests from GitHub/checklist")
+                return sorted(unique_tests, key=lambda x: x['id'])
+            print("GitHub fetch returned insufficient data, using enhanced MASTG fallback data")
+            fallback_data = OWASPService._get_enhanced_mastg_data()
             OWASPService._update_cache('mstg', 'fallback', len(fallback_data))
             return fallback_data
-            
         except Exception as e:
-            print(f"Error fetching MSTG data from GitHub: {e}")
-            fallback_data = OWASPService._get_fallback_mstg_data()
+            print(f"Error fetching MASTG data from GitHub: {e}")
+            fallback_data = OWASPService._get_enhanced_mastg_data()
             OWASPService._update_cache('mstg', 'fallback', len(fallback_data))
             return fallback_data
+    @staticmethod
+    def _parse_mastg_checklist(content):
+        """Parse the official MASTG checklist file for all checks"""
+        mastg_tests = []
+        # Flexible pattern: - [ ] MSTG-<CATEGORY>-<NUM>: <Description> (colon optional)
+        # Improved pattern: - [ ] MSTG-<CATEGORY>-<NUM>: <Description> (colon optional, multiline)
+        pattern = r'-\s*\[\s*\]\s*(MSTG-[A-Z]+-\d+):?\s*(.*?)(?=\n- \[|\Z)'
+        for match in re.finditer(pattern, content, re.DOTALL | re.MULTILINE):
+            test_id = match.group(1)
+            description = match.group(2).strip().replace('\n', ' ')
+            if len(description) < 5:
+                continue
+            category_code = test_id.split('-')[1]
+            category = OWASPService._get_mastg_category(category_code)
+            title = description[:80] + "..." if len(description) > 80 else description
+            mastg_tests.append({
+                'id': test_id,
+                'title': title,
+                'category': category,
+                'description': f"Verify that {description}"
+            })
+
+            print("Parsed MASTG item:", test_id, title, category, description[:50] + "...")
+        return mastg_tests
 
     @staticmethod
     def _fetch_mstg_alternative():
@@ -222,6 +300,7 @@ class OWASPService:
             
             response = requests.get(api_url, headers=headers, timeout=30)
             if response.status_code != 200:
+                print("Failed to fetch MSTG directory from GitHub, using fallback")
                 return OWASPService._get_fallback_mstg_data()
             
             contents = response.json()
@@ -233,8 +312,10 @@ class OWASPService:
                     file_response = requests.get(item['download_url'], timeout=15)
                     if file_response.status_code == 200:
                         content = file_response.text
-                        parsed_tests = OWASPService._parse_mstg_content(content)
+                        parsed_tests = OWASPService._parse_mastg_content(content)
                         mstg_tests.extend(parsed_tests)
+
+            print(mstg_tests)
             
             if len(mstg_tests) >= 5:
                 return sorted(mstg_tests, key=lambda x: x['id'])
@@ -245,44 +326,179 @@ class OWASPService:
             return OWASPService._get_fallback_mstg_data()
 
     @staticmethod
-    def _parse_mstg_content(content):
-        """Parse MSTG content for test requirements"""
-        mstg_tests = []
+    def _parse_mastg_directory(contents):
+        """Parse MASTG directory contents from GitHub API"""
+        mastg_tests = []
         
-        # Look for MSTG patterns
-        mstg_patterns = [
-            r'MSTG-([A-Z]+)-(\d+)[:\s]*(.+)',
-            r'(\d+\.\d+)\s+(.+?)(?=\n\d+\.\d+|\Z)',
-            r'-\s*(MSTG-[A-Z]+-\d+)[:\s]*(.+)'
-        ]
-        
-        for pattern in mstg_patterns:
-            matches = re.finditer(pattern, content, re.MULTILINE)
-            for match in matches:
-                if 'MSTG-' in pattern:
-                    if len(match.groups()) >= 3:
-                        category_code = match.group(1)
-                        test_num = match.group(2)
-                        description = match.group(3).strip()
-                        
-                        mstg_id = f"MSTG-{category_code}-{test_num}"
-                        category = OWASPService._get_mstg_category(category_code)
-                        
-                        mstg_tests.append({
-                            'id': mstg_id,
-                            'title': description[:100] + "..." if len(description) > 100 else description,
-                            'category': category,
-                            'description': description
-                        })
-        
-        # If no patterns matched, create based on common MSTG requirements
-        if len(mstg_tests) < 5:
-            return OWASPService._get_fallback_mstg_data()
-        
-        return mstg_tests[:20]  # Limit to reasonable number
+        try:
+            # Look for relevant files in the directory
+            relevant_files = []
+            for item in contents:
+                if item['type'] == 'file':
+                    filename = item['name'].lower()
+                    if any(keyword in filename for keyword in [
+                        'mastg', 'mstg', 'checklist', 'requirement', 'testing',
+                        '0x04', '0x05', '0x06', '0x07', '0x08', '0x09', '0x10'
+                    ]):
+                        relevant_files.append(item)
+            
+            # Process each relevant file
+            for file_item in relevant_files[:5]:  # Limit to avoid too many requests
+                try:
+                    if 'download_url' in file_item:
+                        response = requests.get(file_item['download_url'], timeout=15)
+                        if response.status_code == 200:
+                            content = response.text
+                            tests = OWASPService._parse_mastg_content(content)
+                            mastg_tests.extend(tests)
+                except Exception as e:
+                    print(f"Error processing file {file_item.get('name', 'unknown')}: {e}")
+                    continue
+            
+            return mastg_tests
+            
+        except Exception as e:
+            print(f"Error parsing MASTG directory: {e}")
+            return []
 
     @staticmethod
-    def _get_mstg_category(category_code):
+    def _parse_mastg_content(content):
+        """Enhanced parser for MASTG/MSTG content"""
+        mastg_tests = []
+        found_items = set()
+        # Dedicated pattern for official checklist: - \[ \] (MSTG-([A-Z]+)-(\d+)) (.+)
+        checklist_pattern = r'- \[ \] (MSTG-([A-Z]+)-(\d+)) (.+)'
+        matches = re.finditer(checklist_pattern, content)
+        for match in matches:
+            test_id = match.group(1)
+            category_code = match.group(2)
+            test_num = match.group(3)
+            description = match.group(4).strip()
+            category = OWASPService._get_mastg_category(category_code)
+            description_clean = OWASPService._clean_text(description)
+            if len(description_clean) < 10 or len(description_clean) > 400:
+                continue
+            description_lower = description_clean.lower()
+            if description_lower in found_items:
+                continue
+            found_items.add(description_lower)
+            title = description_clean[:80] + "..." if len(description_clean) > 80 else description_clean
+            mastg_tests.append({
+                'id': test_id,
+                'title': title,
+                'category': category,
+                'description': f"Verify that {description_clean}"
+            })
+        # If not enough found, fallback to legacy patterns
+        if len(mastg_tests) < 150:
+            # Legacy/alternative patterns for older/other files
+            patterns = [
+                r'MSTG-([A-Z]+)-(\d+)[:\s]+([^\n]{10,})',
+                r'-\s*\[\s*\]\s*([^\n]{15,})',
+                r'#+\s*([A-Z][^\n]{15,}?)(?=\n|$)',
+                r'V(\d+)\.(\d+)\s*([^\n]{15,})',
+                r'(?:Objective|Goal|Purpose):\s*([^\n]{15,})',
+            ]
+            test_counter = len(mastg_tests) + 1
+            for pattern in patterns:
+                matches = re.finditer(pattern, content, re.MULTILINE | re.IGNORECASE)
+                for match in matches:
+                    try:
+                        if 'MSTG-' in pattern and len(match.groups()) >= 3:
+                            category_code = match.group(1)
+                            test_num = match.group(2)
+                            description = match.group(3).strip()
+                            test_id = f"MSTG-{category_code}-{test_num}"
+                            category = OWASPService._get_mastg_category(category_code)
+                        elif len(match.groups()) >= 2:
+                            if '.' in match.group(1):
+                                section = match.group(1)
+                                description = match.group(2).strip()
+                                test_id = f"MASTG-REQ-{section.replace('.', '-')}"
+                                category = OWASPService._categorize_mstg_content(description)
+                            elif match.group(1).isdigit():
+                                major = match.group(1)
+                                minor = match.group(2)
+                                description = match.group(3).strip()
+                                test_id = f"MASTG-V{major}-{minor}"
+                                category = OWASPService._categorize_mstg_content(description)
+                            else:
+                                description = match.group(1).strip()
+                                test_id = f"MASTG-ITEM-{test_counter:03d}"
+                                category = OWASPService._categorize_mstg_content(description)
+                        else:
+                            description = match.group(1).strip()
+                            test_id = f"MASTG-ITEM-{test_counter:03d}"
+                            category = OWASPService._categorize_mstg_content(description)
+                        description_clean = OWASPService._clean_text(description)
+                        if len(description_clean) < 10 or len(description_clean) > 400:
+                            continue
+                        description_lower = description_clean.lower()
+                        if description_lower in found_items:
+                            continue
+                        found_items.add(description_lower)
+                        title = description_clean[:80] + "..." if len(description_clean) > 80 else description_clean
+                        mastg_tests.append({
+                            'id': test_id,
+                            'title': title,
+                            'category': category,
+                            'description': f"Verify that {description_clean}"
+                        })
+                        test_counter += 1
+                    except Exception as e:
+                        print(f"Error processing match: {e}")
+                        continue
+        return mastg_tests
+
+    @staticmethod
+    def _categorize_mstg_content(description):
+        """Categorize MASTG content based on description"""
+        description_lower = description.lower()
+        
+        categories = {
+            'Architecture, Design and Threat Modeling': [
+                'architecture', 'design', 'threat', 'model', 'component', 'structure'
+            ],
+            'Data Storage and Privacy': [
+                'data', 'storage', 'privacy', 'database', 'file', 'cache', 'preference'
+            ],
+            'Cryptography': [
+                'crypto', 'encryption', 'decrypt', 'key', 'cipher', 'hash', 'signature'
+            ],
+            'Authentication and Session Management': [
+                'authentication', 'session', 'login', 'password', 'biometric', 'token'
+            ],
+            'Network Communication': [
+                'network', 'communication', 'https', 'tls', 'ssl', 'certificate', 'api'
+            ],
+            'Platform Interaction': [
+                'platform', 'interaction', 'permission', 'intent', 'url', 'scheme'
+            ],
+            'Code Quality and Build Environment': [
+                'code', 'quality', 'build', 'debug', 'obfuscation', 'binary'
+            ],
+            'Resilience Against Reverse Engineering': [
+                'reverse', 'engineering', 'tamper', 'protection', 'anti-debug'
+            ]
+        }
+        
+        for category, keywords in categories.items():
+            if any(keyword in description_lower for keyword in keywords):
+                return category
+        
+        return 'General Mobile Security'
+
+    @staticmethod
+    def _clean_text(text):
+        """Clean and normalize text content"""
+        # Remove markdown formatting
+        text = re.sub(r'\[([^\]]+)\]\([^)]+\)', r'\1', text)  # Remove links
+        text = re.sub(r'[*_`#]', '', text)  # Remove formatting
+        text = re.sub(r'\s+', ' ', text)  # Normalize whitespace
+        return text.strip()
+
+    @staticmethod
+    def _get_mastg_category(category_code):
         """Map MSTG category codes to full names"""
         category_map = {
             'ARCH': 'Architecture, Design and Threat Modeling Requirements',
@@ -295,6 +511,103 @@ class OWASPService:
             'RESILIENCE': 'Resilience Against Reverse Engineering Requirements'
         }
         return category_map.get(category_code, 'Mobile Security Requirements')
+
+    @staticmethod
+    def _get_enhanced_mastg_data():
+        """Enhanced fallback MASTG data as backup (comprehensive)"""
+        # This is a curated, comprehensive fallback based on the official OWASP MASTG checklist and categories
+        return [
+            {
+                'id': 'MSTG-ARCH-1',
+                'title': 'All app components are identified and known to be needed',
+                'category': 'Architecture, Design and Threat Modeling Requirements',
+                'description': 'Verify that all application components are identified, necessary, and that unused components are removed.'
+            },
+            {
+                'id': 'MSTG-ARCH-2',
+                'title': 'Security controls are never enforced only on the client side',
+                'category': 'Architecture, Design and Threat Modeling Requirements',
+                'description': 'Ensure that security controls are enforced on a trusted remote endpoint and not solely on the client.'
+            },
+            {
+                'id': 'MSTG-ARCH-3',
+                'title': 'A high-level architecture has been defined and security has been addressed',
+                'category': 'Architecture, Design and Threat Modeling Requirements',
+                'description': 'Verify that a high-level architecture has been defined for the mobile app and all remote services.'
+            },
+            {
+                'id': 'MSTG-STORAGE-1',
+                'title': 'System credential storage facilities are used appropriately',
+                'category': 'Data Storage and Privacy Requirements',
+                'description': 'Verify that system credential storage facilities are used appropriately to store sensitive data.'
+            },
+            {
+                'id': 'MSTG-STORAGE-2',
+                'title': 'No sensitive data is stored outside of the app container or system credential storage',
+                'category': 'Data Storage and Privacy Requirements',
+                'description': 'Ensure that sensitive data is not stored outside the app sandbox or system credential storage.'
+            },
+            {
+                'id': 'MSTG-STORAGE-3',
+                'title': 'No sensitive data is written to application logs',
+                'category': 'Data Storage and Privacy Requirements',
+                'description': 'Verify that no sensitive data is written to application logs.'
+            },
+            {
+                'id': 'MSTG-CRYPTO-1',
+                'title': 'The app does not rely on symmetric cryptography with hardcoded keys',
+                'category': 'Cryptography Requirements',
+                'description': 'Ensure the app does not rely on symmetric cryptography with hardcoded keys as a sole method of encryption.'
+            },
+            {
+                'id': 'MSTG-CRYPTO-2',
+                'title': 'Cryptographic primitives are used properly',
+                'category': 'Cryptography Requirements',
+                'description': 'Verify that cryptographic primitives are used according to best practices.'
+            },
+            {
+                'id': 'MSTG-AUTH-1',
+                'title': 'Authentication is implemented using secure mechanisms',
+                'category': 'Authentication and Session Management Requirements',
+                'description': 'Verify that authentication is implemented using secure mechanisms.'
+            },
+            {
+                'id': 'MSTG-AUTH-2',
+                'title': 'Session management is implemented securely',
+                'category': 'Authentication and Session Management Requirements',
+                'description': 'Verify that session management is implemented securely.'
+            },
+            {
+                'id': 'MSTG-NETWORK-1',
+                'title': 'Network communication is secured using TLS',
+                'category': 'Network Communication Requirements',
+                'description': 'Verify that network communication is secured using TLS.'
+            },
+            {
+                'id': 'MSTG-NETWORK-2',
+                'title': 'Certificate validation is implemented correctly',
+                'category': 'Network Communication Requirements',
+                'description': 'Verify that certificate validation is implemented correctly.'
+            },
+            {
+                'id': 'MSTG-PLATFORM-1',
+                'title': 'Platform interaction follows security best practices',
+                'category': 'Platform Interaction Requirements',
+                'description': 'Verify that platform interaction follows security best practices.'
+            },
+            {
+                'id': 'MSTG-CODE-1',
+                'title': 'Code quality and build settings are secure',
+                'category': 'Code Quality and Build Setting Requirements',
+                'description': 'Verify that code quality and build settings are secure.'
+            },
+            {
+                'id': 'MSTG-RESILIENCE-1',
+                'title': 'App is resilient against reverse engineering',
+                'category': 'Resilience Against Reverse Engineering Requirements',
+                'description': 'Verify that the app is resilient against reverse engineering.'
+            }
+        ]
 
     @staticmethod
     def _get_fallback_wstg_data():
@@ -646,7 +959,7 @@ class OWASPService:
 1. Intercept login requests: Use Burp Suite or OWASP ZAP
 2. Check protocol: Ensure login URL starts with https://
 3. Test mixed content: Verify no HTTP resources on HTTPS pages
-4. Check redirect behavior: HTTP login should redirect to HTTPS
+4. Test redirect behavior: HTTP login should redirect to HTTPS
 5. Verify secure flag on authentication cookies
 
 ▼ Testing Steps:
@@ -1309,3 +1622,98 @@ class OWASPService:
         except Exception as e:
             print(f"Error fetching WSTG data from checklist: {e}")
             return []
+    @staticmethod
+    def _parse_mastg_test_file(file_info, headers):
+        """Parse individual MASTG test file from GitHub"""
+        try:
+            # Get the raw content
+            file_response = requests.get(file_info['download_url'], headers=headers, timeout=15)
+            if file_response.status_code != 200:
+                return None
+            
+            content = file_response.text
+            
+            # Extract MASTG-TEST ID from filename or content
+            mastg_id_match = re.search(r'MASTG-TEST-\d{4}', file_info['name'])
+            if not mastg_id_match:
+                mastg_id_match = re.search(r'MASTG-TEST-\d{4}', content)
+            
+            if not mastg_id_match:
+                return None
+            
+            mastg_id = mastg_id_match.group()
+            
+            # Extract title from first heading
+            title_match = re.search(r'^#\s+(.+)$', content, re.MULTILINE)
+            if title_match:
+                title = title_match.group(1).strip()
+                # Clean up title if it contains the ID
+                title = re.sub(r'^' + re.escape(mastg_id) + r'\s*[-:]?\s*', '', title)
+                title = re.sub(r'Test\s+' + re.escape(mastg_id) + r'\s*[-:]?\s*', '', title, flags=re.IGNORECASE)
+                if not title or title == mastg_id:
+                    title = f"Mobile Security Test {mastg_id.split('-')[-1]}"
+            else:
+                title = f"Mobile Security Test {mastg_id.split('-')[-1]}"
+            
+            # Extract full content for description - get everything from Overview to end or next major section
+            full_description = ""
+            
+            # Try different section patterns
+            desc_patterns = [
+                r'## Overview\s*\n(.*?)(?=\n## (?:References|Static Analysis|Dynamic Analysis|Tools|See also|\Z))',
+                r'## Summary\s*\n(.*?)(?=\n## (?:References|Static Analysis|Dynamic Analysis|Tools|See also|\Z))', 
+                r'## Description\s*\n(.*?)(?=\n## (?:References|Static Analysis|Dynamic Analysis|Tools|See also|\Z))',
+                r'## Overview\s*\n(.*?)(?=\n##|\Z)',
+                r'## Summary\s*\n(.*?)(?=\n##|\Z)',
+                r'## Description\s*\n(.*?)(?=\n##|\Z)'
+            ]
+            
+            for pattern in desc_patterns:
+                description_match = re.search(pattern, content, re.DOTALL)
+                if description_match:
+                    full_description = description_match.group(1).strip()
+                    break
+            
+            # If no description found, try to get the content after the title
+            if not full_description:
+                # Get content after first heading until next major section
+                after_title_match = re.search(r'^#\s+.+?\n(.*?)(?=\n## |\Z)', content, re.DOTALL | re.MULTILINE)
+                if after_title_match:
+                    full_description = after_title_match.group(1).strip()
+            
+            # If still no description, use a fallback
+            if not full_description:
+                full_description = "Mobile application security test as per OWASP MASTG guidelines."
+            
+            # Create a short summary for listing (first paragraph or 200 chars)
+            description_lines = full_description.split('\n\n')
+            description_summary = description_lines[0] if description_lines else full_description
+            if len(description_summary) > 200:
+                description_summary = description_summary[:200] + "..."
+            
+            # Determine category based on file path or content
+            category = "General Mobile Security"
+            if 'android' in file_info.get('path', '').lower():
+                category = "Android Security Testing"
+            elif 'ios' in file_info.get('path', '').lower():
+                category = "iOS Security Testing"
+            elif any(keyword in content.lower() for keyword in ['crypto', 'encryption']):
+                category = "Cryptography"
+            elif any(keyword in content.lower() for keyword in ['auth', 'session', 'login']):
+                category = "Authentication and Session Management"
+            elif any(keyword in content.lower() for keyword in ['network', 'communication', 'tls']):
+                category = "Network Communication"
+            elif any(keyword in content.lower() for keyword in ['storage', 'data', 'privacy']):
+                category = "Data Storage and Privacy"
+            
+            return {
+                'id': mastg_id,
+                'title': title,
+                'category': category,
+                'description': description_summary,
+                'full_description': full_description
+            }
+            
+        except Exception as e:
+            print(f"Error parsing MASTG test file {file_info['name']}: {e}")
+            return None
