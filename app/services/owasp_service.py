@@ -179,10 +179,10 @@ class OWASPService:
             # Try the new MASTG test structure first
             mastg_tests = []
             
-            # Fetch tests from both Android and iOS directories
+            # Fetch tests from both Android and iOS directories using the updated API URLs
             test_apis = [
-                "https://api.github.com/repos/OWASP/owasp-mastg/contents/tests/android",
-                "https://api.github.com/repos/OWASP/owasp-mastg/contents/tests/ios"
+                "https://api.github.com/repos/OWASP/mastg/contents/tests/android",
+                "https://api.github.com/repos/OWASP/mastg/contents/tests/ios"
             ]
             
             headers = {'Accept': 'application/vnd.github.v3+json'}
@@ -1661,78 +1661,104 @@ class OWASPService:
             
             content = file_response.text
             
-            # Extract MASTG-TEST ID from filename or content
+            # Extract MASTG-TEST ID from filename
             mastg_id_match = re.search(r'MASTG-TEST-\d{4}', file_info['name'])
-            if not mastg_id_match:
-                mastg_id_match = re.search(r'MASTG-TEST-\d{4}', content)
-            
             if not mastg_id_match:
                 return None
             
             mastg_id = mastg_id_match.group()
             
-            # Extract title from first heading
-            title_match = re.search(r'^#\s+(.+)$', content, re.MULTILINE)
-            if title_match:
-                title = title_match.group(1).strip()
-                # Clean up title if it contains the ID
-                title = re.sub(r'^' + re.escape(mastg_id) + r'\s*[-:]?\s*', '', title)
-                title = re.sub(r'Test\s+' + re.escape(mastg_id) + r'\s*[-:]?\s*', '', title, flags=re.IGNORECASE)
-                if not title or title == mastg_id:
-                    title = f"Mobile Security Test {mastg_id.split('-')[-1]}"
+            # Parse YAML frontmatter to get the title
+            title = f"Mobile Security Test {mastg_id.split('-')[-1]}"  # Default fallback
+            
+            # Look for YAML frontmatter
+            yaml_match = re.search(r'^---\s*\n(.*?)\n---\s*\n', content, re.DOTALL)
+            if yaml_match:
+                yaml_content = yaml_match.group(1)
+                # Extract title from YAML
+                title_match = re.search(r'^title:\s*(.+)$', yaml_content, re.MULTILINE)
+                if title_match:
+                    title = title_match.group(1).strip()
+            
+            # Extract the content after YAML frontmatter
+            content_after_yaml = content
+            if yaml_match:
+                content_after_yaml = content[yaml_match.end():]
+            
+            # Extract Overview section content
+            overview_content = ""
+            overview_match = re.search(r'## Overview\s*\n(.*?)(?=\n## |$)', content_after_yaml, re.DOTALL)
+            if overview_match:
+                overview_content = overview_match.group(1).strip()
+            
+            # Extract Static Analysis section content
+            static_analysis_content = ""
+            static_match = re.search(r'## Static Analysis\s*\n(.*?)(?=\n## |$)', content_after_yaml, re.DOTALL)
+            if static_match:
+                static_analysis_content = static_match.group(1).strip()
+            
+            # Extract Dynamic Analysis section content
+            dynamic_analysis_content = ""
+            dynamic_match = re.search(r'## Dynamic Analysis\s*\n(.*?)(?=\n## |$)', content_after_yaml, re.DOTALL)
+            if dynamic_match:
+                dynamic_analysis_content = dynamic_match.group(1).strip()
+            
+            # Combine the content for full description
+            full_description_parts = []
+            if overview_content:
+                full_description_parts.append(f"## Overview\n\n{overview_content}")
+            if static_analysis_content:
+                full_description_parts.append(f"## Static Analysis\n\n{static_analysis_content}")
+            if dynamic_analysis_content:
+                full_description_parts.append(f"## Dynamic Analysis\n\n{dynamic_analysis_content}")
+            
+            full_description = "\n\n".join(full_description_parts) if full_description_parts else "Mobile application security test as per OWASP MASTG guidelines."
+            
+            # Create a meaningful description summary
+            # Use Static Analysis content if available, otherwise Overview
+            description_summary = ""
+            if static_analysis_content:
+                # Get first meaningful paragraph from Static Analysis
+                lines = static_analysis_content.split('\n\n')
+                for line in lines:
+                    line = line.strip()
+                    if line and not line.startswith('#') and len(line) > 20:
+                        description_summary = line
+                        break
+                if not description_summary:
+                    description_summary = static_analysis_content[:200].strip()
+            elif overview_content:
+                description_summary = overview_content[:200].strip()
+            elif dynamic_analysis_content:
+                description_summary = dynamic_analysis_content[:200].strip()
             else:
-                title = f"Mobile Security Test {mastg_id.split('-')[-1]}"
+                description_summary = f"Test for {title.lower()}"
             
-            # Extract full content for description - get everything from Overview to end or next major section
-            full_description = ""
-            
-            # Try different section patterns
-            desc_patterns = [
-                r'## Overview\s*\n(.*?)(?=\n## (?:References|Static Analysis|Dynamic Analysis|Tools|See also|\Z))',
-                r'## Summary\s*\n(.*?)(?=\n## (?:References|Static Analysis|Dynamic Analysis|Tools|See also|\Z))', 
-                r'## Description\s*\n(.*?)(?=\n## (?:References|Static Analysis|Dynamic Analysis|Tools|See also|\Z))',
-                r'## Overview\s*\n(.*?)(?=\n##|\Z)',
-                r'## Summary\s*\n(.*?)(?=\n##|\Z)',
-                r'## Description\s*\n(.*?)(?=\n##|\Z)'
-            ]
-            
-            for pattern in desc_patterns:
-                description_match = re.search(pattern, content, re.DOTALL)
-                if description_match:
-                    full_description = description_match.group(1).strip()
-                    break
-            
-            # If no description found, try to get the content after the title
-            if not full_description:
-                # Get content after first heading until next major section
-                after_title_match = re.search(r'^#\s+.+?\n(.*?)(?=\n## |\Z)', content, re.DOTALL | re.MULTILINE)
-                if after_title_match:
-                    full_description = after_title_match.group(1).strip()
-            
-            # If still no description, use a fallback
-            if not full_description:
-                full_description = "Mobile application security test as per OWASP MASTG guidelines."
-            
-            # Create a short summary for listing (first paragraph or 200 chars)
-            description_lines = full_description.split('\n\n')
-            description_summary = description_lines[0] if description_lines else full_description
+            # Limit description summary length
             if len(description_summary) > 200:
                 description_summary = description_summary[:200] + "..."
             
-            # Determine category based on file path or content
+            # Determine category based on file path
             category = "General Mobile Security"
-            if 'android' in file_info.get('path', '').lower():
-                category = "Android Security Testing"
-            elif 'ios' in file_info.get('path', '').lower():
-                category = "iOS Security Testing"
-            elif any(keyword in content.lower() for keyword in ['crypto', 'encryption']):
+            path = file_info.get('path', '').lower()
+            if 'auth' in path:
+                category = "Authentication and Authorization"
+            elif 'crypto' in path:
                 category = "Cryptography"
-            elif any(keyword in content.lower() for keyword in ['auth', 'session', 'login']):
-                category = "Authentication and Session Management"
-            elif any(keyword in content.lower() for keyword in ['network', 'communication', 'tls']):
+            elif 'network' in path or 'communication' in path:
                 category = "Network Communication"
-            elif any(keyword in content.lower() for keyword in ['storage', 'data', 'privacy']):
+            elif 'storage' in path or 'data' in path:
                 category = "Data Storage and Privacy"
+            elif 'code' in path:
+                category = "Code Quality and Build Settings"
+            elif 'platform' in path:
+                category = "Platform Interaction"
+            elif 'resilience' in path:
+                category = "Anti-Reverse Engineering"
+            elif 'android' in path:
+                category = "Android Security Testing"
+            elif 'ios' in path:
+                category = "iOS Security Testing"
             
             return {
                 'id': mastg_id,
