@@ -371,8 +371,8 @@
                                     
                                     <!-- Enhanced Description with Collapsible Sections -->
                                     <div class="mb-4">
-                                        <!-- Show short description as summary -->
-                                        <p class="text-sm text-gray-600 mb-2">{{ item.description | safe_escape }}</p>
+                                        <!-- Show summarized description (first block before "What to Review") -->
+                                        <p class="text-sm text-gray-600 mb-2">{{ item.description | summarize_description | safe }}</p>
                                         
                                         <!-- Always show collapsible full description for MASTG tests -->
                                         {% if item.full_description and item.full_description != item.description %}

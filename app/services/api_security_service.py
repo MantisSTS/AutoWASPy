@@ -27,8 +27,26 @@ class APISecurityService:
 
     @staticmethod
     def get_cached_api_security_data():
-        """Get API Security data from cache/fallback without fetching from GitHub"""
-        print("Using cached/fallback API Security data for project creation...")
+        """Get API Security data from JSON cache file, fallback to hardcoded data if not available"""
+        import os
+        import json
+        
+        print("Getting cached API Security data for project creation...")
+        
+        # Try to load from cache file first
+        cache_file = os.path.join(os.path.dirname(__file__), '..', '..', 'cache', 'api_security_cache.json')
+        try:
+            if os.path.exists(cache_file):
+                with open(cache_file, 'r', encoding='utf-8') as f:
+                    cached_data = json.load(f)
+                    if cached_data and len(cached_data) > 5:
+                        print(f"Using cached API Security data: {len(cached_data)} tests")
+                        return cached_data
+        except Exception as e:
+            print(f"Error loading API Security cache file: {e}")
+        
+        # Fall back to hardcoded data
+        print("Using fallback API Security data")
         return APISecurityService._get_fallback_data()
     
     @staticmethod
@@ -72,6 +90,9 @@ class APISecurityService:
                 pass
         
         if api_security_tests:
+            # Save to cache file
+            APISecurityService._save_to_cache(api_security_tests)
+            
             # Update cache
             cache_entry = OWASPDataCache(
                 data_type='api_security',
@@ -329,6 +350,26 @@ class APISecurityService:
         
         print(f"Using fallback data: {len(api_security_tests)} API Security tests")
         return api_security_tests
+
+    @staticmethod
+    def _save_to_cache(data):
+        """Save fetched API Security data to JSON cache file"""
+        import os
+        import json
+        
+        try:
+            # Create cache directory if it doesn't exist
+            cache_dir = os.path.join(os.path.dirname(__file__), '..', '..', 'cache')
+            os.makedirs(cache_dir, exist_ok=True)
+            
+            # Save to cache file
+            cache_file = os.path.join(cache_dir, 'api_security_cache.json')
+            with open(cache_file, 'w', encoding='utf-8') as f:
+                json.dump(data, f, indent=2, ensure_ascii=False)
+            
+            print(f"Saved {len(data)} API Security tests to cache file: {cache_file}")
+        except Exception as e:
+            print(f"Error saving API Security data to cache: {e}")
 
     @staticmethod
     def test_api_authentication_bypass(api_url):

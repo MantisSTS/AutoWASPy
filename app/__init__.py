@@ -80,6 +80,77 @@ def register_filters(app):
         if not content:
             return ""
         return html.escape(str(content))
+    
+    @app.template_filter('summarize_description')
+    def summarize_description(content):
+        """Extract only the first block before 'What to Review' or similar sections"""
+        if not content:
+            return ""
+        
+        # Common section headers that indicate the start of detailed instructions
+        section_markers = [
+            "▼ What to Review",
+            "What to Review",
+            "## What to Review",
+            "### What to Review", 
+            "▼ What to review",
+            "What to review",
+            "## What to review",
+            "### What to review",
+            "▼ How to Test",
+            "How to Test",
+            "## How to Test",
+            "### How to Test",
+            "▼ How to test",
+            "How to test",
+            "## How to test", 
+            "### How to test",
+            "▼ Testing Procedure",
+            "Testing Procedure",
+            "## Testing Procedure",
+            "### Testing Procedure",
+            "▼ Testing procedure",
+            "Testing procedure",
+            "## Testing procedure",
+            "### Testing procedure",
+            "▼ Test Steps",
+            "Test Steps",
+            "## Test Steps",
+            "### Test Steps",
+            "▼ Procedure",
+            "Procedure",
+            "## Procedure",
+            "### Procedure",
+            "▼ Steps",
+            "Steps",
+            "## Steps",
+            "### Steps"
+        ]
+        
+        # Find the first occurrence of any section marker
+        first_marker_pos = len(content)  # Default to end of content
+        
+        for marker in section_markers:
+            pos = content.find(marker)
+            if pos != -1 and pos < first_marker_pos:
+                first_marker_pos = pos
+        
+        # Extract content before the first marker
+        summary = content[:first_marker_pos].strip()
+        
+        # Clean up any trailing symbols like ▼
+        summary = summary.rstrip('▼ \t\n')
+        
+        # If no marker found or summary is very short, take first few sentences
+        if first_marker_pos == len(content) or len(summary) < 50:
+            sentences = content.split('.')
+            if len(sentences) >= 2:
+                summary = '. '.join(sentences[:2]) + '.'
+            else:
+                # Fallback: take first 200 characters
+                summary = content[:200] + '...' if len(content) > 200 else content
+        
+        return html.escape(summary)
 
 def register_blueprints(app):
     """Register all route blueprints"""

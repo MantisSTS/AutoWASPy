@@ -1,0 +1,625 @@
+[
+  {
+    "id": "ISTG-PROC-AUTHZ-001",
+    "title": "Unauthorized Access to the Processing Unit",
+    "description": "Verify that processing units components prevent unauthorized access through proper authentication and access controls.",
+    "category": "Processing Units",
+    "risk_level": "high"
+  },
+  {
+    "id": "ISTG-PROC-AUTHZ-002",
+    "title": "Privilege Escalation",
+    "description": "Verify that processing units components prevent privilege escalation attacks and maintain proper permission boundaries.",
+    "category": "Processing Units",
+    "risk_level": "high"
+  },
+  {
+    "id": "ISTG-PROC-LOGIC-001",
+    "title": "Insecure Implementation of Instructions",
+    "description": "IoT Security test for processing units: Insecure Implementation of Instructions. Verify security controls and implementation best practices.",
+    "category": "Processing Units",
+    "risk_level": "low"
+  },
+  {
+    "id": "ISTG-PROC-SIDEC-001",
+    "title": "Insufficient Protection Against Side-Channel Attacks",
+    "description": "Verify that processing units components are protected against side-channel attacks and information leakage.",
+    "category": "Processing Units",
+    "risk_level": "low"
+  },
+  {
+    "id": "ISTG-MEM-INFO-001",
+    "title": "Disclosure of Source Code and Binaries",
+    "description": "Verify that memory security components do not disclose sensitive information to unauthorized parties.",
+    "category": "Memory Security",
+    "risk_level": "low"
+  },
+  {
+    "id": "ISTG-MEM-INFO-002",
+    "title": "Disclosure of Implementation Details",
+    "description": "Verify that memory security components do not disclose sensitive information to unauthorized parties.",
+    "category": "Memory Security",
+    "risk_level": "low"
+  },
+  {
+    "id": "ISTG-MEM-INFO-003",
+    "title": "Disclosure of Ecosystem Details",
+    "description": "Verify that memory security components do not disclose sensitive information to unauthorized parties.",
+    "category": "Memory Security",
+    "risk_level": "low"
+  },
+  {
+    "id": "ISTG-MEM-INFO-004",
+    "title": "Disclosure of User Data",
+    "description": "Verify that memory security components do not disclose sensitive information to unauthorized parties.",
+    "category": "Memory Security",
+    "risk_level": "low"
+  },
+  {
+    "id": "ISTG-MEM-SCRT-001",
+    "title": "Unencrypted Storage of Secrets",
+    "description": "Verify that memory security components properly protect and manage sensitive secrets and credentials.",
+    "category": "Memory Security",
+    "risk_level": "high"
+  },
+  {
+    "id": "ISTG-MEM-CRYPT-001",
+    "title": "Usage of Weak Cryptographic Algorithms",
+    "description": "Verify that memory security components implement strong cryptographic algorithms and proper encryption practices.",
+    "category": "Memory Security",
+    "risk_level": "high"
+  },
+  {
+    "id": "ISTG-FW-INFO-001",
+    "title": "Disclosure of Source Code and Binaries",
+    "description": "Verify that firmware security components do not disclose sensitive information to unauthorized parties.",
+    "category": "Firmware Security",
+    "risk_level": "high"
+  },
+  {
+    "id": "ISTG-FW-INFO-002",
+    "title": "Disclosure of Implementation Details",
+    "description": "Verify that firmware security components do not disclose sensitive information to unauthorized parties.",
+    "category": "Firmware Security",
+    "risk_level": "high"
+  },
+  {
+    "id": "ISTG-FW-INFO-003",
+    "title": "Disclosure of Ecosystem Details",
+    "description": "Verify that firmware security components do not disclose sensitive information to unauthorized parties.",
+    "category": "Firmware Security",
+    "risk_level": "high"
+  },
+  {
+    "id": "ISTG-FW-CONF-001",
+    "title": "Usage of Outdated Software",
+    "description": "IoT Security test for firmware security: Usage of Outdated Software. Verify security controls and implementation best practices.",
+    "category": "Firmware Security",
+    "risk_level": "high"
+  },
+  {
+    "id": "ISTG-FW-CONF-002",
+    "title": "Presence of Unnecessary Software and Functionalities",
+    "description": "IoT Security test for firmware security: Presence of Unnecessary Software and Functionalities. Verify security controls and implementation best practices.",
+    "category": "Firmware Security",
+    "risk_level": "high"
+  },
+  {
+    "id": "ISTG-FW-SCRT-001",
+    "title": "Secrets Stored in Public Storage",
+    "description": "Verify that firmware security components properly protect and manage sensitive secrets and credentials.",
+    "category": "Firmware Security",
+    "risk_level": "high"
+  },
+  {
+    "id": "ISTG-FW-SCRT-002",
+    "title": "Unencrypted Storage of Secrets",
+    "description": "Verify that firmware security components properly protect and manage sensitive secrets and credentials.",
+    "category": "Firmware Security",
+    "risk_level": "high"
+  },
+  {
+    "id": "ISTG-FW-SCRT-003",
+    "title": "Usage of Hardcoded Secrets",
+    "description": "Verify that firmware security components properly protect and manage sensitive secrets and credentials.",
+    "category": "Firmware Security",
+    "risk_level": "high"
+  },
+  {
+    "id": "ISTG-FW-CRYPT-001",
+    "title": "Usage of Weak Cryptographic Algorithms",
+    "description": "Verify that firmware security components implement strong cryptographic algorithms and proper encryption practices.",
+    "category": "Firmware Security",
+    "risk_level": "high"
+  },
+  {
+    "id": "ISTG-FW[INST]-AUTHZ-001",
+    "title": "Unauthorized Access to the Firmware",
+    "description": "Verify that firmware (istg-fw) - installed firmware (istg-fw[inst]) components prevent unauthorized access through proper authentication and access controls.",
+    "category": "Firmware (ISTG-FW) - Installed Firmware (ISTG-FW[INST])",
+    "risk_level": "high"
+  },
+  {
+    "id": "ISTG-FW[INST]-AUTHZ-002",
+    "title": "Privilege Escalation",
+    "description": "Verify that firmware (istg-fw) - installed firmware (istg-fw[inst]) components prevent privilege escalation attacks and maintain proper permission boundaries.",
+    "category": "Firmware (ISTG-FW) - Installed Firmware (ISTG-FW[INST])",
+    "risk_level": "high"
+  },
+  {
+    "id": "ISTG-FW[INST]-INFO-001",
+    "title": "Disclosure of User Data",
+    "description": "Verify that firmware (istg-fw) - installed firmware (istg-fw[inst]) components do not disclose sensitive information to unauthorized parties.",
+    "category": "Firmware (ISTG-FW) - Installed Firmware (ISTG-FW[INST])",
+    "risk_level": "high"
+  },
+  {
+    "id": "ISTG-FW[INST]-CRYPT-001",
+    "title": "Insufficient Verification of the Bootloader Signature",
+    "description": "Verify that firmware (istg-fw) - installed firmware (istg-fw[inst]) components properly validate digital signatures and implement signature verification.",
+    "category": "Firmware (ISTG-FW) - Installed Firmware (ISTG-FW[INST])",
+    "risk_level": "high"
+  },
+  {
+    "id": "ISTG-FW[UPDT]-AUTHZ-001",
+    "title": "Unauthorized Firmware Update",
+    "description": "Verify that firmware update mechanisms are secure, authenticated, and implement proper integrity checking.",
+    "category": "Firmware (ISTG-FW) - Firmware Update Mechanism (ISTG-FW[UPDT])",
+    "risk_level": "high"
+  },
+  {
+    "id": "ISTG-FW[UPDT]-CRYPT-001",
+    "title": "Insufficient Firmware Update Signature",
+    "description": "Verify that firmware update mechanisms are secure, authenticated, and implement proper integrity checking.",
+    "category": "Firmware (ISTG-FW) - Firmware Update Mechanism (ISTG-FW[UPDT])",
+    "risk_level": "high"
+  },
+  {
+    "id": "ISTG-FW[UPDT]-CRYPT-002",
+    "title": "Insufficient Firmware Update Encryption",
+    "description": "Verify that firmware (istg-fw) - firmware update mechanism (istg-fw[updt]) components implement strong cryptographic algorithms and proper encryption practices.",
+    "category": "Firmware (ISTG-FW) - Firmware Update Mechanism (ISTG-FW[UPDT])",
+    "risk_level": "high"
+  },
+  {
+    "id": "ISTG-FW[UPDT]-CRYPT-003",
+    "title": "Insecure Transmission of the Firmware Update",
+    "description": "Verify that firmware update mechanisms are secure, authenticated, and implement proper integrity checking.",
+    "category": "Firmware (ISTG-FW) - Firmware Update Mechanism (ISTG-FW[UPDT])",
+    "risk_level": "high"
+  },
+  {
+    "id": "ISTG-FW[UPDT]-CRYPT-004",
+    "title": "Insufficient Verification of the Firmware Update Signature",
+    "description": "Verify that firmware update mechanisms are secure, authenticated, and implement proper integrity checking.",
+    "category": "Firmware (ISTG-FW) - Firmware Update Mechanism (ISTG-FW[UPDT])",
+    "risk_level": "high"
+  },
+  {
+    "id": "ISTG-FW[UPDT]-LOGIC-001",
+    "title": "Insufficient Rollback Protection",
+    "description": "Verify that firmware (istg-fw) - firmware update mechanism (istg-fw[updt]) components implement proper rollback protection to prevent downgrade attacks.",
+    "category": "Firmware (ISTG-FW) - Firmware Update Mechanism (ISTG-FW[UPDT])",
+    "risk_level": "high"
+  },
+  {
+    "id": "ISTG-DES-AUTHZ-001",
+    "title": "Unauthorized Access to the Data Exchange Service",
+    "description": "Verify that data exchange services - firmware update mechanism (istg-fw[updt]) components prevent unauthorized access through proper authentication and access controls.",
+    "category": "Data Exchange Services - Firmware Update Mechanism (ISTG-FW[UPDT])",
+    "risk_level": "high"
+  },
+  {
+    "id": "ISTG-DES-AUTHZ-002",
+    "title": "Privilege Escalation",
+    "description": "Verify that data exchange services - firmware update mechanism (istg-fw[updt]) components prevent privilege escalation attacks and maintain proper permission boundaries.",
+    "category": "Data Exchange Services - Firmware Update Mechanism (ISTG-FW[UPDT])",
+    "risk_level": "high"
+  },
+  {
+    "id": "ISTG-DES-INFO-001",
+    "title": "Disclosure of Implementation Details",
+    "description": "Verify that data exchange services - firmware update mechanism (istg-fw[updt]) components do not disclose sensitive information to unauthorized parties.",
+    "category": "Data Exchange Services - Firmware Update Mechanism (ISTG-FW[UPDT])",
+    "risk_level": "high"
+  },
+  {
+    "id": "ISTG-DES-INFO-002",
+    "title": "Disclosure of Ecosystem Details",
+    "description": "Verify that data exchange services - firmware update mechanism (istg-fw[updt]) components do not disclose sensitive information to unauthorized parties.",
+    "category": "Data Exchange Services - Firmware Update Mechanism (ISTG-FW[UPDT])",
+    "risk_level": "high"
+  },
+  {
+    "id": "ISTG-DES-INFO-003",
+    "title": "Disclosure of User Data",
+    "description": "Verify that data exchange services - firmware update mechanism (istg-fw[updt]) components do not disclose sensitive information to unauthorized parties.",
+    "category": "Data Exchange Services - Firmware Update Mechanism (ISTG-FW[UPDT])",
+    "risk_level": "high"
+  },
+  {
+    "id": "ISTG-DES-CONF-001",
+    "title": "Usage of Outdated Software",
+    "description": "IoT Security test for data exchange services - firmware update mechanism (istg-fw[updt]): Usage of Outdated Software. Verify security controls and implementation best practices.",
+    "category": "Data Exchange Services - Firmware Update Mechanism (ISTG-FW[UPDT])",
+    "risk_level": "high"
+  },
+  {
+    "id": "ISTG-DES-CONF-002",
+    "title": "Presence of Unnecessary Software and Functionalities",
+    "description": "IoT Security test for data exchange services - firmware update mechanism (istg-fw[updt]): Presence of Unnecessary Software and Functionalities. Verify security controls and implementation best practices.",
+    "category": "Data Exchange Services - Firmware Update Mechanism (ISTG-FW[UPDT])",
+    "risk_level": "high"
+  },
+  {
+    "id": "ISTG-DES-SCRT-001",
+    "title": "Access to Confidential Data",
+    "description": "IoT Security test for data exchange services - firmware update mechanism (istg-fw[updt]): Access to Confidential Data. Verify security controls and implementation best practices.",
+    "category": "Data Exchange Services - Firmware Update Mechanism (ISTG-FW[UPDT])",
+    "risk_level": "high"
+  },
+  {
+    "id": "ISTG-DES-CRYPT-001",
+    "title": "Usage of Weak Cryptographic Algorithms",
+    "description": "Verify that data exchange services - firmware update mechanism (istg-fw[updt]) components implement strong cryptographic algorithms and proper encryption practices.",
+    "category": "Data Exchange Services - Firmware Update Mechanism (ISTG-FW[UPDT])",
+    "risk_level": "high"
+  },
+  {
+    "id": "ISTG-DES-LOGIC-001",
+    "title": "Circumvention of the Intended Business Logic",
+    "description": "Verify that data exchange services - firmware update mechanism (istg-fw[updt]) components implement proper business logic controls and cannot be circumvented.",
+    "category": "Data Exchange Services - Firmware Update Mechanism (ISTG-FW[UPDT])",
+    "risk_level": "high"
+  },
+  {
+    "id": "ISTG-DES-INPV-001",
+    "title": "Insufficient Input Validation",
+    "description": "Verify that data exchange services - firmware update mechanism (istg-fw[updt]) components properly validate and sanitize all input data.",
+    "category": "Data Exchange Services - Firmware Update Mechanism (ISTG-FW[UPDT])",
+    "risk_level": "high"
+  },
+  {
+    "id": "ISTG-DES-INPV-002",
+    "title": "Code or Command Injection",
+    "description": "Verify that data exchange services - firmware update mechanism (istg-fw[updt]) components are protected against code and command injection attacks.",
+    "category": "Data Exchange Services - Firmware Update Mechanism (ISTG-FW[UPDT])",
+    "risk_level": "high"
+  },
+  {
+    "id": "ISTG-INT-AUTHZ-001",
+    "title": "Unauthorized Access to the Interface",
+    "description": "Verify that internal interfaces - firmware update mechanism (istg-fw[updt]) components prevent unauthorized access through proper authentication and access controls.",
+    "category": "Internal Interfaces - Firmware Update Mechanism (ISTG-FW[UPDT])",
+    "risk_level": "high"
+  },
+  {
+    "id": "ISTG-INT-AUTHZ-002",
+    "title": "Privilege Escalation",
+    "description": "Verify that internal interfaces - firmware update mechanism (istg-fw[updt]) components prevent privilege escalation attacks and maintain proper permission boundaries.",
+    "category": "Internal Interfaces - Firmware Update Mechanism (ISTG-FW[UPDT])",
+    "risk_level": "high"
+  },
+  {
+    "id": "ISTG-INT-INFO-001",
+    "title": "Disclosure of Implementation Details",
+    "description": "Verify that internal interfaces - firmware update mechanism (istg-fw[updt]) components do not disclose sensitive information to unauthorized parties.",
+    "category": "Internal Interfaces - Firmware Update Mechanism (ISTG-FW[UPDT])",
+    "risk_level": "high"
+  },
+  {
+    "id": "ISTG-INT-INFO-002",
+    "title": "Disclosure of Ecosystem Details",
+    "description": "Verify that internal interfaces - firmware update mechanism (istg-fw[updt]) components do not disclose sensitive information to unauthorized parties.",
+    "category": "Internal Interfaces - Firmware Update Mechanism (ISTG-FW[UPDT])",
+    "risk_level": "high"
+  },
+  {
+    "id": "ISTG-INT-INFO-003",
+    "title": "Disclosure of User Data",
+    "description": "Verify that internal interfaces - firmware update mechanism (istg-fw[updt]) components do not disclose sensitive information to unauthorized parties.",
+    "category": "Internal Interfaces - Firmware Update Mechanism (ISTG-FW[UPDT])",
+    "risk_level": "high"
+  },
+  {
+    "id": "ISTG-INT-CONF-001",
+    "title": "Usage of Outdated Software",
+    "description": "IoT Security test for internal interfaces - firmware update mechanism (istg-fw[updt]): Usage of Outdated Software. Verify security controls and implementation best practices.",
+    "category": "Internal Interfaces - Firmware Update Mechanism (ISTG-FW[UPDT])",
+    "risk_level": "high"
+  },
+  {
+    "id": "ISTG-INT-CONF-002",
+    "title": "Presence of Unnecessary Software and Functionalities",
+    "description": "IoT Security test for internal interfaces - firmware update mechanism (istg-fw[updt]): Presence of Unnecessary Software and Functionalities. Verify security controls and implementation best practices.",
+    "category": "Internal Interfaces - Firmware Update Mechanism (ISTG-FW[UPDT])",
+    "risk_level": "high"
+  },
+  {
+    "id": "ISTG-INT-SCRT-001",
+    "title": "Access to Confidential Data",
+    "description": "IoT Security test for internal interfaces - firmware update mechanism (istg-fw[updt]): Access to Confidential Data. Verify security controls and implementation best practices.",
+    "category": "Internal Interfaces - Firmware Update Mechanism (ISTG-FW[UPDT])",
+    "risk_level": "high"
+  },
+  {
+    "id": "ISTG-INT-CRYPT-001",
+    "title": "Usage of Weak Cryptographic Algorithms",
+    "description": "Verify that internal interfaces - firmware update mechanism (istg-fw[updt]) components implement strong cryptographic algorithms and proper encryption practices.",
+    "category": "Internal Interfaces - Firmware Update Mechanism (ISTG-FW[UPDT])",
+    "risk_level": "high"
+  },
+  {
+    "id": "ISTG-INT-LOGIC-001",
+    "title": "Circumvention of the Intended Business Logic",
+    "description": "Verify that internal interfaces - firmware update mechanism (istg-fw[updt]) components implement proper business logic controls and cannot be circumvented.",
+    "category": "Internal Interfaces - Firmware Update Mechanism (ISTG-FW[UPDT])",
+    "risk_level": "high"
+  },
+  {
+    "id": "ISTG-INT-INPV-001",
+    "title": "Insufficient Input Validation",
+    "description": "Verify that internal interfaces - firmware update mechanism (istg-fw[updt]) components properly validate and sanitize all input data.",
+    "category": "Internal Interfaces - Firmware Update Mechanism (ISTG-FW[UPDT])",
+    "risk_level": "high"
+  },
+  {
+    "id": "ISTG-INT-INPV-002",
+    "title": "Code or Command Injection",
+    "description": "Verify that internal interfaces - firmware update mechanism (istg-fw[updt]) components are protected against code and command injection attacks.",
+    "category": "Internal Interfaces - Firmware Update Mechanism (ISTG-FW[UPDT])",
+    "risk_level": "high"
+  },
+  {
+    "id": "ISTG-PHY-AUTHZ-001",
+    "title": "Unauthorized Access to the Interface",
+    "description": "Verify that physical interfaces - firmware update mechanism (istg-fw[updt]) components prevent unauthorized access through proper authentication and access controls.",
+    "category": "Physical Interfaces - Firmware Update Mechanism (ISTG-FW[UPDT])",
+    "risk_level": "high"
+  },
+  {
+    "id": "ISTG-PHY-AUTHZ-002",
+    "title": "Privilege Escalation",
+    "description": "Verify that physical interfaces - firmware update mechanism (istg-fw[updt]) components prevent privilege escalation attacks and maintain proper permission boundaries.",
+    "category": "Physical Interfaces - Firmware Update Mechanism (ISTG-FW[UPDT])",
+    "risk_level": "high"
+  },
+  {
+    "id": "ISTG-PHY-INFO-001",
+    "title": "Disclosure of Implementation Details",
+    "description": "Verify that physical interfaces - firmware update mechanism (istg-fw[updt]) components do not disclose sensitive information to unauthorized parties.",
+    "category": "Physical Interfaces - Firmware Update Mechanism (ISTG-FW[UPDT])",
+    "risk_level": "high"
+  },
+  {
+    "id": "ISTG-PHY-INFO-002",
+    "title": "Disclosure of Ecosystem Details",
+    "description": "Verify that physical interfaces - firmware update mechanism (istg-fw[updt]) components do not disclose sensitive information to unauthorized parties.",
+    "category": "Physical Interfaces - Firmware Update Mechanism (ISTG-FW[UPDT])",
+    "risk_level": "high"
+  },
+  {
+    "id": "ISTG-PHY-INFO-003",
+    "title": "Disclosure of User Data",
+    "description": "Verify that physical interfaces - firmware update mechanism (istg-fw[updt]) components do not disclose sensitive information to unauthorized parties.",
+    "category": "Physical Interfaces - Firmware Update Mechanism (ISTG-FW[UPDT])",
+    "risk_level": "high"
+  },
+  {
+    "id": "ISTG-PHY-CONF-001",
+    "title": "Usage of Outdated Software",
+    "description": "IoT Security test for physical interfaces - firmware update mechanism (istg-fw[updt]): Usage of Outdated Software. Verify security controls and implementation best practices.",
+    "category": "Physical Interfaces - Firmware Update Mechanism (ISTG-FW[UPDT])",
+    "risk_level": "high"
+  },
+  {
+    "id": "ISTG-PHY-CONF-002",
+    "title": "Presence of Unnecessary Software and Functionalities",
+    "description": "IoT Security test for physical interfaces - firmware update mechanism (istg-fw[updt]): Presence of Unnecessary Software and Functionalities. Verify security controls and implementation best practices.",
+    "category": "Physical Interfaces - Firmware Update Mechanism (ISTG-FW[UPDT])",
+    "risk_level": "high"
+  },
+  {
+    "id": "ISTG-PHY-SCRT-001",
+    "title": "Access to Confidential Data",
+    "description": "IoT Security test for physical interfaces - firmware update mechanism (istg-fw[updt]): Access to Confidential Data. Verify security controls and implementation best practices.",
+    "category": "Physical Interfaces - Firmware Update Mechanism (ISTG-FW[UPDT])",
+    "risk_level": "high"
+  },
+  {
+    "id": "ISTG-PHY-CRYPT-001",
+    "title": "Usage of Weak Cryptographic Algorithms",
+    "description": "Verify that physical interfaces - firmware update mechanism (istg-fw[updt]) components implement strong cryptographic algorithms and proper encryption practices.",
+    "category": "Physical Interfaces - Firmware Update Mechanism (ISTG-FW[UPDT])",
+    "risk_level": "high"
+  },
+  {
+    "id": "ISTG-PHY-LOGIC-001",
+    "title": "Circumvention of the Intended Business Logic",
+    "description": "Verify that physical interfaces - firmware update mechanism (istg-fw[updt]) components implement proper business logic controls and cannot be circumvented.",
+    "category": "Physical Interfaces - Firmware Update Mechanism (ISTG-FW[UPDT])",
+    "risk_level": "high"
+  },
+  {
+    "id": "ISTG-PHY-INPV-001",
+    "title": "Insufficient Input Validation",
+    "description": "Verify that physical interfaces - firmware update mechanism (istg-fw[updt]) components properly validate and sanitize all input data.",
+    "category": "Physical Interfaces - Firmware Update Mechanism (ISTG-FW[UPDT])",
+    "risk_level": "high"
+  },
+  {
+    "id": "ISTG-PHY-INPV-002",
+    "title": "Code or Command Injection",
+    "description": "Verify that physical interfaces - firmware update mechanism (istg-fw[updt]) components are protected against code and command injection attacks.",
+    "category": "Physical Interfaces - Firmware Update Mechanism (ISTG-FW[UPDT])",
+    "risk_level": "high"
+  },
+  {
+    "id": "ISTG-WRLS-AUTHZ-001",
+    "title": "Unauthorized Access to the Interface",
+    "description": "Verify that wireless interfaces - firmware update mechanism (istg-fw[updt]) components prevent unauthorized access through proper authentication and access controls.",
+    "category": "Wireless Interfaces - Firmware Update Mechanism (ISTG-FW[UPDT])",
+    "risk_level": "high"
+  },
+  {
+    "id": "ISTG-WRLS-AUTHZ-002",
+    "title": "Privilege Escalation",
+    "description": "Verify that wireless interfaces - firmware update mechanism (istg-fw[updt]) components prevent privilege escalation attacks and maintain proper permission boundaries.",
+    "category": "Wireless Interfaces - Firmware Update Mechanism (ISTG-FW[UPDT])",
+    "risk_level": "high"
+  },
+  {
+    "id": "ISTG-WRLS-INFO-001",
+    "title": "Disclosure of Implementation Details",
+    "description": "Verify that wireless interfaces - firmware update mechanism (istg-fw[updt]) components do not disclose sensitive information to unauthorized parties.",
+    "category": "Wireless Interfaces - Firmware Update Mechanism (ISTG-FW[UPDT])",
+    "risk_level": "high"
+  },
+  {
+    "id": "ISTG-WRLS-INFO-002",
+    "title": "Disclosure of Ecosystem Details",
+    "description": "Verify that wireless interfaces - firmware update mechanism (istg-fw[updt]) components do not disclose sensitive information to unauthorized parties.",
+    "category": "Wireless Interfaces - Firmware Update Mechanism (ISTG-FW[UPDT])",
+    "risk_level": "high"
+  },
+  {
+    "id": "ISTG-WRLS-INFO-003",
+    "title": "Disclosure of User Data",
+    "description": "Verify that wireless interfaces - firmware update mechanism (istg-fw[updt]) components do not disclose sensitive information to unauthorized parties.",
+    "category": "Wireless Interfaces - Firmware Update Mechanism (ISTG-FW[UPDT])",
+    "risk_level": "high"
+  },
+  {
+    "id": "ISTG-WRLS-CONF-001",
+    "title": "Usage of Outdated Software",
+    "description": "IoT Security test for wireless interfaces - firmware update mechanism (istg-fw[updt]): Usage of Outdated Software. Verify security controls and implementation best practices.",
+    "category": "Wireless Interfaces - Firmware Update Mechanism (ISTG-FW[UPDT])",
+    "risk_level": "high"
+  },
+  {
+    "id": "ISTG-WRLS-CONF-002",
+    "title": "Presence of Unnecessary Software and Functionalities",
+    "description": "IoT Security test for wireless interfaces - firmware update mechanism (istg-fw[updt]): Presence of Unnecessary Software and Functionalities. Verify security controls and implementation best practices.",
+    "category": "Wireless Interfaces - Firmware Update Mechanism (ISTG-FW[UPDT])",
+    "risk_level": "high"
+  },
+  {
+    "id": "ISTG-WRLS-SCRT-001",
+    "title": "Access to Confidential Data",
+    "description": "IoT Security test for wireless interfaces - firmware update mechanism (istg-fw[updt]): Access to Confidential Data. Verify security controls and implementation best practices.",
+    "category": "Wireless Interfaces - Firmware Update Mechanism (ISTG-FW[UPDT])",
+    "risk_level": "high"
+  },
+  {
+    "id": "ISTG-WRLS-CRYPT-001",
+    "title": "Usage of Weak Cryptographic Algorithms",
+    "description": "Verify that wireless interfaces - firmware update mechanism (istg-fw[updt]) components implement strong cryptographic algorithms and proper encryption practices.",
+    "category": "Wireless Interfaces - Firmware Update Mechanism (ISTG-FW[UPDT])",
+    "risk_level": "high"
+  },
+  {
+    "id": "ISTG-WRLS-LOGIC-001",
+    "title": "Circumvention of the Intended Business Logic",
+    "description": "Verify that wireless interfaces - firmware update mechanism (istg-fw[updt]) components implement proper business logic controls and cannot be circumvented.",
+    "category": "Wireless Interfaces - Firmware Update Mechanism (ISTG-FW[UPDT])",
+    "risk_level": "high"
+  },
+  {
+    "id": "ISTG-WRLS-INPV-001",
+    "title": "Insufficient Input Validation",
+    "description": "Verify that wireless interfaces - firmware update mechanism (istg-fw[updt]) components properly validate and sanitize all input data.",
+    "category": "Wireless Interfaces - Firmware Update Mechanism (ISTG-FW[UPDT])",
+    "risk_level": "high"
+  },
+  {
+    "id": "ISTG-WRLS-INPV-002",
+    "title": "Code or Command Injection",
+    "description": "Verify that wireless interfaces - firmware update mechanism (istg-fw[updt]) components are protected against code and command injection attacks.",
+    "category": "Wireless Interfaces - Firmware Update Mechanism (ISTG-FW[UPDT])",
+    "risk_level": "high"
+  },
+  {
+    "id": "ISTG-UI-AUTHZ-001",
+    "title": "Unauthorized Access to the Interface",
+    "description": "Verify that user interfaces - firmware update mechanism (istg-fw[updt]) components prevent unauthorized access through proper authentication and access controls.",
+    "category": "User Interfaces - Firmware Update Mechanism (ISTG-FW[UPDT])",
+    "risk_level": "high"
+  },
+  {
+    "id": "ISTG-UI-AUTHZ-002",
+    "title": "Privilege Escalation",
+    "description": "Verify that user interfaces - firmware update mechanism (istg-fw[updt]) components prevent privilege escalation attacks and maintain proper permission boundaries.",
+    "category": "User Interfaces - Firmware Update Mechanism (ISTG-FW[UPDT])",
+    "risk_level": "high"
+  },
+  {
+    "id": "ISTG-UI-INFO-001",
+    "title": "Disclosure of Implementation Details",
+    "description": "Verify that user interfaces - firmware update mechanism (istg-fw[updt]) components do not disclose sensitive information to unauthorized parties.",
+    "category": "User Interfaces - Firmware Update Mechanism (ISTG-FW[UPDT])",
+    "risk_level": "high"
+  },
+  {
+    "id": "ISTG-UI-INFO-002",
+    "title": "Disclosure of Ecosystem Details",
+    "description": "Verify that user interfaces - firmware update mechanism (istg-fw[updt]) components do not disclose sensitive information to unauthorized parties.",
+    "category": "User Interfaces - Firmware Update Mechanism (ISTG-FW[UPDT])",
+    "risk_level": "high"
+  },
+  {
+    "id": "ISTG-UI-INFO-003",
+    "title": "Disclosure of User Data",
+    "description": "Verify that user interfaces - firmware update mechanism (istg-fw[updt]) components do not disclose sensitive information to unauthorized parties.",
+    "category": "User Interfaces - Firmware Update Mechanism (ISTG-FW[UPDT])",
+    "risk_level": "high"
+  },
+  {
+    "id": "ISTG-UI-CONF-001",
+    "title": "Usage of Outdated Software",
+    "description": "IoT Security test for user interfaces - firmware update mechanism (istg-fw[updt]): Usage of Outdated Software. Verify security controls and implementation best practices.",
+    "category": "User Interfaces - Firmware Update Mechanism (ISTG-FW[UPDT])",
+    "risk_level": "high"
+  },
+  {
+    "id": "ISTG-UI-CONF-002",
+    "title": "Presence of Unnecessary Software and Functionalities",
+    "description": "IoT Security test for user interfaces - firmware update mechanism (istg-fw[updt]): Presence of Unnecessary Software and Functionalities. Verify security controls and implementation best practices.",
+    "category": "User Interfaces - Firmware Update Mechanism (ISTG-FW[UPDT])",
+    "risk_level": "high"
+  },
+  {
+    "id": "ISTG-UI-SCRT-001",
+    "title": "Access to Confidential Data",
+    "description": "IoT Security test for user interfaces - firmware update mechanism (istg-fw[updt]): Access to Confidential Data. Verify security controls and implementation best practices.",
+    "category": "User Interfaces - Firmware Update Mechanism (ISTG-FW[UPDT])",
+    "risk_level": "high"
+  },
+  {
+    "id": "ISTG-UI-CRYPT-001",
+    "title": "Usage of Weak Cryptographic Algorithms",
+    "description": "Verify that user interfaces - firmware update mechanism (istg-fw[updt]) components implement strong cryptographic algorithms and proper encryption practices.",
+    "category": "User Interfaces - Firmware Update Mechanism (ISTG-FW[UPDT])",
+    "risk_level": "high"
+  },
+  {
+    "id": "ISTG-UI-LOGIC-001",
+    "title": "Circumvention of the Intended Business Logic",
+    "description": "Verify that user interfaces - firmware update mechanism (istg-fw[updt]) components implement proper business logic controls and cannot be circumvented.",
+    "category": "User Interfaces - Firmware Update Mechanism (ISTG-FW[UPDT])",
+    "risk_level": "high"
+  },
+  {
+    "id": "ISTG-UI-INPV-001",
+    "title": "Insufficient Input Validation",
+    "description": "Verify that user interfaces - firmware update mechanism (istg-fw[updt]) components properly validate and sanitize all input data.",
+    "category": "User Interfaces - Firmware Update Mechanism (ISTG-FW[UPDT])",
+    "risk_level": "high"
+  },
+  {
+    "id": "ISTG-UI-INPV-002",
+    "title": "Code or Command Injection",
+    "description": "Verify that user interfaces - firmware update mechanism (istg-fw[updt]) components are protected against code and command injection attacks.",
+    "category": "User Interfaces - Firmware Update Mechanism (ISTG-FW[UPDT])",
+    "risk_level": "high"
+  }
+]

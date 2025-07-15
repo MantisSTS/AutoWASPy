@@ -7,6 +7,8 @@ MSTG (Mobile Security Testing Guide) test data from GitHub repositories.
 
 import requests
 import re
+import os
+import json
 from app.utils.datetime_utils import utc_now
 
 
@@ -50,6 +52,7 @@ class OWASPService:
                 
                 # If we got enough tests from the original method, use them
                 if len(wstg_tests) >= 10:
+                    OWASPService._save_to_cache('wstg', wstg_tests)
                     OWASPService._update_cache('wstg', 'github', len(wstg_tests))
                     print(f"Successfully fetched {len(wstg_tests)} WSTG tests from GitHub (original method)")
                     return sorted(wstg_tests, key=lambda x: x['id'])
@@ -58,6 +61,7 @@ class OWASPService:
             print("Original method failed or insufficient data, trying checklist fallback...")
             checklist_data = OWASPService._fetch_wstg_from_checklist()
             if len(checklist_data) >= 10:
+                OWASPService._save_to_cache('wstg', checklist_data)
                 OWASPService._update_cache('wstg', 'github', len(checklist_data))
                 print(f"Successfully fetched {len(checklist_data)} WSTG tests from GitHub (checklist method)")
                 return checklist_data
@@ -205,6 +209,7 @@ class OWASPService:
             
             if len(mastg_tests) >= 50:  # Lower threshold since individual test files
                 print(f"Successfully fetched {len(mastg_tests)} MASTG tests from new structure")
+                OWASPService._save_to_cache('mstg', mastg_tests)
                 OWASPService._update_cache('mstg', 'github', len(mastg_tests))
                 return sorted(mastg_tests, key=lambda x: x['id'])
             
@@ -253,6 +258,7 @@ class OWASPService:
                     seen_ids.add(test['id'])
                     unique_tests.append(test)
             if len(unique_tests) >= 150:
+                OWASPService._save_to_cache('mstg', unique_tests)
                 OWASPService._update_cache('mstg', 'github', len(unique_tests))
                 print(f"Successfully fetched {len(unique_tests)} MASTG tests from GitHub/checklist")
                 return sorted(unique_tests, key=lambda x: x['id'])
@@ -1507,14 +1513,44 @@ class OWASPService:
 
     @staticmethod
     def get_cached_wstg_data():
-        """Get WSTG data from cache/fallback without fetching from GitHub"""
-        print("Using cached/fallback WSTG data for project creation...")
+        """Get WSTG data from JSON cache file, fallback to hardcoded data if not available"""
+        print("Getting cached WSTG data for project creation...")
+        
+        # Try to load from cache file first
+        cache_file = os.path.join(os.path.dirname(__file__), '..', '..', 'cache', 'wstg_cache.json')
+        try:
+            if os.path.exists(cache_file):
+                with open(cache_file, 'r', encoding='utf-8') as f:
+                    cached_data = json.load(f)
+                    if cached_data and len(cached_data) > 10:
+                        print(f"Using cached WSTG data: {len(cached_data)} tests")
+                        return cached_data
+        except Exception as e:
+            print(f"Error loading WSTG cache file: {e}")
+        
+        # Fall back to hardcoded data
+        print("Using fallback WSTG data")
         return OWASPService._get_fallback_wstg_data()
 
     @staticmethod
     def get_cached_mstg_data():
-        """Get MASTG data from cache/fallback without fetching from GitHub"""
-        print("Using cached/fallback MASTG data for project creation...")
+        """Get MASTG data from JSON cache file, fallback to hardcoded data if not available"""
+        print("Getting cached MASTG data for project creation...")
+        
+        # Try to load from cache file first
+        cache_file = os.path.join(os.path.dirname(__file__), '..', '..', 'cache', 'mstg_cache.json')
+        try:
+            if os.path.exists(cache_file):
+                with open(cache_file, 'r', encoding='utf-8') as f:
+                    cached_data = json.load(f)
+                    if cached_data and len(cached_data) > 10:
+                        print(f"Using cached MASTG data: {len(cached_data)} tests")
+                        return cached_data
+        except Exception as e:
+            print(f"Error loading MASTG cache file: {e}")
+        
+        # Fall back to hardcoded data
+        print("Using fallback MASTG data")
         return OWASPService._get_fallback_mstg_data()
 
     @staticmethod
@@ -1709,3 +1745,20 @@ class OWASPService:
         except Exception as e:
             print(f"Error parsing MASTG test file {file_info['name']}: {e}")
             return None
+
+    @staticmethod
+    def _save_to_cache(data_type, data):
+        """Save fetched data to JSON cache file"""
+        try:
+            # Create cache directory if it doesn't exist
+            cache_dir = os.path.join(os.path.dirname(__file__), '..', '..', 'cache')
+            os.makedirs(cache_dir, exist_ok=True)
+            
+            # Save to appropriate cache file
+            cache_file = os.path.join(cache_dir, f'{data_type}_cache.json')
+            with open(cache_file, 'w', encoding='utf-8') as f:
+                json.dump(data, f, indent=2, ensure_ascii=False)
+            
+            print(f"Saved {len(data)} {data_type.upper()} tests to cache file: {cache_file}")
+        except Exception as e:
+            print(f"Error saving {data_type} data to cache: {e}")

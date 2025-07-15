@@ -1,0 +1,656 @@
+[
+  {
+    "id": "WSTG-APIT-01",
+    "title": "API Reconnaissance",
+    "category": "API Testing",
+    "description": "Security testing as per OWASP WSTG guidelines for api reconnaissance.\n\n▼ What to Test:\n• Review the specific functionality related to api reconnaissance\n• Identify potential security weaknesses in implementation\n• Test using both manual and automated approaches\n• Verify proper security controls are in place\n\n▼ How to Test:\n• Follow OWASP WSTG methodology for this test case\n• Use appropriate tools and techniques for the vulnerability type\n• Document all testing steps and observations\n• Capture evidence of any security issues found\n\n▼ Documentation Required:\n• Detailed test steps and methodology\n• Screenshots or logs showing evidence\n• Risk assessment and potential impact\n• Specific remediation recommendations"
+  },
+  {
+    "id": "WSTG-APIT-02",
+    "title": "API Broken Object Level Authorization",
+    "category": "API Testing",
+    "description": "Security testing as per OWASP WSTG guidelines for api broken object level authorization.\n\n▼ What to Test:\n• Review the specific functionality related to api broken object level authorization\n• Identify potential security weaknesses in implementation\n• Test using both manual and automated approaches\n• Verify proper security controls are in place\n\n▼ How to Test:\n• Follow OWASP WSTG methodology for this test case\n• Use appropriate tools and techniques for the vulnerability type\n• Document all testing steps and observations\n• Capture evidence of any security issues found\n\n▼ Documentation Required:\n• Detailed test steps and methodology\n• Screenshots or logs showing evidence\n• Risk assessment and potential impact\n• Specific remediation recommendations"
+  },
+  {
+    "id": "WSTG-APIT-99",
+    "title": "Testing GraphQL",
+    "category": "API Testing",
+    "description": "Security testing as per OWASP WSTG guidelines for testing graphql.\n\n▼ What to Test:\n• Review the specific functionality related to testing graphql\n• Identify potential security weaknesses in implementation\n• Test using both manual and automated approaches\n• Verify proper security controls are in place\n\n▼ How to Test:\n• Follow OWASP WSTG methodology for this test case\n• Use appropriate tools and techniques for the vulnerability type\n• Document all testing steps and observations\n• Capture evidence of any security issues found\n\n▼ Documentation Required:\n• Detailed test steps and methodology\n• Screenshots or logs showing evidence\n• Risk assessment and potential impact\n• Specific remediation recommendations"
+  },
+  {
+    "id": "WSTG-ATHN-01",
+    "title": "Testing for Credentials Transported over an Encrypted Channel",
+    "category": "Authentication Testing",
+    "description": "Security testing as per OWASP WSTG guidelines for testing for credentials transported over an encrypted channel.\n\n▼ What to Test:\n• Review the specific functionality related to testing for credentials transported over an encrypted channel\n• Identify potential security weaknesses in implementation\n• Test using both manual and automated approaches\n• Verify proper security controls are in place\n\n▼ How to Test:\n• Follow OWASP WSTG methodology for this test case\n• Use appropriate tools and techniques for the vulnerability type\n• Document all testing steps and observations\n• Capture evidence of any security issues found\n\n▼ Documentation Required:\n• Detailed test steps and methodology\n• Screenshots or logs showing evidence\n• Risk assessment and potential impact\n• Specific remediation recommendations"
+  },
+  {
+    "id": "WSTG-ATHN-02",
+    "title": "Testing for Default Credentials",
+    "category": "Authentication Testing",
+    "description": "Security testing as per OWASP WSTG guidelines for testing for default credentials.\n\n▼ What to Test:\n• Review the specific functionality related to testing for default credentials\n• Identify potential security weaknesses in implementation\n• Test using both manual and automated approaches\n• Verify proper security controls are in place\n\n▼ How to Test:\n• Follow OWASP WSTG methodology for this test case\n• Use appropriate tools and techniques for the vulnerability type\n• Document all testing steps and observations\n• Capture evidence of any security issues found\n\n▼ Documentation Required:\n• Detailed test steps and methodology\n• Screenshots or logs showing evidence\n• Risk assessment and potential impact\n• Specific remediation recommendations"
+  },
+  {
+    "id": "WSTG-ATHN-03",
+    "title": "Testing for Weak Lock Out Mechanism",
+    "category": "Authentication Testing",
+    "description": "Security testing as per OWASP WSTG guidelines for testing for weak lock out mechanism.\n\n▼ What to Test:\n• Review the specific functionality related to testing for weak lock out mechanism\n• Identify potential security weaknesses in implementation\n• Test using both manual and automated approaches\n• Verify proper security controls are in place\n\n▼ How to Test:\n• Follow OWASP WSTG methodology for this test case\n• Use appropriate tools and techniques for the vulnerability type\n• Document all testing steps and observations\n• Capture evidence of any security issues found\n\n▼ Documentation Required:\n• Detailed test steps and methodology\n• Screenshots or logs showing evidence\n• Risk assessment and potential impact\n• Specific remediation recommendations"
+  },
+  {
+    "id": "WSTG-ATHN-04",
+    "title": "Testing for Bypassing Authentication Schema",
+    "category": "Authentication Testing",
+    "description": "Security testing as per OWASP WSTG guidelines for testing for bypassing authentication schema.\n\n▼ What to Test:\n• Review the specific functionality related to testing for bypassing authentication schema\n• Identify potential security weaknesses in implementation\n• Test using both manual and automated approaches\n• Verify proper security controls are in place\n\n▼ How to Test:\n• Follow OWASP WSTG methodology for this test case\n• Use appropriate tools and techniques for the vulnerability type\n• Document all testing steps and observations\n• Capture evidence of any security issues found\n\n▼ Documentation Required:\n• Detailed test steps and methodology\n• Screenshots or logs showing evidence\n• Risk assessment and potential impact\n• Specific remediation recommendations"
+  },
+  {
+    "id": "WSTG-ATHN-05",
+    "title": "Testing for Vulnerable Remember Password",
+    "category": "Authentication Testing",
+    "description": "Security testing as per OWASP WSTG guidelines for testing for vulnerable remember password.\n\n▼ What to Test:\n• Review the specific functionality related to testing for vulnerable remember password\n• Identify potential security weaknesses in implementation\n• Test using both manual and automated approaches\n• Verify proper security controls are in place\n\n▼ How to Test:\n• Follow OWASP WSTG methodology for this test case\n• Use appropriate tools and techniques for the vulnerability type\n• Document all testing steps and observations\n• Capture evidence of any security issues found\n\n▼ Documentation Required:\n• Detailed test steps and methodology\n• Screenshots or logs showing evidence\n• Risk assessment and potential impact\n• Specific remediation recommendations"
+  },
+  {
+    "id": "WSTG-ATHN-06",
+    "title": "Testing for Browser Cache Weakness",
+    "category": "Authentication Testing",
+    "description": "Security testing as per OWASP WSTG guidelines for testing for browser cache weakness.\n\n▼ What to Test:\n• Review the specific functionality related to testing for browser cache weakness\n• Identify potential security weaknesses in implementation\n• Test using both manual and automated approaches\n• Verify proper security controls are in place\n\n▼ How to Test:\n• Follow OWASP WSTG methodology for this test case\n• Use appropriate tools and techniques for the vulnerability type\n• Document all testing steps and observations\n• Capture evidence of any security issues found\n\n▼ Documentation Required:\n• Detailed test steps and methodology\n• Screenshots or logs showing evidence\n• Risk assessment and potential impact\n• Specific remediation recommendations"
+  },
+  {
+    "id": "WSTG-ATHN-07",
+    "title": "Testing for Weak Password Policy",
+    "category": "Authentication Testing",
+    "description": "Security testing as per OWASP WSTG guidelines for testing for weak password policy.\n\n▼ What to Test:\n• Review the specific functionality related to testing for weak password policy\n• Identify potential security weaknesses in implementation\n• Test using both manual and automated approaches\n• Verify proper security controls are in place\n\n▼ How to Test:\n• Follow OWASP WSTG methodology for this test case\n• Use appropriate tools and techniques for the vulnerability type\n• Document all testing steps and observations\n• Capture evidence of any security issues found\n\n▼ Documentation Required:\n• Detailed test steps and methodology\n• Screenshots or logs showing evidence\n• Risk assessment and potential impact\n• Specific remediation recommendations"
+  },
+  {
+    "id": "WSTG-ATHN-08",
+    "title": "Testing for Weak Security Question Answer",
+    "category": "Authentication Testing",
+    "description": "Security testing as per OWASP WSTG guidelines for testing for weak security question answer.\n\n▼ What to Test:\n• Review the specific functionality related to testing for weak security question answer\n• Identify potential security weaknesses in implementation\n• Test using both manual and automated approaches\n• Verify proper security controls are in place\n\n▼ How to Test:\n• Follow OWASP WSTG methodology for this test case\n• Use appropriate tools and techniques for the vulnerability type\n• Document all testing steps and observations\n• Capture evidence of any security issues found\n\n▼ Documentation Required:\n• Detailed test steps and methodology\n• Screenshots or logs showing evidence\n• Risk assessment and potential impact\n• Specific remediation recommendations"
+  },
+  {
+    "id": "WSTG-ATHN-09",
+    "title": "Testing for Weak Password Change or Reset Functionalities",
+    "category": "Authentication Testing",
+    "description": "Security testing as per OWASP WSTG guidelines for testing for weak password change or reset functionalities.\n\n▼ What to Test:\n• Review the specific functionality related to testing for weak password change or reset functionalities\n• Identify potential security weaknesses in implementation\n• Test using both manual and automated approaches\n• Verify proper security controls are in place\n\n▼ How to Test:\n• Follow OWASP WSTG methodology for this test case\n• Use appropriate tools and techniques for the vulnerability type\n• Document all testing steps and observations\n• Capture evidence of any security issues found\n\n▼ Documentation Required:\n• Detailed test steps and methodology\n• Screenshots or logs showing evidence\n• Risk assessment and potential impact\n• Specific remediation recommendations"
+  },
+  {
+    "id": "WSTG-ATHN-10",
+    "title": "Testing for Weaker Authentication in Alternative Channel",
+    "category": "Authentication Testing",
+    "description": "Security testing as per OWASP WSTG guidelines for testing for weaker authentication in alternative channel.\n\n▼ What to Test:\n• Review the specific functionality related to testing for weaker authentication in alternative channel\n• Identify potential security weaknesses in implementation\n• Test using both manual and automated approaches\n• Verify proper security controls are in place\n\n▼ How to Test:\n• Follow OWASP WSTG methodology for this test case\n• Use appropriate tools and techniques for the vulnerability type\n• Document all testing steps and observations\n• Capture evidence of any security issues found\n\n▼ Documentation Required:\n• Detailed test steps and methodology\n• Screenshots or logs showing evidence\n• Risk assessment and potential impact\n• Specific remediation recommendations"
+  },
+  {
+    "id": "WSTG-ATHN-11",
+    "title": "Testing Multi-Factor Authentication (MFA)",
+    "category": "Authentication Testing",
+    "description": "Security testing as per OWASP WSTG guidelines for testing multi-factor authentication (mfa).\n\n▼ What to Test:\n• Review the specific functionality related to testing multi-factor authentication (mfa)\n• Identify potential security weaknesses in implementation\n• Test using both manual and automated approaches\n• Verify proper security controls are in place\n\n▼ How to Test:\n• Follow OWASP WSTG methodology for this test case\n• Use appropriate tools and techniques for the vulnerability type\n• Document all testing steps and observations\n• Capture evidence of any security issues found\n\n▼ Documentation Required:\n• Detailed test steps and methodology\n• Screenshots or logs showing evidence\n• Risk assessment and potential impact\n• Specific remediation recommendations"
+  },
+  {
+    "id": "WSTG-ATHZ-01",
+    "title": "Testing Directory Traversal File Include",
+    "category": "Authorization Testing",
+    "description": "Security testing as per OWASP WSTG guidelines for testing directory traversal file include.\n\n▼ What to Test:\n• Review the specific functionality related to testing directory traversal file include\n• Identify potential security weaknesses in implementation\n• Test using both manual and automated approaches\n• Verify proper security controls are in place\n\n▼ How to Test:\n• Follow OWASP WSTG methodology for this test case\n• Use appropriate tools and techniques for the vulnerability type\n• Document all testing steps and observations\n• Capture evidence of any security issues found\n\n▼ Documentation Required:\n• Detailed test steps and methodology\n• Screenshots or logs showing evidence\n• Risk assessment and potential impact\n• Specific remediation recommendations"
+  },
+  {
+    "id": "WSTG-ATHZ-02",
+    "title": "Testing for Bypassing Authorization Schema",
+    "category": "Authorization Testing",
+    "description": "Security testing as per OWASP WSTG guidelines for testing for bypassing authorization schema.\n\n▼ What to Test:\n• Review the specific functionality related to testing for bypassing authorization schema\n• Identify potential security weaknesses in implementation\n• Test using both manual and automated approaches\n• Verify proper security controls are in place\n\n▼ How to Test:\n• Follow OWASP WSTG methodology for this test case\n• Use appropriate tools and techniques for the vulnerability type\n• Document all testing steps and observations\n• Capture evidence of any security issues found\n\n▼ Documentation Required:\n• Detailed test steps and methodology\n• Screenshots or logs showing evidence\n• Risk assessment and potential impact\n• Specific remediation recommendations"
+  },
+  {
+    "id": "WSTG-ATHZ-03",
+    "title": "Testing for Privilege Escalation",
+    "category": "Authorization Testing",
+    "description": "Security testing as per OWASP WSTG guidelines for testing for privilege escalation.\n\n▼ What to Test:\n• Review the specific functionality related to testing for privilege escalation\n• Identify potential security weaknesses in implementation\n• Test using both manual and automated approaches\n• Verify proper security controls are in place\n\n▼ How to Test:\n• Follow OWASP WSTG methodology for this test case\n• Use appropriate tools and techniques for the vulnerability type\n• Document all testing steps and observations\n• Capture evidence of any security issues found\n\n▼ Documentation Required:\n• Detailed test steps and methodology\n• Screenshots or logs showing evidence\n• Risk assessment and potential impact\n• Specific remediation recommendations"
+  },
+  {
+    "id": "WSTG-ATHZ-04",
+    "title": "Testing for Insecure Direct Object References",
+    "category": "Authorization Testing",
+    "description": "Security testing as per OWASP WSTG guidelines for testing for insecure direct object references.\n\n▼ What to Test:\n• Review the specific functionality related to testing for insecure direct object references\n• Identify potential security weaknesses in implementation\n• Test using both manual and automated approaches\n• Verify proper security controls are in place\n\n▼ How to Test:\n• Follow OWASP WSTG methodology for this test case\n• Use appropriate tools and techniques for the vulnerability type\n• Document all testing steps and observations\n• Capture evidence of any security issues found\n\n▼ Documentation Required:\n• Detailed test steps and methodology\n• Screenshots or logs showing evidence\n• Risk assessment and potential impact\n• Specific remediation recommendations"
+  },
+  {
+    "id": "WSTG-ATHZ-05",
+    "title": "Testing for OAuth Weaknesses",
+    "category": "Authorization Testing",
+    "description": "Security testing as per OWASP WSTG guidelines for testing for oauth weaknesses.\n\n▼ What to Test:\n• Review the specific functionality related to testing for oauth weaknesses\n• Identify potential security weaknesses in implementation\n• Test using both manual and automated approaches\n• Verify proper security controls are in place\n\n▼ How to Test:\n• Follow OWASP WSTG methodology for this test case\n• Use appropriate tools and techniques for the vulnerability type\n• Document all testing steps and observations\n• Capture evidence of any security issues found\n\n▼ Documentation Required:\n• Detailed test steps and methodology\n• Screenshots or logs showing evidence\n• Risk assessment and potential impact\n• Specific remediation recommendations"
+  },
+  {
+    "id": "WSTG-BUSL-01",
+    "title": "Test Business Logic Data Validation",
+    "category": "Business Logic Testing",
+    "description": "Security testing as per OWASP WSTG guidelines for test business logic data validation.\n\n▼ What to Test:\n• Review the specific functionality related to test business logic data validation\n• Identify potential security weaknesses in implementation\n• Test using both manual and automated approaches\n• Verify proper security controls are in place\n\n▼ How to Test:\n• Follow OWASP WSTG methodology for this test case\n• Use appropriate tools and techniques for the vulnerability type\n• Document all testing steps and observations\n• Capture evidence of any security issues found\n\n▼ Documentation Required:\n• Detailed test steps and methodology\n• Screenshots or logs showing evidence\n• Risk assessment and potential impact\n• Specific remediation recommendations"
+  },
+  {
+    "id": "WSTG-BUSL-02",
+    "title": "Test Ability to Forge Requests",
+    "category": "Business Logic Testing",
+    "description": "Security testing as per OWASP WSTG guidelines for test ability to forge requests.\n\n▼ What to Test:\n• Review the specific functionality related to test ability to forge requests\n• Identify potential security weaknesses in implementation\n• Test using both manual and automated approaches\n• Verify proper security controls are in place\n\n▼ How to Test:\n• Follow OWASP WSTG methodology for this test case\n• Use appropriate tools and techniques for the vulnerability type\n• Document all testing steps and observations\n• Capture evidence of any security issues found\n\n▼ Documentation Required:\n• Detailed test steps and methodology\n• Screenshots or logs showing evidence\n• Risk assessment and potential impact\n• Specific remediation recommendations"
+  },
+  {
+    "id": "WSTG-BUSL-03",
+    "title": "Test Integrity Checks",
+    "category": "Business Logic Testing",
+    "description": "Security testing as per OWASP WSTG guidelines for test integrity checks.\n\n▼ What to Test:\n• Review the specific functionality related to test integrity checks\n• Identify potential security weaknesses in implementation\n• Test using both manual and automated approaches\n• Verify proper security controls are in place\n\n▼ How to Test:\n• Follow OWASP WSTG methodology for this test case\n• Use appropriate tools and techniques for the vulnerability type\n• Document all testing steps and observations\n• Capture evidence of any security issues found\n\n▼ Documentation Required:\n• Detailed test steps and methodology\n• Screenshots or logs showing evidence\n• Risk assessment and potential impact\n• Specific remediation recommendations"
+  },
+  {
+    "id": "WSTG-BUSL-04",
+    "title": "Test for Process Timing",
+    "category": "Business Logic Testing",
+    "description": "Security testing as per OWASP WSTG guidelines for test for process timing.\n\n▼ What to Test:\n• Review the specific functionality related to test for process timing\n• Identify potential security weaknesses in implementation\n• Test using both manual and automated approaches\n• Verify proper security controls are in place\n\n▼ How to Test:\n• Follow OWASP WSTG methodology for this test case\n• Use appropriate tools and techniques for the vulnerability type\n• Document all testing steps and observations\n• Capture evidence of any security issues found\n\n▼ Documentation Required:\n• Detailed test steps and methodology\n• Screenshots or logs showing evidence\n• Risk assessment and potential impact\n• Specific remediation recommendations"
+  },
+  {
+    "id": "WSTG-BUSL-05",
+    "title": "Test Number of Times a Function Can Be Used Limits",
+    "category": "Business Logic Testing",
+    "description": "Security testing as per OWASP WSTG guidelines for test number of times a function can be used limits.\n\n▼ What to Test:\n• Review the specific functionality related to test number of times a function can be used limits\n• Identify potential security weaknesses in implementation\n• Test using both manual and automated approaches\n• Verify proper security controls are in place\n\n▼ How to Test:\n• Follow OWASP WSTG methodology for this test case\n• Use appropriate tools and techniques for the vulnerability type\n• Document all testing steps and observations\n• Capture evidence of any security issues found\n\n▼ Documentation Required:\n• Detailed test steps and methodology\n• Screenshots or logs showing evidence\n• Risk assessment and potential impact\n• Specific remediation recommendations"
+  },
+  {
+    "id": "WSTG-BUSL-06",
+    "title": "Testing for the Circumvention of Work Flows",
+    "category": "Business Logic Testing",
+    "description": "Security testing as per OWASP WSTG guidelines for testing for the circumvention of work flows.\n\n▼ What to Test:\n• Review the specific functionality related to testing for the circumvention of work flows\n• Identify potential security weaknesses in implementation\n• Test using both manual and automated approaches\n• Verify proper security controls are in place\n\n▼ How to Test:\n• Follow OWASP WSTG methodology for this test case\n• Use appropriate tools and techniques for the vulnerability type\n• Document all testing steps and observations\n• Capture evidence of any security issues found\n\n▼ Documentation Required:\n• Detailed test steps and methodology\n• Screenshots or logs showing evidence\n• Risk assessment and potential impact\n• Specific remediation recommendations"
+  },
+  {
+    "id": "WSTG-BUSL-07",
+    "title": "Test Defenses Against Application Misuse",
+    "category": "Business Logic Testing",
+    "description": "Security testing as per OWASP WSTG guidelines for test defenses against application misuse.\n\n▼ What to Test:\n• Review the specific functionality related to test defenses against application misuse\n• Identify potential security weaknesses in implementation\n• Test using both manual and automated approaches\n• Verify proper security controls are in place\n\n▼ How to Test:\n• Follow OWASP WSTG methodology for this test case\n• Use appropriate tools and techniques for the vulnerability type\n• Document all testing steps and observations\n• Capture evidence of any security issues found\n\n▼ Documentation Required:\n• Detailed test steps and methodology\n• Screenshots or logs showing evidence\n• Risk assessment and potential impact\n• Specific remediation recommendations"
+  },
+  {
+    "id": "WSTG-BUSL-08",
+    "title": "Test Upload of Unexpected File Types",
+    "category": "Business Logic Testing",
+    "description": "Security testing as per OWASP WSTG guidelines for test upload of unexpected file types.\n\n▼ What to Test:\n• Review the specific functionality related to test upload of unexpected file types\n• Identify potential security weaknesses in implementation\n• Test using both manual and automated approaches\n• Verify proper security controls are in place\n\n▼ How to Test:\n• Follow OWASP WSTG methodology for this test case\n• Use appropriate tools and techniques for the vulnerability type\n• Document all testing steps and observations\n• Capture evidence of any security issues found\n\n▼ Documentation Required:\n• Detailed test steps and methodology\n• Screenshots or logs showing evidence\n• Risk assessment and potential impact\n• Specific remediation recommendations"
+  },
+  {
+    "id": "WSTG-BUSL-09",
+    "title": "Test Upload of Malicious Files",
+    "category": "Business Logic Testing",
+    "description": "Security testing as per OWASP WSTG guidelines for test upload of malicious files.\n\n▼ What to Test:\n• Review the specific functionality related to test upload of malicious files\n• Identify potential security weaknesses in implementation\n• Test using both manual and automated approaches\n• Verify proper security controls are in place\n\n▼ How to Test:\n• Follow OWASP WSTG methodology for this test case\n• Use appropriate tools and techniques for the vulnerability type\n• Document all testing steps and observations\n• Capture evidence of any security issues found\n\n▼ Documentation Required:\n• Detailed test steps and methodology\n• Screenshots or logs showing evidence\n• Risk assessment and potential impact\n• Specific remediation recommendations"
+  },
+  {
+    "id": "WSTG-BUSL-10",
+    "title": "Test Payment Functionality",
+    "category": "Business Logic Testing",
+    "description": "Security testing as per OWASP WSTG guidelines for test payment functionality.\n\n▼ What to Test:\n• Review the specific functionality related to test payment functionality\n• Identify potential security weaknesses in implementation\n• Test using both manual and automated approaches\n• Verify proper security controls are in place\n\n▼ How to Test:\n• Follow OWASP WSTG methodology for this test case\n• Use appropriate tools and techniques for the vulnerability type\n• Document all testing steps and observations\n• Capture evidence of any security issues found\n\n▼ Documentation Required:\n• Detailed test steps and methodology\n• Screenshots or logs showing evidence\n• Risk assessment and potential impact\n• Specific remediation recommendations"
+  },
+  {
+    "id": "WSTG-CLNT-01",
+    "title": "Testing for DOM Based Cross Site Scripting",
+    "category": "Client-Side Testing",
+    "description": "Security testing as per OWASP WSTG guidelines for testing for dom based cross site scripting.\n\n▼ What to Test:\n• Review the specific functionality related to testing for dom based cross site scripting\n• Identify potential security weaknesses in implementation\n• Test using both manual and automated approaches\n• Verify proper security controls are in place\n\n▼ How to Test:\n• Follow OWASP WSTG methodology for this test case\n• Use appropriate tools and techniques for the vulnerability type\n• Document all testing steps and observations\n• Capture evidence of any security issues found\n\n▼ Documentation Required:\n• Detailed test steps and methodology\n• Screenshots or logs showing evidence\n• Risk assessment and potential impact\n• Specific remediation recommendations"
+  },
+  {
+    "id": "WSTG-CLNT-02",
+    "title": "Testing for JavaScript Execution",
+    "category": "Client-Side Testing",
+    "description": "Security testing as per OWASP WSTG guidelines for testing for javascript execution.\n\n▼ What to Test:\n• Review the specific functionality related to testing for javascript execution\n• Identify potential security weaknesses in implementation\n• Test using both manual and automated approaches\n• Verify proper security controls are in place\n\n▼ How to Test:\n• Follow OWASP WSTG methodology for this test case\n• Use appropriate tools and techniques for the vulnerability type\n• Document all testing steps and observations\n• Capture evidence of any security issues found\n\n▼ Documentation Required:\n• Detailed test steps and methodology\n• Screenshots or logs showing evidence\n• Risk assessment and potential impact\n• Specific remediation recommendations"
+  },
+  {
+    "id": "WSTG-CLNT-03",
+    "title": "Testing for HTML Injection",
+    "category": "Client-Side Testing",
+    "description": "Security testing as per OWASP WSTG guidelines for testing for html injection.\n\n▼ What to Test:\n• Review the specific functionality related to testing for html injection\n• Identify potential security weaknesses in implementation\n• Test using both manual and automated approaches\n• Verify proper security controls are in place\n\n▼ How to Test:\n• Follow OWASP WSTG methodology for this test case\n• Use appropriate tools and techniques for the vulnerability type\n• Document all testing steps and observations\n• Capture evidence of any security issues found\n\n▼ Documentation Required:\n• Detailed test steps and methodology\n• Screenshots or logs showing evidence\n• Risk assessment and potential impact\n• Specific remediation recommendations"
+  },
+  {
+    "id": "WSTG-CLNT-04",
+    "title": "Testing for Client-Side URL Redirect",
+    "category": "Client-Side Testing",
+    "description": "Security testing as per OWASP WSTG guidelines for testing for client-side url redirect.\n\n▼ What to Test:\n• Review the specific functionality related to testing for client-side url redirect\n• Identify potential security weaknesses in implementation\n• Test using both manual and automated approaches\n• Verify proper security controls are in place\n\n▼ How to Test:\n• Follow OWASP WSTG methodology for this test case\n• Use appropriate tools and techniques for the vulnerability type\n• Document all testing steps and observations\n• Capture evidence of any security issues found\n\n▼ Documentation Required:\n• Detailed test steps and methodology\n• Screenshots or logs showing evidence\n• Risk assessment and potential impact\n• Specific remediation recommendations"
+  },
+  {
+    "id": "WSTG-CLNT-05",
+    "title": "Testing for CSS Injection",
+    "category": "Client-Side Testing",
+    "description": "Security testing as per OWASP WSTG guidelines for testing for css injection.\n\n▼ What to Test:\n• Review the specific functionality related to testing for css injection\n• Identify potential security weaknesses in implementation\n• Test using both manual and automated approaches\n• Verify proper security controls are in place\n\n▼ How to Test:\n• Follow OWASP WSTG methodology for this test case\n• Use appropriate tools and techniques for the vulnerability type\n• Document all testing steps and observations\n• Capture evidence of any security issues found\n\n▼ Documentation Required:\n• Detailed test steps and methodology\n• Screenshots or logs showing evidence\n• Risk assessment and potential impact\n• Specific remediation recommendations"
+  },
+  {
+    "id": "WSTG-CLNT-06",
+    "title": "Testing for Client-Side Resource Manipulation",
+    "category": "Client-Side Testing",
+    "description": "Security testing as per OWASP WSTG guidelines for testing for client-side resource manipulation.\n\n▼ What to Test:\n• Review the specific functionality related to testing for client-side resource manipulation\n• Identify potential security weaknesses in implementation\n• Test using both manual and automated approaches\n• Verify proper security controls are in place\n\n▼ How to Test:\n• Follow OWASP WSTG methodology for this test case\n• Use appropriate tools and techniques for the vulnerability type\n• Document all testing steps and observations\n• Capture evidence of any security issues found\n\n▼ Documentation Required:\n• Detailed test steps and methodology\n• Screenshots or logs showing evidence\n• Risk assessment and potential impact\n• Specific remediation recommendations"
+  },
+  {
+    "id": "WSTG-CLNT-07",
+    "title": "Test Cross Origin Resource Sharing",
+    "category": "Client-Side Testing",
+    "description": "Security testing as per OWASP WSTG guidelines for test cross origin resource sharing.\n\n▼ What to Test:\n• Review the specific functionality related to test cross origin resource sharing\n• Identify potential security weaknesses in implementation\n• Test using both manual and automated approaches\n• Verify proper security controls are in place\n\n▼ How to Test:\n• Follow OWASP WSTG methodology for this test case\n• Use appropriate tools and techniques for the vulnerability type\n• Document all testing steps and observations\n• Capture evidence of any security issues found\n\n▼ Documentation Required:\n• Detailed test steps and methodology\n• Screenshots or logs showing evidence\n• Risk assessment and potential impact\n• Specific remediation recommendations"
+  },
+  {
+    "id": "WSTG-CLNT-08",
+    "title": "Testing for Cross Site Flashing",
+    "category": "Client-Side Testing",
+    "description": "Security testing as per OWASP WSTG guidelines for testing for cross site flashing.\n\n▼ What to Test:\n• Review the specific functionality related to testing for cross site flashing\n• Identify potential security weaknesses in implementation\n• Test using both manual and automated approaches\n• Verify proper security controls are in place\n\n▼ How to Test:\n• Follow OWASP WSTG methodology for this test case\n• Use appropriate tools and techniques for the vulnerability type\n• Document all testing steps and observations\n• Capture evidence of any security issues found\n\n▼ Documentation Required:\n• Detailed test steps and methodology\n• Screenshots or logs showing evidence\n• Risk assessment and potential impact\n• Specific remediation recommendations"
+  },
+  {
+    "id": "WSTG-CLNT-09",
+    "title": "Testing for Clickjacking",
+    "category": "Client-Side Testing",
+    "description": "Security testing as per OWASP WSTG guidelines for testing for clickjacking.\n\n▼ What to Test:\n• Review the specific functionality related to testing for clickjacking\n• Identify potential security weaknesses in implementation\n• Test using both manual and automated approaches\n• Verify proper security controls are in place\n\n▼ How to Test:\n• Follow OWASP WSTG methodology for this test case\n• Use appropriate tools and techniques for the vulnerability type\n• Document all testing steps and observations\n• Capture evidence of any security issues found\n\n▼ Documentation Required:\n• Detailed test steps and methodology\n• Screenshots or logs showing evidence\n• Risk assessment and potential impact\n• Specific remediation recommendations"
+  },
+  {
+    "id": "WSTG-CLNT-10",
+    "title": "Testing WebSockets",
+    "category": "Client-Side Testing",
+    "description": "Security testing as per OWASP WSTG guidelines for testing websockets.\n\n▼ What to Test:\n• Review the specific functionality related to testing websockets\n• Identify potential security weaknesses in implementation\n• Test using both manual and automated approaches\n• Verify proper security controls are in place\n\n▼ How to Test:\n• Follow OWASP WSTG methodology for this test case\n• Use appropriate tools and techniques for the vulnerability type\n• Document all testing steps and observations\n• Capture evidence of any security issues found\n\n▼ Documentation Required:\n• Detailed test steps and methodology\n• Screenshots or logs showing evidence\n• Risk assessment and potential impact\n• Specific remediation recommendations"
+  },
+  {
+    "id": "WSTG-CLNT-11",
+    "title": "Test Web Messaging",
+    "category": "Client-Side Testing",
+    "description": "Security testing as per OWASP WSTG guidelines for test web messaging.\n\n▼ What to Test:\n• Review the specific functionality related to test web messaging\n• Identify potential security weaknesses in implementation\n• Test using both manual and automated approaches\n• Verify proper security controls are in place\n\n▼ How to Test:\n• Follow OWASP WSTG methodology for this test case\n• Use appropriate tools and techniques for the vulnerability type\n• Document all testing steps and observations\n• Capture evidence of any security issues found\n\n▼ Documentation Required:\n• Detailed test steps and methodology\n• Screenshots or logs showing evidence\n• Risk assessment and potential impact\n• Specific remediation recommendations"
+  },
+  {
+    "id": "WSTG-CLNT-12",
+    "title": "Test Browser Storage",
+    "category": "Client-Side Testing",
+    "description": "Security testing as per OWASP WSTG guidelines for test browser storage.\n\n▼ What to Test:\n• Review the specific functionality related to test browser storage\n• Identify potential security weaknesses in implementation\n• Test using both manual and automated approaches\n• Verify proper security controls are in place\n\n▼ How to Test:\n• Follow OWASP WSTG methodology for this test case\n• Use appropriate tools and techniques for the vulnerability type\n• Document all testing steps and observations\n• Capture evidence of any security issues found\n\n▼ Documentation Required:\n• Detailed test steps and methodology\n• Screenshots or logs showing evidence\n• Risk assessment and potential impact\n• Specific remediation recommendations"
+  },
+  {
+    "id": "WSTG-CLNT-13",
+    "title": "Testing for Cross Site Script Inclusion",
+    "category": "Client-Side Testing",
+    "description": "Security testing as per OWASP WSTG guidelines for testing for cross site script inclusion.\n\n▼ What to Test:\n• Review the specific functionality related to testing for cross site script inclusion\n• Identify potential security weaknesses in implementation\n• Test using both manual and automated approaches\n• Verify proper security controls are in place\n\n▼ How to Test:\n• Follow OWASP WSTG methodology for this test case\n• Use appropriate tools and techniques for the vulnerability type\n• Document all testing steps and observations\n• Capture evidence of any security issues found\n\n▼ Documentation Required:\n• Detailed test steps and methodology\n• Screenshots or logs showing evidence\n• Risk assessment and potential impact\n• Specific remediation recommendations"
+  },
+  {
+    "id": "WSTG-CLNT-14",
+    "title": "Testing for Reverse Tabnabbing",
+    "category": "Client-Side Testing",
+    "description": "Security testing as per OWASP WSTG guidelines for testing for reverse tabnabbing.\n\n▼ What to Test:\n• Review the specific functionality related to testing for reverse tabnabbing\n• Identify potential security weaknesses in implementation\n• Test using both manual and automated approaches\n• Verify proper security controls are in place\n\n▼ How to Test:\n• Follow OWASP WSTG methodology for this test case\n• Use appropriate tools and techniques for the vulnerability type\n• Document all testing steps and observations\n• Capture evidence of any security issues found\n\n▼ Documentation Required:\n• Detailed test steps and methodology\n• Screenshots or logs showing evidence\n• Risk assessment and potential impact\n• Specific remediation recommendations"
+  },
+  {
+    "id": "WSTG-CONF-01",
+    "title": "Test Network Infrastructure Configuration",
+    "category": "Configuration and Deployment Management Testing",
+    "description": "Security testing as per OWASP WSTG guidelines for test network infrastructure configuration.\n\n▼ What to Test:\n• Review the specific functionality related to test network infrastructure configuration\n• Identify potential security weaknesses in implementation\n• Test using both manual and automated approaches\n• Verify proper security controls are in place\n\n▼ How to Test:\n• Follow OWASP WSTG methodology for this test case\n• Use appropriate tools and techniques for the vulnerability type\n• Document all testing steps and observations\n• Capture evidence of any security issues found\n\n▼ Documentation Required:\n• Detailed test steps and methodology\n• Screenshots or logs showing evidence\n• Risk assessment and potential impact\n• Specific remediation recommendations"
+  },
+  {
+    "id": "WSTG-CONF-02",
+    "title": "Test Application Platform Configuration",
+    "category": "Configuration and Deployment Management Testing",
+    "description": "Security testing as per OWASP WSTG guidelines for test application platform configuration.\n\n▼ What to Test:\n• Review the specific functionality related to test application platform configuration\n• Identify potential security weaknesses in implementation\n• Test using both manual and automated approaches\n• Verify proper security controls are in place\n\n▼ How to Test:\n• Follow OWASP WSTG methodology for this test case\n• Use appropriate tools and techniques for the vulnerability type\n• Document all testing steps and observations\n• Capture evidence of any security issues found\n\n▼ Documentation Required:\n• Detailed test steps and methodology\n• Screenshots or logs showing evidence\n• Risk assessment and potential impact\n• Specific remediation recommendations"
+  },
+  {
+    "id": "WSTG-CONF-03",
+    "title": "Test File Extensions Handling for Sensitive Information",
+    "category": "Configuration and Deployment Management Testing",
+    "description": "Security testing as per OWASP WSTG guidelines for test file extensions handling for sensitive information.\n\n▼ What to Test:\n• Review the specific functionality related to test file extensions handling for sensitive information\n• Identify potential security weaknesses in implementation\n• Test using both manual and automated approaches\n• Verify proper security controls are in place\n\n▼ How to Test:\n• Follow OWASP WSTG methodology for this test case\n• Use appropriate tools and techniques for the vulnerability type\n• Document all testing steps and observations\n• Capture evidence of any security issues found\n\n▼ Documentation Required:\n• Detailed test steps and methodology\n• Screenshots or logs showing evidence\n• Risk assessment and potential impact\n• Specific remediation recommendations"
+  },
+  {
+    "id": "WSTG-CONF-04",
+    "title": "Review Old Backup and Unreferenced Files for Sensitive Information",
+    "category": "Configuration and Deployment Management Testing",
+    "description": "Security testing as per OWASP WSTG guidelines for review old backup and unreferenced files for sensitive information.\n\n▼ What to Test:\n• Review the specific functionality related to review old backup and unreferenced files for sensitive information\n• Identify potential security weaknesses in implementation\n• Test using both manual and automated approaches\n• Verify proper security controls are in place\n\n▼ How to Test:\n• Follow OWASP WSTG methodology for this test case\n• Use appropriate tools and techniques for the vulnerability type\n• Document all testing steps and observations\n• Capture evidence of any security issues found\n\n▼ Documentation Required:\n• Detailed test steps and methodology\n• Screenshots or logs showing evidence\n• Risk assessment and potential impact\n• Specific remediation recommendations"
+  },
+  {
+    "id": "WSTG-CONF-05",
+    "title": "Enumerate Infrastructure and Application Admin Interfaces",
+    "category": "Configuration and Deployment Management Testing",
+    "description": "Security testing as per OWASP WSTG guidelines for enumerate infrastructure and application admin interfaces.\n\n▼ What to Test:\n• Review the specific functionality related to enumerate infrastructure and application admin interfaces\n• Identify potential security weaknesses in implementation\n• Test using both manual and automated approaches\n• Verify proper security controls are in place\n\n▼ How to Test:\n• Follow OWASP WSTG methodology for this test case\n• Use appropriate tools and techniques for the vulnerability type\n• Document all testing steps and observations\n• Capture evidence of any security issues found\n\n▼ Documentation Required:\n• Detailed test steps and methodology\n• Screenshots or logs showing evidence\n• Risk assessment and potential impact\n• Specific remediation recommendations"
+  },
+  {
+    "id": "WSTG-CONF-06",
+    "title": "Test HTTP Methods",
+    "category": "Configuration and Deployment Management Testing",
+    "description": "Security testing as per OWASP WSTG guidelines for test http methods.\n\n▼ What to Test:\n• Review the specific functionality related to test http methods\n• Identify potential security weaknesses in implementation\n• Test using both manual and automated approaches\n• Verify proper security controls are in place\n\n▼ How to Test:\n• Follow OWASP WSTG methodology for this test case\n• Use appropriate tools and techniques for the vulnerability type\n• Document all testing steps and observations\n• Capture evidence of any security issues found\n\n▼ Documentation Required:\n• Detailed test steps and methodology\n• Screenshots or logs showing evidence\n• Risk assessment and potential impact\n• Specific remediation recommendations"
+  },
+  {
+    "id": "WSTG-CONF-07",
+    "title": "Test HTTP Strict Transport Security",
+    "category": "Configuration and Deployment Management Testing",
+    "description": "Security testing as per OWASP WSTG guidelines for test http strict transport security.\n\n▼ What to Test:\n• Review the specific functionality related to test http strict transport security\n• Identify potential security weaknesses in implementation\n• Test using both manual and automated approaches\n• Verify proper security controls are in place\n\n▼ How to Test:\n• Follow OWASP WSTG methodology for this test case\n• Use appropriate tools and techniques for the vulnerability type\n• Document all testing steps and observations\n• Capture evidence of any security issues found\n\n▼ Documentation Required:\n• Detailed test steps and methodology\n• Screenshots or logs showing evidence\n• Risk assessment and potential impact\n• Specific remediation recommendations"
+  },
+  {
+    "id": "WSTG-CONF-08",
+    "title": "Test RIA Cross Domain Policy",
+    "category": "Configuration and Deployment Management Testing",
+    "description": "Security testing as per OWASP WSTG guidelines for test ria cross domain policy.\n\n▼ What to Test:\n• Review the specific functionality related to test ria cross domain policy\n• Identify potential security weaknesses in implementation\n• Test using both manual and automated approaches\n• Verify proper security controls are in place\n\n▼ How to Test:\n• Follow OWASP WSTG methodology for this test case\n• Use appropriate tools and techniques for the vulnerability type\n• Document all testing steps and observations\n• Capture evidence of any security issues found\n\n▼ Documentation Required:\n• Detailed test steps and methodology\n• Screenshots or logs showing evidence\n• Risk assessment and potential impact\n• Specific remediation recommendations"
+  },
+  {
+    "id": "WSTG-CONF-09",
+    "title": "Test File Permission",
+    "category": "Configuration and Deployment Management Testing",
+    "description": "Security testing as per OWASP WSTG guidelines for test file permission.\n\n▼ What to Test:\n• Review the specific functionality related to test file permission\n• Identify potential security weaknesses in implementation\n• Test using both manual and automated approaches\n• Verify proper security controls are in place\n\n▼ How to Test:\n• Follow OWASP WSTG methodology for this test case\n• Use appropriate tools and techniques for the vulnerability type\n• Document all testing steps and observations\n• Capture evidence of any security issues found\n\n▼ Documentation Required:\n• Detailed test steps and methodology\n• Screenshots or logs showing evidence\n• Risk assessment and potential impact\n• Specific remediation recommendations"
+  },
+  {
+    "id": "WSTG-CONF-10",
+    "title": "Test for Subdomain Takeover",
+    "category": "Configuration and Deployment Management Testing",
+    "description": "Security testing as per OWASP WSTG guidelines for test for subdomain takeover.\n\n▼ What to Test:\n• Review the specific functionality related to test for subdomain takeover\n• Identify potential security weaknesses in implementation\n• Test using both manual and automated approaches\n• Verify proper security controls are in place\n\n▼ How to Test:\n• Follow OWASP WSTG methodology for this test case\n• Use appropriate tools and techniques for the vulnerability type\n• Document all testing steps and observations\n• Capture evidence of any security issues found\n\n▼ Documentation Required:\n• Detailed test steps and methodology\n• Screenshots or logs showing evidence\n• Risk assessment and potential impact\n• Specific remediation recommendations"
+  },
+  {
+    "id": "WSTG-CONF-11",
+    "title": "Test Cloud Storage",
+    "category": "Configuration and Deployment Management Testing",
+    "description": "Security testing as per OWASP WSTG guidelines for test cloud storage.\n\n▼ What to Test:\n• Review the specific functionality related to test cloud storage\n• Identify potential security weaknesses in implementation\n• Test using both manual and automated approaches\n• Verify proper security controls are in place\n\n▼ How to Test:\n• Follow OWASP WSTG methodology for this test case\n• Use appropriate tools and techniques for the vulnerability type\n• Document all testing steps and observations\n• Capture evidence of any security issues found\n\n▼ Documentation Required:\n• Detailed test steps and methodology\n• Screenshots or logs showing evidence\n• Risk assessment and potential impact\n• Specific remediation recommendations"
+  },
+  {
+    "id": "WSTG-CONF-12",
+    "title": "Testing for Content Security Policy",
+    "category": "Configuration and Deployment Management Testing",
+    "description": "Security testing as per OWASP WSTG guidelines for testing for content security policy.\n\n▼ What to Test:\n• Review the specific functionality related to testing for content security policy\n• Identify potential security weaknesses in implementation\n• Test using both manual and automated approaches\n• Verify proper security controls are in place\n\n▼ How to Test:\n• Follow OWASP WSTG methodology for this test case\n• Use appropriate tools and techniques for the vulnerability type\n• Document all testing steps and observations\n• Capture evidence of any security issues found\n\n▼ Documentation Required:\n• Detailed test steps and methodology\n• Screenshots or logs showing evidence\n• Risk assessment and potential impact\n• Specific remediation recommendations"
+  },
+  {
+    "id": "WSTG-CONF-13",
+    "title": "Test Path Confusion",
+    "category": "Configuration and Deployment Management Testing",
+    "description": "Security testing as per OWASP WSTG guidelines for test path confusion.\n\n▼ What to Test:\n• Review the specific functionality related to test path confusion\n• Identify potential security weaknesses in implementation\n• Test using both manual and automated approaches\n• Verify proper security controls are in place\n\n▼ How to Test:\n• Follow OWASP WSTG methodology for this test case\n• Use appropriate tools and techniques for the vulnerability type\n• Document all testing steps and observations\n• Capture evidence of any security issues found\n\n▼ Documentation Required:\n• Detailed test steps and methodology\n• Screenshots or logs showing evidence\n• Risk assessment and potential impact\n• Specific remediation recommendations"
+  },
+  {
+    "id": "WSTG-CONF-14",
+    "title": "Test Other HTTP Security Header Misconfigurations",
+    "category": "Configuration and Deployment Management Testing",
+    "description": "Security testing as per OWASP WSTG guidelines for test other http security header misconfigurations.\n\n▼ What to Test:\n• Review the specific functionality related to test other http security header misconfigurations\n• Identify potential security weaknesses in implementation\n• Test using both manual and automated approaches\n• Verify proper security controls are in place\n\n▼ How to Test:\n• Follow OWASP WSTG methodology for this test case\n• Use appropriate tools and techniques for the vulnerability type\n• Document all testing steps and observations\n• Capture evidence of any security issues found\n\n▼ Documentation Required:\n• Detailed test steps and methodology\n• Screenshots or logs showing evidence\n• Risk assessment and potential impact\n• Specific remediation recommendations"
+  },
+  {
+    "id": "WSTG-CRYP-01",
+    "title": "Testing for Weak Transport Layer Security",
+    "category": "Cryptography",
+    "description": "Security testing as per OWASP WSTG guidelines for testing for weak transport layer security.\n\n▼ What to Test:\n• Review the specific functionality related to testing for weak transport layer security\n• Identify potential security weaknesses in implementation\n• Test using both manual and automated approaches\n• Verify proper security controls are in place\n\n▼ How to Test:\n• Follow OWASP WSTG methodology for this test case\n• Use appropriate tools and techniques for the vulnerability type\n• Document all testing steps and observations\n• Capture evidence of any security issues found\n\n▼ Documentation Required:\n• Detailed test steps and methodology\n• Screenshots or logs showing evidence\n• Risk assessment and potential impact\n• Specific remediation recommendations"
+  },
+  {
+    "id": "WSTG-CRYP-02",
+    "title": "Testing for Padding Oracle",
+    "category": "Cryptography",
+    "description": "Security testing as per OWASP WSTG guidelines for testing for padding oracle.\n\n▼ What to Test:\n• Review the specific functionality related to testing for padding oracle\n• Identify potential security weaknesses in implementation\n• Test using both manual and automated approaches\n• Verify proper security controls are in place\n\n▼ How to Test:\n• Follow OWASP WSTG methodology for this test case\n• Use appropriate tools and techniques for the vulnerability type\n• Document all testing steps and observations\n• Capture evidence of any security issues found\n\n▼ Documentation Required:\n• Detailed test steps and methodology\n• Screenshots or logs showing evidence\n• Risk assessment and potential impact\n• Specific remediation recommendations"
+  },
+  {
+    "id": "WSTG-CRYP-03",
+    "title": "Testing for Sensitive Information Sent Via Unencrypted Channels",
+    "category": "Cryptography",
+    "description": "Security testing as per OWASP WSTG guidelines for testing for sensitive information sent via unencrypted channels.\n\n▼ What to Test:\n• Review the specific functionality related to testing for sensitive information sent via unencrypted channels\n• Identify potential security weaknesses in implementation\n• Test using both manual and automated approaches\n• Verify proper security controls are in place\n\n▼ How to Test:\n• Follow OWASP WSTG methodology for this test case\n• Use appropriate tools and techniques for the vulnerability type\n• Document all testing steps and observations\n• Capture evidence of any security issues found\n\n▼ Documentation Required:\n• Detailed test steps and methodology\n• Screenshots or logs showing evidence\n• Risk assessment and potential impact\n• Specific remediation recommendations"
+  },
+  {
+    "id": "WSTG-CRYP-04",
+    "title": "Testing for Weak Encryption",
+    "category": "Cryptography",
+    "description": "Security testing as per OWASP WSTG guidelines for testing for weak encryption.\n\n▼ What to Test:\n• Review the specific functionality related to testing for weak encryption\n• Identify potential security weaknesses in implementation\n• Test using both manual and automated approaches\n• Verify proper security controls are in place\n\n▼ How to Test:\n• Follow OWASP WSTG methodology for this test case\n• Use appropriate tools and techniques for the vulnerability type\n• Document all testing steps and observations\n• Capture evidence of any security issues found\n\n▼ Documentation Required:\n• Detailed test steps and methodology\n• Screenshots or logs showing evidence\n• Risk assessment and potential impact\n• Specific remediation recommendations"
+  },
+  {
+    "id": "WSTG-ERRH-01",
+    "title": "Testing for Improper Error Handling",
+    "category": "Error Handling",
+    "description": "Security testing as per OWASP WSTG guidelines for testing for improper error handling.\n\n▼ What to Test:\n• Review the specific functionality related to testing for improper error handling\n• Identify potential security weaknesses in implementation\n• Test using both manual and automated approaches\n• Verify proper security controls are in place\n\n▼ How to Test:\n• Follow OWASP WSTG methodology for this test case\n• Use appropriate tools and techniques for the vulnerability type\n• Document all testing steps and observations\n• Capture evidence of any security issues found\n\n▼ Documentation Required:\n• Detailed test steps and methodology\n• Screenshots or logs showing evidence\n• Risk assessment and potential impact\n• Specific remediation recommendations"
+  },
+  {
+    "id": "WSTG-ERRH-02",
+    "title": "Testing for Stack Traces",
+    "category": "Error Handling",
+    "description": "Security testing as per OWASP WSTG guidelines for testing for stack traces.\n\n▼ What to Test:\n• Review the specific functionality related to testing for stack traces\n• Identify potential security weaknesses in implementation\n• Test using both manual and automated approaches\n• Verify proper security controls are in place\n\n▼ How to Test:\n• Follow OWASP WSTG methodology for this test case\n• Use appropriate tools and techniques for the vulnerability type\n• Document all testing steps and observations\n• Capture evidence of any security issues found\n\n▼ Documentation Required:\n• Detailed test steps and methodology\n• Screenshots or logs showing evidence\n• Risk assessment and potential impact\n• Specific remediation recommendations"
+  },
+  {
+    "id": "WSTG-IDNT-01",
+    "title": "Test Role Definitions",
+    "category": "Identity Management Testing",
+    "description": "Security testing as per OWASP WSTG guidelines for test role definitions.\n\n▼ What to Test:\n• Review the specific functionality related to test role definitions\n• Identify potential security weaknesses in implementation\n• Test using both manual and automated approaches\n• Verify proper security controls are in place\n\n▼ How to Test:\n• Follow OWASP WSTG methodology for this test case\n• Use appropriate tools and techniques for the vulnerability type\n• Document all testing steps and observations\n• Capture evidence of any security issues found\n\n▼ Documentation Required:\n• Detailed test steps and methodology\n• Screenshots or logs showing evidence\n• Risk assessment and potential impact\n• Specific remediation recommendations"
+  },
+  {
+    "id": "WSTG-IDNT-02",
+    "title": "Test User Registration Process",
+    "category": "Identity Management Testing",
+    "description": "Security testing as per OWASP WSTG guidelines for test user registration process.\n\n▼ What to Test:\n• Review the specific functionality related to test user registration process\n• Identify potential security weaknesses in implementation\n• Test using both manual and automated approaches\n• Verify proper security controls are in place\n\n▼ How to Test:\n• Follow OWASP WSTG methodology for this test case\n• Use appropriate tools and techniques for the vulnerability type\n• Document all testing steps and observations\n• Capture evidence of any security issues found\n\n▼ Documentation Required:\n• Detailed test steps and methodology\n• Screenshots or logs showing evidence\n• Risk assessment and potential impact\n• Specific remediation recommendations"
+  },
+  {
+    "id": "WSTG-IDNT-03",
+    "title": "Test Account Provisioning Process",
+    "category": "Identity Management Testing",
+    "description": "Security testing as per OWASP WSTG guidelines for test account provisioning process.\n\n▼ What to Test:\n• Review the specific functionality related to test account provisioning process\n• Identify potential security weaknesses in implementation\n• Test using both manual and automated approaches\n• Verify proper security controls are in place\n\n▼ How to Test:\n• Follow OWASP WSTG methodology for this test case\n• Use appropriate tools and techniques for the vulnerability type\n• Document all testing steps and observations\n• Capture evidence of any security issues found\n\n▼ Documentation Required:\n• Detailed test steps and methodology\n• Screenshots or logs showing evidence\n• Risk assessment and potential impact\n• Specific remediation recommendations"
+  },
+  {
+    "id": "WSTG-IDNT-04",
+    "title": "Testing for Account Enumeration and Guessable User Account",
+    "category": "Identity Management Testing",
+    "description": "Security testing as per OWASP WSTG guidelines for testing for account enumeration and guessable user account.\n\n▼ What to Test:\n• Review the specific functionality related to testing for account enumeration and guessable user account\n• Identify potential security weaknesses in implementation\n• Test using both manual and automated approaches\n• Verify proper security controls are in place\n\n▼ How to Test:\n• Follow OWASP WSTG methodology for this test case\n• Use appropriate tools and techniques for the vulnerability type\n• Document all testing steps and observations\n• Capture evidence of any security issues found\n\n▼ Documentation Required:\n• Detailed test steps and methodology\n• Screenshots or logs showing evidence\n• Risk assessment and potential impact\n• Specific remediation recommendations"
+  },
+  {
+    "id": "WSTG-IDNT-05",
+    "title": "Testing for Weak or Unenforced Username Policy",
+    "category": "Identity Management Testing",
+    "description": "Security testing as per OWASP WSTG guidelines for testing for weak or unenforced username policy.\n\n▼ What to Test:\n• Review the specific functionality related to testing for weak or unenforced username policy\n• Identify potential security weaknesses in implementation\n• Test using both manual and automated approaches\n• Verify proper security controls are in place\n\n▼ How to Test:\n• Follow OWASP WSTG methodology for this test case\n• Use appropriate tools and techniques for the vulnerability type\n• Document all testing steps and observations\n• Capture evidence of any security issues found\n\n▼ Documentation Required:\n• Detailed test steps and methodology\n• Screenshots or logs showing evidence\n• Risk assessment and potential impact\n• Specific remediation recommendations"
+  },
+  {
+    "id": "WSTG-INFO-01",
+    "title": "Conduct Search Engine Discovery and Reconnaissance for Information Leakage",
+    "category": "Information Gathering",
+    "description": "Security testing as per OWASP WSTG guidelines for conduct search engine discovery and reconnaissance for information leakage.\n\n▼ What to Test:\n• Review the specific functionality related to conduct search engine discovery and reconnaissance for information leakage\n• Identify potential security weaknesses in implementation\n• Test using both manual and automated approaches\n• Verify proper security controls are in place\n\n▼ How to Test:\n• Follow OWASP WSTG methodology for this test case\n• Use appropriate tools and techniques for the vulnerability type\n• Document all testing steps and observations\n• Capture evidence of any security issues found\n\n▼ Documentation Required:\n• Detailed test steps and methodology\n• Screenshots or logs showing evidence\n• Risk assessment and potential impact\n• Specific remediation recommendations"
+  },
+  {
+    "id": "WSTG-INFO-02",
+    "title": "Fingerprint Web Server",
+    "category": "Information Gathering",
+    "description": "Security testing as per OWASP WSTG guidelines for fingerprint web server.\n\n▼ What to Test:\n• Review the specific functionality related to fingerprint web server\n• Identify potential security weaknesses in implementation\n• Test using both manual and automated approaches\n• Verify proper security controls are in place\n\n▼ How to Test:\n• Follow OWASP WSTG methodology for this test case\n• Use appropriate tools and techniques for the vulnerability type\n• Document all testing steps and observations\n• Capture evidence of any security issues found\n\n▼ Documentation Required:\n• Detailed test steps and methodology\n• Screenshots or logs showing evidence\n• Risk assessment and potential impact\n• Specific remediation recommendations"
+  },
+  {
+    "id": "WSTG-INFO-03",
+    "title": "Review Webserver Metafiles for Information Leakage",
+    "category": "Information Gathering",
+    "description": "Security testing as per OWASP WSTG guidelines for review webserver metafiles for information leakage.\n\n▼ What to Test:\n• Review the specific functionality related to review webserver metafiles for information leakage\n• Identify potential security weaknesses in implementation\n• Test using both manual and automated approaches\n• Verify proper security controls are in place\n\n▼ How to Test:\n• Follow OWASP WSTG methodology for this test case\n• Use appropriate tools and techniques for the vulnerability type\n• Document all testing steps and observations\n• Capture evidence of any security issues found\n\n▼ Documentation Required:\n• Detailed test steps and methodology\n• Screenshots or logs showing evidence\n• Risk assessment and potential impact\n• Specific remediation recommendations"
+  },
+  {
+    "id": "WSTG-INFO-04",
+    "title": "Enumerate Applications on Webserver",
+    "category": "Information Gathering",
+    "description": "Security testing as per OWASP WSTG guidelines for enumerate applications on webserver.\n\n▼ What to Test:\n• Review the specific functionality related to enumerate applications on webserver\n• Identify potential security weaknesses in implementation\n• Test using both manual and automated approaches\n• Verify proper security controls are in place\n\n▼ How to Test:\n• Follow OWASP WSTG methodology for this test case\n• Use appropriate tools and techniques for the vulnerability type\n• Document all testing steps and observations\n• Capture evidence of any security issues found\n\n▼ Documentation Required:\n• Detailed test steps and methodology\n• Screenshots or logs showing evidence\n• Risk assessment and potential impact\n• Specific remediation recommendations"
+  },
+  {
+    "id": "WSTG-INFO-05",
+    "title": "Review Webpage Content for Information Leakage",
+    "category": "Information Gathering",
+    "description": "Security testing as per OWASP WSTG guidelines for review webpage content for information leakage.\n\n▼ What to Test:\n• Review the specific functionality related to review webpage content for information leakage\n• Identify potential security weaknesses in implementation\n• Test using both manual and automated approaches\n• Verify proper security controls are in place\n\n▼ How to Test:\n• Follow OWASP WSTG methodology for this test case\n• Use appropriate tools and techniques for the vulnerability type\n• Document all testing steps and observations\n• Capture evidence of any security issues found\n\n▼ Documentation Required:\n• Detailed test steps and methodology\n• Screenshots or logs showing evidence\n• Risk assessment and potential impact\n• Specific remediation recommendations"
+  },
+  {
+    "id": "WSTG-INFO-06",
+    "title": "Identify Application Entry Points",
+    "category": "Information Gathering",
+    "description": "Security testing as per OWASP WSTG guidelines for identify application entry points.\n\n▼ What to Test:\n• Review the specific functionality related to identify application entry points\n• Identify potential security weaknesses in implementation\n• Test using both manual and automated approaches\n• Verify proper security controls are in place\n\n▼ How to Test:\n• Follow OWASP WSTG methodology for this test case\n• Use appropriate tools and techniques for the vulnerability type\n• Document all testing steps and observations\n• Capture evidence of any security issues found\n\n▼ Documentation Required:\n• Detailed test steps and methodology\n• Screenshots or logs showing evidence\n• Risk assessment and potential impact\n• Specific remediation recommendations"
+  },
+  {
+    "id": "WSTG-INFO-07",
+    "title": "Map Execution Paths Through Application",
+    "category": "Information Gathering",
+    "description": "Security testing as per OWASP WSTG guidelines for map execution paths through application.\n\n▼ What to Test:\n• Review the specific functionality related to map execution paths through application\n• Identify potential security weaknesses in implementation\n• Test using both manual and automated approaches\n• Verify proper security controls are in place\n\n▼ How to Test:\n• Follow OWASP WSTG methodology for this test case\n• Use appropriate tools and techniques for the vulnerability type\n• Document all testing steps and observations\n• Capture evidence of any security issues found\n\n▼ Documentation Required:\n• Detailed test steps and methodology\n• Screenshots or logs showing evidence\n• Risk assessment and potential impact\n• Specific remediation recommendations"
+  },
+  {
+    "id": "WSTG-INFO-08",
+    "title": "Fingerprint Web Application Framework",
+    "category": "Information Gathering",
+    "description": "Security testing as per OWASP WSTG guidelines for fingerprint web application framework.\n\n▼ What to Test:\n• Review the specific functionality related to fingerprint web application framework\n• Identify potential security weaknesses in implementation\n• Test using both manual and automated approaches\n• Verify proper security controls are in place\n\n▼ How to Test:\n• Follow OWASP WSTG methodology for this test case\n• Use appropriate tools and techniques for the vulnerability type\n• Document all testing steps and observations\n• Capture evidence of any security issues found\n\n▼ Documentation Required:\n• Detailed test steps and methodology\n• Screenshots or logs showing evidence\n• Risk assessment and potential impact\n• Specific remediation recommendations"
+  },
+  {
+    "id": "WSTG-INFO-09",
+    "title": "Fingerprint Web Application",
+    "category": "Information Gathering",
+    "description": "Security testing as per OWASP WSTG guidelines for fingerprint web application.\n\n▼ What to Test:\n• Review the specific functionality related to fingerprint web application\n• Identify potential security weaknesses in implementation\n• Test using both manual and automated approaches\n• Verify proper security controls are in place\n\n▼ How to Test:\n• Follow OWASP WSTG methodology for this test case\n• Use appropriate tools and techniques for the vulnerability type\n• Document all testing steps and observations\n• Capture evidence of any security issues found\n\n▼ Documentation Required:\n• Detailed test steps and methodology\n• Screenshots or logs showing evidence\n• Risk assessment and potential impact\n• Specific remediation recommendations"
+  },
+  {
+    "id": "WSTG-INFO-10",
+    "title": "Map Application Architecture",
+    "category": "Information Gathering",
+    "description": "Security testing as per OWASP WSTG guidelines for map application architecture.\n\n▼ What to Test:\n• Review the specific functionality related to map application architecture\n• Identify potential security weaknesses in implementation\n• Test using both manual and automated approaches\n• Verify proper security controls are in place\n\n▼ How to Test:\n• Follow OWASP WSTG methodology for this test case\n• Use appropriate tools and techniques for the vulnerability type\n• Document all testing steps and observations\n• Capture evidence of any security issues found\n\n▼ Documentation Required:\n• Detailed test steps and methodology\n• Screenshots or logs showing evidence\n• Risk assessment and potential impact\n• Specific remediation recommendations"
+  },
+  {
+    "id": "WSTG-INPV-01",
+    "title": "Testing for Reflected Cross Site Scripting",
+    "category": "Input Validation Testing",
+    "description": "Security testing as per OWASP WSTG guidelines for testing for reflected cross site scripting.\n\n▼ What to Test:\n• Review the specific functionality related to testing for reflected cross site scripting\n• Identify potential security weaknesses in implementation\n• Test using both manual and automated approaches\n• Verify proper security controls are in place\n\n▼ How to Test:\n• Follow OWASP WSTG methodology for this test case\n• Use appropriate tools and techniques for the vulnerability type\n• Document all testing steps and observations\n• Capture evidence of any security issues found\n\n▼ Documentation Required:\n• Detailed test steps and methodology\n• Screenshots or logs showing evidence\n• Risk assessment and potential impact\n• Specific remediation recommendations"
+  },
+  {
+    "id": "WSTG-INPV-02",
+    "title": "Testing for Stored Cross Site Scripting",
+    "category": "Input Validation Testing",
+    "description": "Security testing as per OWASP WSTG guidelines for testing for stored cross site scripting.\n\n▼ What to Test:\n• Review the specific functionality related to testing for stored cross site scripting\n• Identify potential security weaknesses in implementation\n• Test using both manual and automated approaches\n• Verify proper security controls are in place\n\n▼ How to Test:\n• Follow OWASP WSTG methodology for this test case\n• Use appropriate tools and techniques for the vulnerability type\n• Document all testing steps and observations\n• Capture evidence of any security issues found\n\n▼ Documentation Required:\n• Detailed test steps and methodology\n• Screenshots or logs showing evidence\n• Risk assessment and potential impact\n• Specific remediation recommendations"
+  },
+  {
+    "id": "WSTG-INPV-03",
+    "title": "Testing for HTTP Verb Tampering",
+    "category": "Input Validation Testing",
+    "description": "Security testing as per OWASP WSTG guidelines for testing for http verb tampering.\n\n▼ What to Test:\n• Review the specific functionality related to testing for http verb tampering\n• Identify potential security weaknesses in implementation\n• Test using both manual and automated approaches\n• Verify proper security controls are in place\n\n▼ How to Test:\n• Follow OWASP WSTG methodology for this test case\n• Use appropriate tools and techniques for the vulnerability type\n• Document all testing steps and observations\n• Capture evidence of any security issues found\n\n▼ Documentation Required:\n• Detailed test steps and methodology\n• Screenshots or logs showing evidence\n• Risk assessment and potential impact\n• Specific remediation recommendations"
+  },
+  {
+    "id": "WSTG-INPV-04",
+    "title": "Testing for HTTP Parameter pollution",
+    "category": "Input Validation Testing",
+    "description": "Security testing as per OWASP WSTG guidelines for testing for http parameter pollution.\n\n▼ What to Test:\n• Review the specific functionality related to testing for http parameter pollution\n• Identify potential security weaknesses in implementation\n• Test using both manual and automated approaches\n• Verify proper security controls are in place\n\n▼ How to Test:\n• Follow OWASP WSTG methodology for this test case\n• Use appropriate tools and techniques for the vulnerability type\n• Document all testing steps and observations\n• Capture evidence of any security issues found\n\n▼ Documentation Required:\n• Detailed test steps and methodology\n• Screenshots or logs showing evidence\n• Risk assessment and potential impact\n• Specific remediation recommendations"
+  },
+  {
+    "id": "WSTG-INPV-05",
+    "title": "Testing for SQL Injection",
+    "category": "Input Validation Testing",
+    "description": "Security testing as per OWASP WSTG guidelines for testing for sql injection.\n\n▼ What to Test:\n• Review the specific functionality related to testing for sql injection\n• Identify potential security weaknesses in implementation\n• Test using both manual and automated approaches\n• Verify proper security controls are in place\n\n▼ How to Test:\n• Follow OWASP WSTG methodology for this test case\n• Use appropriate tools and techniques for the vulnerability type\n• Document all testing steps and observations\n• Capture evidence of any security issues found\n\n▼ Documentation Required:\n• Detailed test steps and methodology\n• Screenshots or logs showing evidence\n• Risk assessment and potential impact\n• Specific remediation recommendations"
+  },
+  {
+    "id": "WSTG-INPV-06",
+    "title": "Testing for LDAP Injection",
+    "category": "Input Validation Testing",
+    "description": "Security testing as per OWASP WSTG guidelines for testing for ldap injection.\n\n▼ What to Test:\n• Review the specific functionality related to testing for ldap injection\n• Identify potential security weaknesses in implementation\n• Test using both manual and automated approaches\n• Verify proper security controls are in place\n\n▼ How to Test:\n• Follow OWASP WSTG methodology for this test case\n• Use appropriate tools and techniques for the vulnerability type\n• Document all testing steps and observations\n• Capture evidence of any security issues found\n\n▼ Documentation Required:\n• Detailed test steps and methodology\n• Screenshots or logs showing evidence\n• Risk assessment and potential impact\n• Specific remediation recommendations"
+  },
+  {
+    "id": "WSTG-INPV-07",
+    "title": "Testing for XML Injection",
+    "category": "Input Validation Testing",
+    "description": "Security testing as per OWASP WSTG guidelines for testing for xml injection.\n\n▼ What to Test:\n• Review the specific functionality related to testing for xml injection\n• Identify potential security weaknesses in implementation\n• Test using both manual and automated approaches\n• Verify proper security controls are in place\n\n▼ How to Test:\n• Follow OWASP WSTG methodology for this test case\n• Use appropriate tools and techniques for the vulnerability type\n• Document all testing steps and observations\n• Capture evidence of any security issues found\n\n▼ Documentation Required:\n• Detailed test steps and methodology\n• Screenshots or logs showing evidence\n• Risk assessment and potential impact\n• Specific remediation recommendations"
+  },
+  {
+    "id": "WSTG-INPV-08",
+    "title": "Testing for SSI Injection",
+    "category": "Input Validation Testing",
+    "description": "Security testing as per OWASP WSTG guidelines for testing for ssi injection.\n\n▼ What to Test:\n• Review the specific functionality related to testing for ssi injection\n• Identify potential security weaknesses in implementation\n• Test using both manual and automated approaches\n• Verify proper security controls are in place\n\n▼ How to Test:\n• Follow OWASP WSTG methodology for this test case\n• Use appropriate tools and techniques for the vulnerability type\n• Document all testing steps and observations\n• Capture evidence of any security issues found\n\n▼ Documentation Required:\n• Detailed test steps and methodology\n• Screenshots or logs showing evidence\n• Risk assessment and potential impact\n• Specific remediation recommendations"
+  },
+  {
+    "id": "WSTG-INPV-09",
+    "title": "Testing for XPath Injection",
+    "category": "Input Validation Testing",
+    "description": "Security testing as per OWASP WSTG guidelines for testing for xpath injection.\n\n▼ What to Test:\n• Review the specific functionality related to testing for xpath injection\n• Identify potential security weaknesses in implementation\n• Test using both manual and automated approaches\n• Verify proper security controls are in place\n\n▼ How to Test:\n• Follow OWASP WSTG methodology for this test case\n• Use appropriate tools and techniques for the vulnerability type\n• Document all testing steps and observations\n• Capture evidence of any security issues found\n\n▼ Documentation Required:\n• Detailed test steps and methodology\n• Screenshots or logs showing evidence\n• Risk assessment and potential impact\n• Specific remediation recommendations"
+  },
+  {
+    "id": "WSTG-INPV-10",
+    "title": "Testing for IMAP SMTP Injection",
+    "category": "Input Validation Testing",
+    "description": "Security testing as per OWASP WSTG guidelines for testing for imap smtp injection.\n\n▼ What to Test:\n• Review the specific functionality related to testing for imap smtp injection\n• Identify potential security weaknesses in implementation\n• Test using both manual and automated approaches\n• Verify proper security controls are in place\n\n▼ How to Test:\n• Follow OWASP WSTG methodology for this test case\n• Use appropriate tools and techniques for the vulnerability type\n• Document all testing steps and observations\n• Capture evidence of any security issues found\n\n▼ Documentation Required:\n• Detailed test steps and methodology\n• Screenshots or logs showing evidence\n• Risk assessment and potential impact\n• Specific remediation recommendations"
+  },
+  {
+    "id": "WSTG-INPV-11",
+    "title": "Testing for Code Injection",
+    "category": "Input Validation Testing",
+    "description": "Security testing as per OWASP WSTG guidelines for testing for code injection.\n\n▼ What to Test:\n• Review the specific functionality related to testing for code injection\n• Identify potential security weaknesses in implementation\n• Test using both manual and automated approaches\n• Verify proper security controls are in place\n\n▼ How to Test:\n• Follow OWASP WSTG methodology for this test case\n• Use appropriate tools and techniques for the vulnerability type\n• Document all testing steps and observations\n• Capture evidence of any security issues found\n\n▼ Documentation Required:\n• Detailed test steps and methodology\n• Screenshots or logs showing evidence\n• Risk assessment and potential impact\n• Specific remediation recommendations"
+  },
+  {
+    "id": "WSTG-INPV-12",
+    "title": "Testing for Command Injection",
+    "category": "Input Validation Testing",
+    "description": "Security testing as per OWASP WSTG guidelines for testing for command injection.\n\n▼ What to Test:\n• Review the specific functionality related to testing for command injection\n• Identify potential security weaknesses in implementation\n• Test using both manual and automated approaches\n• Verify proper security controls are in place\n\n▼ How to Test:\n• Follow OWASP WSTG methodology for this test case\n• Use appropriate tools and techniques for the vulnerability type\n• Document all testing steps and observations\n• Capture evidence of any security issues found\n\n▼ Documentation Required:\n• Detailed test steps and methodology\n• Screenshots or logs showing evidence\n• Risk assessment and potential impact\n• Specific remediation recommendations"
+  },
+  {
+    "id": "WSTG-INPV-13",
+    "title": "Testing for Format String Injection",
+    "category": "Input Validation Testing",
+    "description": "Security testing as per OWASP WSTG guidelines for testing for format string injection.\n\n▼ What to Test:\n• Review the specific functionality related to testing for format string injection\n• Identify potential security weaknesses in implementation\n• Test using both manual and automated approaches\n• Verify proper security controls are in place\n\n▼ How to Test:\n• Follow OWASP WSTG methodology for this test case\n• Use appropriate tools and techniques for the vulnerability type\n• Document all testing steps and observations\n• Capture evidence of any security issues found\n\n▼ Documentation Required:\n• Detailed test steps and methodology\n• Screenshots or logs showing evidence\n• Risk assessment and potential impact\n• Specific remediation recommendations"
+  },
+  {
+    "id": "WSTG-INPV-14",
+    "title": "Testing for Incubated Vulnerabilities",
+    "category": "Input Validation Testing",
+    "description": "Security testing as per OWASP WSTG guidelines for testing for incubated vulnerabilities.\n\n▼ What to Test:\n• Review the specific functionality related to testing for incubated vulnerabilities\n• Identify potential security weaknesses in implementation\n• Test using both manual and automated approaches\n• Verify proper security controls are in place\n\n▼ How to Test:\n• Follow OWASP WSTG methodology for this test case\n• Use appropriate tools and techniques for the vulnerability type\n• Document all testing steps and observations\n• Capture evidence of any security issues found\n\n▼ Documentation Required:\n• Detailed test steps and methodology\n• Screenshots or logs showing evidence\n• Risk assessment and potential impact\n• Specific remediation recommendations"
+  },
+  {
+    "id": "WSTG-INPV-15",
+    "title": "Testing for HTTP Splitting Smuggling",
+    "category": "Input Validation Testing",
+    "description": "Security testing as per OWASP WSTG guidelines for testing for http splitting smuggling.\n\n▼ What to Test:\n• Review the specific functionality related to testing for http splitting smuggling\n• Identify potential security weaknesses in implementation\n• Test using both manual and automated approaches\n• Verify proper security controls are in place\n\n▼ How to Test:\n• Follow OWASP WSTG methodology for this test case\n• Use appropriate tools and techniques for the vulnerability type\n• Document all testing steps and observations\n• Capture evidence of any security issues found\n\n▼ Documentation Required:\n• Detailed test steps and methodology\n• Screenshots or logs showing evidence\n• Risk assessment and potential impact\n• Specific remediation recommendations"
+  },
+  {
+    "id": "WSTG-INPV-16",
+    "title": "Testing for HTTP Incoming Requests",
+    "category": "Input Validation Testing",
+    "description": "Security testing as per OWASP WSTG guidelines for testing for http incoming requests.\n\n▼ What to Test:\n• Review the specific functionality related to testing for http incoming requests\n• Identify potential security weaknesses in implementation\n• Test using both manual and automated approaches\n• Verify proper security controls are in place\n\n▼ How to Test:\n• Follow OWASP WSTG methodology for this test case\n• Use appropriate tools and techniques for the vulnerability type\n• Document all testing steps and observations\n• Capture evidence of any security issues found\n\n▼ Documentation Required:\n• Detailed test steps and methodology\n• Screenshots or logs showing evidence\n• Risk assessment and potential impact\n• Specific remediation recommendations"
+  },
+  {
+    "id": "WSTG-INPV-17",
+    "title": "Testing for Host Header Injection",
+    "category": "Input Validation Testing",
+    "description": "Security testing as per OWASP WSTG guidelines for testing for host header injection.\n\n▼ What to Test:\n• Review the specific functionality related to testing for host header injection\n• Identify potential security weaknesses in implementation\n• Test using both manual and automated approaches\n• Verify proper security controls are in place\n\n▼ How to Test:\n• Follow OWASP WSTG methodology for this test case\n• Use appropriate tools and techniques for the vulnerability type\n• Document all testing steps and observations\n• Capture evidence of any security issues found\n\n▼ Documentation Required:\n• Detailed test steps and methodology\n• Screenshots or logs showing evidence\n• Risk assessment and potential impact\n• Specific remediation recommendations"
+  },
+  {
+    "id": "WSTG-INPV-18",
+    "title": "Testing for Server-Side Template Injection",
+    "category": "Input Validation Testing",
+    "description": "Security testing as per OWASP WSTG guidelines for testing for server-side template injection.\n\n▼ What to Test:\n• Review the specific functionality related to testing for server-side template injection\n• Identify potential security weaknesses in implementation\n• Test using both manual and automated approaches\n• Verify proper security controls are in place\n\n▼ How to Test:\n• Follow OWASP WSTG methodology for this test case\n• Use appropriate tools and techniques for the vulnerability type\n• Document all testing steps and observations\n• Capture evidence of any security issues found\n\n▼ Documentation Required:\n• Detailed test steps and methodology\n• Screenshots or logs showing evidence\n• Risk assessment and potential impact\n• Specific remediation recommendations"
+  },
+  {
+    "id": "WSTG-INPV-19",
+    "title": "Testing for Server-Side Request Forgery",
+    "category": "Input Validation Testing",
+    "description": "Security testing as per OWASP WSTG guidelines for testing for server-side request forgery.\n\n▼ What to Test:\n• Review the specific functionality related to testing for server-side request forgery\n• Identify potential security weaknesses in implementation\n• Test using both manual and automated approaches\n• Verify proper security controls are in place\n\n▼ How to Test:\n• Follow OWASP WSTG methodology for this test case\n• Use appropriate tools and techniques for the vulnerability type\n• Document all testing steps and observations\n• Capture evidence of any security issues found\n\n▼ Documentation Required:\n• Detailed test steps and methodology\n• Screenshots or logs showing evidence\n• Risk assessment and potential impact\n• Specific remediation recommendations"
+  },
+  {
+    "id": "WSTG-INPV-20",
+    "title": "Testing for Mass Assignment",
+    "category": "Input Validation Testing",
+    "description": "Security testing as per OWASP WSTG guidelines for testing for mass assignment.\n\n▼ What to Test:\n• Review the specific functionality related to testing for mass assignment\n• Identify potential security weaknesses in implementation\n• Test using both manual and automated approaches\n• Verify proper security controls are in place\n\n▼ How to Test:\n• Follow OWASP WSTG methodology for this test case\n• Use appropriate tools and techniques for the vulnerability type\n• Document all testing steps and observations\n• Capture evidence of any security issues found\n\n▼ Documentation Required:\n• Detailed test steps and methodology\n• Screenshots or logs showing evidence\n• Risk assessment and potential impact\n• Specific remediation recommendations"
+  },
+  {
+    "id": "WSTG-SESS-01",
+    "title": "Testing for Session Management Schema",
+    "category": "Session Management Testing",
+    "description": "Security testing as per OWASP WSTG guidelines for testing for session management schema.\n\n▼ What to Test:\n• Review the specific functionality related to testing for session management schema\n• Identify potential security weaknesses in implementation\n• Test using both manual and automated approaches\n• Verify proper security controls are in place\n\n▼ How to Test:\n• Follow OWASP WSTG methodology for this test case\n• Use appropriate tools and techniques for the vulnerability type\n• Document all testing steps and observations\n• Capture evidence of any security issues found\n\n▼ Documentation Required:\n• Detailed test steps and methodology\n• Screenshots or logs showing evidence\n• Risk assessment and potential impact\n• Specific remediation recommendations"
+  },
+  {
+    "id": "WSTG-SESS-02",
+    "title": "Testing for Cookies Attributes",
+    "category": "Session Management Testing",
+    "description": "Security testing as per OWASP WSTG guidelines for testing for cookies attributes.\n\n▼ What to Test:\n• Review the specific functionality related to testing for cookies attributes\n• Identify potential security weaknesses in implementation\n• Test using both manual and automated approaches\n• Verify proper security controls are in place\n\n▼ How to Test:\n• Follow OWASP WSTG methodology for this test case\n• Use appropriate tools and techniques for the vulnerability type\n• Document all testing steps and observations\n• Capture evidence of any security issues found\n\n▼ Documentation Required:\n• Detailed test steps and methodology\n• Screenshots or logs showing evidence\n• Risk assessment and potential impact\n• Specific remediation recommendations"
+  },
+  {
+    "id": "WSTG-SESS-03",
+    "title": "Testing for Session Fixation",
+    "category": "Session Management Testing",
+    "description": "Security testing as per OWASP WSTG guidelines for testing for session fixation.\n\n▼ What to Test:\n• Review the specific functionality related to testing for session fixation\n• Identify potential security weaknesses in implementation\n• Test using both manual and automated approaches\n• Verify proper security controls are in place\n\n▼ How to Test:\n• Follow OWASP WSTG methodology for this test case\n• Use appropriate tools and techniques for the vulnerability type\n• Document all testing steps and observations\n• Capture evidence of any security issues found\n\n▼ Documentation Required:\n• Detailed test steps and methodology\n• Screenshots or logs showing evidence\n• Risk assessment and potential impact\n• Specific remediation recommendations"
+  },
+  {
+    "id": "WSTG-SESS-04",
+    "title": "Testing for Exposed Session Variables",
+    "category": "Session Management Testing",
+    "description": "Security testing as per OWASP WSTG guidelines for testing for exposed session variables.\n\n▼ What to Test:\n• Review the specific functionality related to testing for exposed session variables\n• Identify potential security weaknesses in implementation\n• Test using both manual and automated approaches\n• Verify proper security controls are in place\n\n▼ How to Test:\n• Follow OWASP WSTG methodology for this test case\n• Use appropriate tools and techniques for the vulnerability type\n• Document all testing steps and observations\n• Capture evidence of any security issues found\n\n▼ Documentation Required:\n• Detailed test steps and methodology\n• Screenshots or logs showing evidence\n• Risk assessment and potential impact\n• Specific remediation recommendations"
+  },
+  {
+    "id": "WSTG-SESS-05",
+    "title": "Testing for Cross Site Request Forgery",
+    "category": "Session Management Testing",
+    "description": "Security testing as per OWASP WSTG guidelines for testing for cross site request forgery.\n\n▼ What to Test:\n• Review the specific functionality related to testing for cross site request forgery\n• Identify potential security weaknesses in implementation\n• Test using both manual and automated approaches\n• Verify proper security controls are in place\n\n▼ How to Test:\n• Follow OWASP WSTG methodology for this test case\n• Use appropriate tools and techniques for the vulnerability type\n• Document all testing steps and observations\n• Capture evidence of any security issues found\n\n▼ Documentation Required:\n• Detailed test steps and methodology\n• Screenshots or logs showing evidence\n• Risk assessment and potential impact\n• Specific remediation recommendations"
+  },
+  {
+    "id": "WSTG-SESS-06",
+    "title": "Testing for Logout Functionality",
+    "category": "Session Management Testing",
+    "description": "Security testing as per OWASP WSTG guidelines for testing for logout functionality.\n\n▼ What to Test:\n• Review the specific functionality related to testing for logout functionality\n• Identify potential security weaknesses in implementation\n• Test using both manual and automated approaches\n• Verify proper security controls are in place\n\n▼ How to Test:\n• Follow OWASP WSTG methodology for this test case\n• Use appropriate tools and techniques for the vulnerability type\n• Document all testing steps and observations\n• Capture evidence of any security issues found\n\n▼ Documentation Required:\n• Detailed test steps and methodology\n• Screenshots or logs showing evidence\n• Risk assessment and potential impact\n• Specific remediation recommendations"
+  },
+  {
+    "id": "WSTG-SESS-07",
+    "title": "Testing Session Timeout",
+    "category": "Session Management Testing",
+    "description": "Security testing as per OWASP WSTG guidelines for testing session timeout.\n\n▼ What to Test:\n• Review the specific functionality related to testing session timeout\n• Identify potential security weaknesses in implementation\n• Test using both manual and automated approaches\n• Verify proper security controls are in place\n\n▼ How to Test:\n• Follow OWASP WSTG methodology for this test case\n• Use appropriate tools and techniques for the vulnerability type\n• Document all testing steps and observations\n• Capture evidence of any security issues found\n\n▼ Documentation Required:\n• Detailed test steps and methodology\n• Screenshots or logs showing evidence\n• Risk assessment and potential impact\n• Specific remediation recommendations"
+  },
+  {
+    "id": "WSTG-SESS-08",
+    "title": "Testing for Session Puzzling",
+    "category": "Session Management Testing",
+    "description": "Security testing as per OWASP WSTG guidelines for testing for session puzzling.\n\n▼ What to Test:\n• Review the specific functionality related to testing for session puzzling\n• Identify potential security weaknesses in implementation\n• Test using both manual and automated approaches\n• Verify proper security controls are in place\n\n▼ How to Test:\n• Follow OWASP WSTG methodology for this test case\n• Use appropriate tools and techniques for the vulnerability type\n• Document all testing steps and observations\n• Capture evidence of any security issues found\n\n▼ Documentation Required:\n• Detailed test steps and methodology\n• Screenshots or logs showing evidence\n• Risk assessment and potential impact\n• Specific remediation recommendations"
+  },
+  {
+    "id": "WSTG-SESS-09",
+    "title": "Testing for Session Hijacking",
+    "category": "Session Management Testing",
+    "description": "Security testing as per OWASP WSTG guidelines for testing for session hijacking.\n\n▼ What to Test:\n• Review the specific functionality related to testing for session hijacking\n• Identify potential security weaknesses in implementation\n• Test using both manual and automated approaches\n• Verify proper security controls are in place\n\n▼ How to Test:\n• Follow OWASP WSTG methodology for this test case\n• Use appropriate tools and techniques for the vulnerability type\n• Document all testing steps and observations\n• Capture evidence of any security issues found\n\n▼ Documentation Required:\n• Detailed test steps and methodology\n• Screenshots or logs showing evidence\n• Risk assessment and potential impact\n• Specific remediation recommendations"
+  },
+  {
+    "id": "WSTG-SESS-10",
+    "title": "Testing JSON Web Tokens",
+    "category": "Session Management Testing",
+    "description": "Security testing as per OWASP WSTG guidelines for testing json web tokens.\n\n▼ What to Test:\n• Review the specific functionality related to testing json web tokens\n• Identify potential security weaknesses in implementation\n• Test using both manual and automated approaches\n• Verify proper security controls are in place\n\n▼ How to Test:\n• Follow OWASP WSTG methodology for this test case\n• Use appropriate tools and techniques for the vulnerability type\n• Document all testing steps and observations\n• Capture evidence of any security issues found\n\n▼ Documentation Required:\n• Detailed test steps and methodology\n• Screenshots or logs showing evidence\n• Risk assessment and potential impact\n• Specific remediation recommendations"
+  },
+  {
+    "id": "WSTG-SESS-11",
+    "title": "Testing for Concurrent Sessions",
+    "category": "Session Management Testing",
+    "description": "Security testing as per OWASP WSTG guidelines for testing for concurrent sessions.\n\n▼ What to Test:\n• Review the specific functionality related to testing for concurrent sessions\n• Identify potential security weaknesses in implementation\n• Test using both manual and automated approaches\n• Verify proper security controls are in place\n\n▼ How to Test:\n• Follow OWASP WSTG methodology for this test case\n• Use appropriate tools and techniques for the vulnerability type\n• Document all testing steps and observations\n• Capture evidence of any security issues found\n\n▼ Documentation Required:\n• Detailed test steps and methodology\n• Screenshots or logs showing evidence\n• Risk assessment and potential impact\n• Specific remediation recommendations"
+  }
+]

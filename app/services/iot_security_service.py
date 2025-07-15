@@ -29,8 +29,26 @@ class IoTSecurityService:
 
     @staticmethod
     def get_cached_iot_security_data():
-        """Get IoT Security data from cache/fallback without fetching from GitHub"""
-        print("Using cached/fallback IoT Security data for project creation...")
+        """Get IoT Security data from JSON cache file, fallback to hardcoded data if not available"""
+        import os
+        import json
+        
+        print("Getting cached IoT Security data for project creation...")
+        
+        # Try to load from cache file first
+        cache_file = os.path.join(os.path.dirname(__file__), '..', '..', 'cache', 'iot_security_cache.json')
+        try:
+            if os.path.exists(cache_file):
+                with open(cache_file, 'r', encoding='utf-8') as f:
+                    cached_data = json.load(f)
+                    if cached_data and len(cached_data) > 5:
+                        print(f"Using cached IoT Security data: {len(cached_data)} tests")
+                        return cached_data
+        except Exception as e:
+            print(f"Error loading IoT Security cache file: {e}")
+        
+        # Fall back to hardcoded data
+        print("Using fallback IoT Security data")
         return IoTSecurityService._get_fallback_data()
     
     @staticmethod
@@ -103,6 +121,10 @@ class IoTSecurityService:
                 db.session.rollback()
             
             print(f"Successfully fetched {len(unique_tests)} IoT Security tests from ISTG GitHub")
+            
+            # Save to cache file
+            IoTSecurityService._save_to_cache(unique_tests)
+            
             return unique_tests
         else:
             raise Exception("No data found in ISTG GitHub repositories")
@@ -797,3 +819,23 @@ class IoTSecurityService:
                 base_desc += f" - Verify side-channel attack protection in {category.lower()}"
         
         return f"{base_desc} (Test Type: {test_type})" if test_type else base_desc
+
+    @staticmethod
+    def _save_to_cache(data):
+        """Save fetched IoT Security data to JSON cache file"""
+        import os
+        import json
+        
+        try:
+            # Create cache directory if it doesn't exist
+            cache_dir = os.path.join(os.path.dirname(__file__), '..', '..', 'cache')
+            os.makedirs(cache_dir, exist_ok=True)
+            
+            # Save to cache file
+            cache_file = os.path.join(cache_dir, 'iot_security_cache.json')
+            with open(cache_file, 'w', encoding='utf-8') as f:
+                json.dump(data, f, indent=2, ensure_ascii=False)
+            
+            print(f"Saved {len(data)} IoT Security tests to cache file: {cache_file}")
+        except Exception as e:
+            print(f"Error saving IoT Security data to cache: {e}")
