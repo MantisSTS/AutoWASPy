@@ -7,5 +7,6 @@ from .autotest_service import AutoTestService
 from .api_security_service import APISecurityService
 from .iot_security_service import IoTSecurityService
 from .asvs_service import ASVSService
+from .masvs_service import MASVSService
 
 __all__ = ['OWASPService', 'AutoTestService', 'APISecurityService', 'IoTSecurityService', 'ASVSService']

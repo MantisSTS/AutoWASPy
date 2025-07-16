@@ -25,6 +25,10 @@
                                     <i class="fab fa-apple text-gray-700 text-2xl"></i>
                                 {% elif project.job_type == 'mobile_android' %}
                                     <i class="fab fa-android text-green-500 text-2xl"></i>
+                                {% elif project.job_type == 'masvs_ios' %}
+                                    <i class="fab fa-apple text-blue-600 text-2xl"></i>
+                                {% elif project.job_type == 'masvs_android' %}
+                                    <i class="fab fa-android text-blue-600 text-2xl"></i>
                                 {% elif project.job_type == 'api_security' %}
                                     <i class="fas fa-code text-purple-500 text-2xl"></i>
                                 {% elif project.job_type == 'iot_security' %}
@@ -74,6 +78,8 @@
                                     WSTG
                                 {% elif project.job_type in ['mobile_ios', 'mobile_android'] %}
                                     MSTG
+                                {% elif project.job_type in ['masvs_ios', 'masvs_android'] %}
+                                    MASVS
                                 {% elif project.job_type == 'api_security' %}
                                     API Security
                                 {% elif project.job_type == 'iot_security' %}
@@ -156,7 +162,7 @@
                 <div class="ml-5 w-0 flex-1">
                     <dl>
                         <dt class="text-sm font-medium text-gray-500 truncate">Mobile Projects</dt>
-                        <dd class="text-lg font-medium text-gray-900">{{ projects|selectattr('job_type', 'in', ['mobile_ios', 'mobile_android'])|list|length }}</dd>
+                        <dd class="text-lg font-medium text-gray-900">{{ projects|selectattr('job_type', 'in', ['mobile_ios', 'mobile_android', 'masvs_ios', 'masvs_android'])|list|length }}</dd>
                     </dl>
                 </div>
             </div>

@@ -46,6 +46,12 @@ class ComprehensiveOWASPService:
                 'version': '5.0',
                 'categories': ['Architecture & Design', 'Input Validation & Business Logic', 'Web Frontend Security', 'API & Web Service Security', 'File Handling', 'Authentication', 'Session Management', 'Authorization', 'Self-contained Tokens', 'OAuth & OIDC', 'Cryptography', 'Secure Communication', 'Configuration', 'Data Protection']
             },
+            'masvs': {
+                'name': 'Mobile Application Security Verification Standard',
+                'description': 'Mobile app security verification requirements for iOS and Android',
+                'version': '1.7',
+                'categories': ['Architecture & Design', 'Data Storage & Privacy', 'Cryptography', 'Authentication & Session Management', 'Network Communication', 'Environmental Interaction', 'Code Quality & Build Settings', 'Resilience Against Reverse Engineering']
+            },
             # 'cloud_security': {
             #     'name': 'Cloud Security Testing Guide',
             #     'description': 'Cloud security testing based on OWASP sources, industry best practices, and CIS benchmarks',

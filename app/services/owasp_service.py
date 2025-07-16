@@ -91,6 +91,44 @@ class OWASPService:
             return fallback_data
 
     @staticmethod
+    def _clean_title_what_to_test(title):
+        """Remove 'What to Test:' and everything after it from titles"""
+        # Remove various forms of "What to Test:" section
+        patterns = [
+            r'\s+What to Test:.*$',
+            r'\s+▼\s*What to Test:.*$',
+            r'\s+\*\*What to Test:\*\*.*$',
+            r'\s+## What to Test.*$',
+            r'\s+### What to Test.*$',
+            r'\s+▼\s*$',  # Remove trailing ▼
+            r'\s+\*\*\s*$'  # Remove trailing **
+        ]
+        
+        cleaned_title = title
+        for pattern in patterns:
+            cleaned_title = re.sub(pattern, '', cleaned_title, flags=re.IGNORECASE | re.DOTALL)
+        
+        return cleaned_title.strip()
+
+    @staticmethod
+    def _clean_description_what_to_test(description):
+        """Remove 'What to Test:' section and everything after it from descriptions"""
+        # Remove various forms of "What to Test:" section and everything after
+        patterns = [
+            r'\n\s*▼\s*What to Test:.*$',
+            r'\n\s*What to Test:.*$',
+            r'\n\s*\*\*What to Test:\*\*.*$',
+            r'\n\s*## What to Test.*$',
+            r'\n\s*### What to Test.*$'
+        ]
+        
+        cleaned_description = description
+        for pattern in patterns:
+            cleaned_description = re.sub(pattern, '', cleaned_description, flags=re.IGNORECASE | re.DOTALL)
+        
+        return cleaned_description.strip()
+
+    @staticmethod
     def _parse_wstg_file(file_info, headers):
         """Parse individual WSTG test file from GitHub"""
         try:
@@ -118,6 +156,9 @@ class OWASPService:
             # Clean up title if it contains the ID
             title = re.sub(r'^' + re.escape(wstg_id) + r'\s*[-:]?\s*', '', title)
             
+            # Remove "What to Test:" and everything after it
+            title = OWASPService._clean_title_what_to_test(title)
+            
             # Extract description from the content
             description_match = re.search(r'## Summary\s*\n(.*?)(?=\n##|\n#|\Z)', content, re.DOTALL)
             if not description_match:
@@ -141,6 +182,9 @@ class OWASPService:
 • Specific remediation guidance
 • Retest validation after fixes'''
             description = re.sub(r'\n+', ' ', description)[:500] + "..." if len(description) > 500 else description
+            
+            # Clean description to remove "What to Test:" sections
+            description = OWASPService._clean_description_what_to_test(description)
             
             # Determine category based on the ID
             category_map = {
@@ -286,6 +330,7 @@ class OWASPService:
             category_code = test_id.split('-')[1]
             category = OWASPService._get_mastg_category(category_code)
             title = description[:80] + "..." if len(description) > 80 else description
+            title = OWASPService._clean_title_what_to_test(title)  # Clean title
             mastg_tests.append({
                 'id': test_id,
                 'title': title,
@@ -389,6 +434,7 @@ class OWASPService:
                 continue
             found_items.add(description_lower)
             title = description_clean[:80] + "..." if len(description_clean) > 80 else description_clean
+            title = OWASPService._clean_title_what_to_test(title)  # Clean title
             mastg_tests.append({
                 'id': test_id,
                 'title': title,
@@ -444,6 +490,7 @@ class OWASPService:
                             continue
                         found_items.add(description_lower)
                         title = description_clean[:80] + "..." if len(description_clean) > 80 else description_clean
+                        title = OWASPService._clean_title_what_to_test(title)  # Clean title
                         mastg_tests.append({
                             'id': test_id,
                             'title': title,
@@ -618,7 +665,7 @@ class OWASPService:
     @staticmethod
     def _get_fallback_wstg_data():
         """Enhanced fallback WSTG data as backup"""
-        return [
+        fallback_data = [
             {
                 'id': 'WSTG-INFO-01',
                 'title': 'Conduct Search Engine Discovery Reconnaissance for Information Leakage',
@@ -1471,6 +1518,15 @@ class OWASPService:
 • Frida for runtime key extraction'''
             }
         ]
+        
+        # Clean all descriptions to remove "What to Test:" sections
+        for item in fallback_data:
+            if 'description' in item:
+                item['description'] = OWASPService._clean_description_what_to_test(item['description'])
+            if 'title' in item:
+                item['title'] = OWASPService._clean_title_what_to_test(item['title'])
+        
+        return fallback_data
 
     @staticmethod
     def _update_cache(data_type, source, count):
@@ -1552,6 +1608,72 @@ class OWASPService:
         # Fall back to hardcoded data
         print("Using fallback MASTG data")
         return OWASPService._get_fallback_mstg_data()
+
+    @staticmethod
+    def get_cached_mstg_data_for_platform(platform):
+        """Get platform-specific MASTG data (ios or android)"""
+        try:
+            all_tests = OWASPService.get_cached_mstg_data()
+            platform_tests = []
+            
+            for test in all_tests:
+                # Check if test is platform-specific
+                is_platform_specific = False
+                
+                # Check description content for platform indicators
+                description_content = (test.get('description', '') + ' ' + test.get('full_description', '')).lower()
+                
+                if platform == 'ios':
+                    # iOS-specific keywords and patterns
+                    ios_indicators = [
+                        'ios', 'iphone', 'ipad', 'apple', 'xcode', 'swift', 'objective-c',
+                        'uiwebview', 'wkwebview', 'keychain', 'info.plist', 'codesign',
+                        'app store', 'itunes', 'cocoa', 'foundation', 'uikit', 'core data',
+                        'security.framework', 'commoncrypto', 'cfbundleidentifier',
+                        'ats', 'app transport security', 'entitlements.plist'
+                    ]
+                    
+                    # Check if this test contains iOS-specific content
+                    for indicator in ios_indicators:
+                        if indicator in description_content:
+                            is_platform_specific = True
+                            break
+                    
+                    # Also check category
+                    if 'ios' in test.get('category', '').lower():
+                        is_platform_specific = True
+                        
+                elif platform == 'android':
+                    # Android-specific keywords and patterns
+                    android_indicators = [
+                        'android', 'androidmanifest.xml', 'gradle', 'adb', 'dalvik',
+                        'sharedpreferences', 'contentprovider', 'activity', 'service',
+                        'broadcastreceiver', 'intent', 'bundle', 'sqlite', 'room',
+                        'kotlin', 'java', 'android.', 'com.android', 'androidx.',
+                        'play store', 'apk', 'dex', 'aapt', 'android studio'
+                    ]
+                    
+                    # Check if this test contains Android-specific content
+                    for indicator in android_indicators:
+                        if indicator in description_content:
+                            is_platform_specific = True
+                            break
+                    
+                    # Also check category
+                    if 'android' in test.get('category', '').lower():
+                        is_platform_specific = True
+                
+                # If platform-specific, add to filtered list
+                # If not platform-specific, it's a general mobile test that applies to both
+                if is_platform_specific or not any(x in description_content for x in ['ios', 'android', 'iphone', 'gradle']):
+                    platform_tests.append(test)
+            
+            print(f"Filtered {len(platform_tests)} tests for {platform} platform from {len(all_tests)} total MASTG tests")
+            return platform_tests
+            
+        except Exception as e:
+            print(f"Error filtering MASTG data for platform {platform}: {e}")
+            return OWASPService.get_cached_mstg_data()  # Return all tests as fallback
 
     @staticmethod
     def _fetch_wstg_from_checklist():

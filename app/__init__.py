@@ -83,12 +83,20 @@ def register_filters(app):
     
     @app.template_filter('summarize_description')
     def summarize_description(content):
-        """Extract only the first block before 'What to Review' or similar sections"""
+        """Extract only the first block before 'What to Review' or similar sections with markdown support"""
         if not content:
             return ""
         
         # Common section headers that indicate the start of detailed instructions
         section_markers = [
+            "▼ What to Test",
+            "What to Test",
+            "## What to Test",
+            "### What to Test",
+            "▼ What to test",
+            "What to test",
+            "## What to test",
+            "### What to test",
             "▼ What to Review",
             "What to Review",
             "## What to Review",
@@ -150,7 +158,15 @@ def register_filters(app):
                 # Fallback: take first 200 characters
                 summary = content[:200] + '...' if len(content) > 200 else content
         
-        return html.escape(summary)
+        # Limit summary length for better display
+        if len(summary) > 300:
+            summary = summary[:297] + "..."
+        
+        # Convert markdown to HTML for links and basic formatting
+        md = markdown.Markdown(extensions=['nl2br'])
+        html_content = md.convert(summary)
+        
+        return Markup(html_content)
 
 def register_blueprints(app):
     """Register all route blueprints"""

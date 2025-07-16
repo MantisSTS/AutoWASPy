@@ -24,7 +24,7 @@ def create_models(database):
         id = database.Column(database.Integer, primary_key=True)
         name = database.Column(database.String(100), nullable=False)
         client_name = database.Column(database.String(100), nullable=False)
-        job_type = database.Column(database.String(20), nullable=False)  # 'web', 'mobile_ios', 'mobile_android', 'api_security', 'iot_security', 'asvs_verification'
+        job_type = database.Column(database.String(20), nullable=False)  # 'web', 'mobile_ios', 'mobile_android', 'masvs_ios', 'masvs_android', 'api_security', 'iot_security', 'asvs_verification'
         created_date = database.Column(database.DateTime, default=utc_now)
         description = database.Column(database.Text)
         urls = database.Column(database.Text)  # JSON string of URLs for web tests

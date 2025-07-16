@@ -4,7 +4,7 @@ Project management routes
 from flask import Blueprint, render_template, request, redirect, url_for, flash
 from app import db
 from app.models import Project, TestItem
-from app.services import OWASPService, APISecurityService, IoTSecurityService, ASVSService
+from app.services import OWASPService, APISecurityService, IoTSecurityService, ASVSService, MASVSService
 # from app.services.cloud_security_service import CloudSecurityService
 from app.utils import utc_now
 
@@ -31,9 +31,18 @@ def new_project():
         if project.job_type == 'web':
             tests = OWASPService.get_cached_wstg_data()
             test_type = 'wstg'
-        elif project.job_type in ['mobile_ios', 'mobile_android']:
-            tests = OWASPService.get_cached_mstg_data()
+        elif project.job_type == 'mobile_ios':
+            tests = OWASPService.get_cached_mstg_data_for_platform('ios')
             test_type = 'mstg'
+        elif project.job_type == 'mobile_android':
+            tests = OWASPService.get_cached_mstg_data_for_platform('android')
+            test_type = 'mstg'
+        elif project.job_type == 'masvs_ios':
+            tests = MASVSService.get_cached_masvs_data_for_platform('ios')
+            test_type = 'masvs'
+        elif project.job_type == 'masvs_android':
+            tests = MASVSService.get_cached_masvs_data_for_platform('android')
+            test_type = 'masvs'
         elif project.job_type == 'api_security':
             tests = APISecurityService.get_cached_api_security_data()
             test_type = 'api_security'

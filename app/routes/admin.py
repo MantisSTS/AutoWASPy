@@ -4,7 +4,7 @@ Admin routes for system administration
 from flask import Blueprint, render_template, request, redirect, url_for, flash, jsonify
 from app import db
 from app.models import OWASPDataCache
-from app.services import OWASPService, APISecurityService, IoTSecurityService, ASVSService
+from app.services import OWASPService, APISecurityService, IoTSecurityService, ASVSService, MASVSService
 # from app.services.cloud_security_service import CloudSecurityService
 from app.services.comprehensive_owasp_service import ComprehensiveOWASPService
 
@@ -53,6 +53,13 @@ def refresh_owasp_data():
             except Exception as e:
                 flash(f"❌ ASVS: Failed to refresh - {str(e)}", 'error')
             
+            # MASVS refresh
+            try:
+                masvs_tests = MASVSService.fetch_masvs_data()
+                flash(f"✅ MASVS: Successfully refreshed {len(masvs_tests)} verification requirements", 'success')
+            except Exception as e:
+                flash(f"❌ MASVS: Failed to refresh - {str(e)}", 'error')
+            
             flash('Framework refresh completed! New projects will use cached data for fast creation.', 'info')
             return redirect(url_for('admin.refresh_owasp_data'))
             
@@ -85,6 +92,36 @@ def refresh_owasp_data():
         return render_template('refresh_owasp.html', 
                              framework_status={},
                              total_frameworks=0)
+
+@bp.route('/refresh-individual/<framework>', methods=['POST'])
+def refresh_individual_framework(framework):
+    """Refresh individual OWASP framework"""
+    try:
+        if framework == 'wstg':
+            tests = OWASPService.fetch_wstg_data()
+            flash(f"✅ WSTG: Successfully refreshed {len(tests)} test cases", 'success')
+        elif framework == 'mastg':
+            tests = OWASPService.fetch_mstg_data()
+            flash(f"✅ MASTG: Successfully refreshed {len(tests)} test cases", 'success')
+        elif framework == 'api_security':
+            tests = APISecurityService.fetch_api_security_data()
+            flash(f"✅ API Security: Successfully refreshed {len(tests)} test cases", 'success')
+        elif framework == 'iot_security':
+            tests = IoTSecurityService.fetch_iot_security_data()
+            flash(f"✅ IoT Security: Successfully refreshed {len(tests)} test cases", 'success')
+        elif framework == 'asvs':
+            tests = ASVSService.fetch_asvs_data()
+            flash(f"✅ ASVS: Successfully refreshed {len(tests)} test cases", 'success')
+        elif framework == 'masvs':
+            tests = MASVSService.fetch_masvs_data()
+            flash(f"✅ MASVS: Successfully refreshed {len(tests)} verification requirements", 'success')
+        else:
+            flash(f"❌ Unknown framework: {framework}", 'error')
+            
+    except Exception as e:
+        flash(f"❌ {framework.upper()}: Failed to refresh - {str(e)}", 'error')
+    
+    return redirect(url_for('admin.refresh_owasp_data'))
 
 @bp.route('/api/frameworks')
 def api_frameworks():

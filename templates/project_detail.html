@@ -93,6 +93,10 @@
                                 <i class="fab fa-apple mr-1"></i>MSTG iOS
                             {% elif project.job_type == 'mobile_android' %}
                                 <i class="fab fa-android mr-1"></i>MSTG Android
+                            {% elif project.job_type == 'masvs_ios' %}
+                                <i class="fab fa-apple mr-1"></i>MASVS iOS
+                            {% elif project.job_type == 'masvs_android' %}
+                                <i class="fab fa-android mr-1"></i>MASVS Android
                             {% endif %}
                         </span>
                         <span class="text-sm text-gray-500">
@@ -107,7 +111,7 @@
                     <button onclick="runAutoTests()" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-green-600 hover:bg-green-700">
                         <i class="fas fa-play mr-2"></i>Run Auto Tests
                     </button>
-                    <a href="{{ url_for('autotest_results', project_id=project.id) }}" class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
+                    <a href="{{ url_for('testing.autotest_results', project_id=project.id) }}" class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
                         <i class="fas fa-chart-line mr-2"></i>Auto Test Results
                     </a>
                 {% endif %}

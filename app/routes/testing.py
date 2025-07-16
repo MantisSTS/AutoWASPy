@@ -5,12 +5,13 @@ from flask import Blueprint, render_template, request, redirect, url_for, flash
 from app import db
 from app.models import Project, AutoTestResult
 from app.services import AutoTestService
+from app.services.enhanced_autotest_service import EnhancedAutoTestService
 
 bp = Blueprint('testing', __name__, url_prefix='/project')
 
 @bp.route('/<int:project_id>/autotest', methods=['POST'])
 def run_auto_tests(project_id):
-    """Run automated security tests for a project"""
+    """Run enhanced automated security tests for a project"""
     project = db.get_or_404(Project, project_id)
     
     if not project.urls:
@@ -19,13 +20,11 @@ def run_auto_tests(project_id):
     
     urls = [url.strip() for url in project.urls.split('\n') if url.strip()]
     
-    # List of all available auto tests
-    auto_tests = [
-        ('HSTS Test', AutoTestService.test_hsts),
-        ('Cookie Security Test', AutoTestService.test_cookie_security),
-        ('Security Headers Test', AutoTestService.test_security_headers),
-        ('SSL Configuration Test', AutoTestService.test_ssl_configuration),
-        ('HTTP Methods Test', AutoTestService.test_http_methods),
+    # Use enhanced auto tests that map to OWASP checklist
+    enhanced_tests = EnhancedAutoTestService.get_all_tests()
+    
+    # Legacy tests for additional coverage
+    legacy_tests = [
         ('Information Disclosure Test', AutoTestService.test_information_disclosure),
         ('Clickjacking Protection Test', AutoTestService.test_clickjacking_protection),
         ('CORS Configuration Test', AutoTestService.test_cors_configuration),
@@ -43,8 +42,12 @@ def run_auto_tests(project_id):
         ('Version Control Exposure', AutoTestService.test_version_control_exposure)
     ]
     
+    # Combine all tests
+    auto_tests = enhanced_tests + legacy_tests
+    
     total_tests = 0
     successful_tests = 0
+    checklist_updates = 0
     
     for url in urls:
         flash(f'Running automated tests for: {url}', 'info')
@@ -54,6 +57,7 @@ def run_auto_tests(project_id):
                 print(f"Running {test_name} for {url}")
                 test_result = test_function(url)
                 
+                # Store auto-test result
                 auto_result = AutoTestResult(
                     project_id=project_id,
                     test_name=test_name,
@@ -64,6 +68,15 @@ def run_auto_tests(project_id):
                     response_data=test_result['response']
                 )
                 db.session.add(auto_result)
+                
+                # Update OWASP checklist if this is an enhanced test
+                if test_function in [test[1] for test in enhanced_tests]:
+                    try:
+                        EnhancedAutoTestService.update_checklist_items(project_id, test_name, test_result)
+                        checklist_updates += 1
+                        print(f"Updated checklist for {test_name}")
+                    except Exception as e:
+                        print(f"Error updating checklist for {test_name}: {e}")
                 
                 total_tests += 1
                 if test_result['result'] == 'pass':
@@ -85,7 +98,13 @@ def run_auto_tests(project_id):
                 total_tests += 1
     
     db.session.commit()
-    flash(f'Automated tests completed! {successful_tests}/{total_tests} tests passed.', 'success')
+    
+    # Enhanced success message
+    success_msg = f'Automated tests completed! {successful_tests}/{total_tests} tests passed.'
+    if checklist_updates > 0:
+        success_msg += f' {checklist_updates} checklist items automatically updated.'
+    
+    flash(success_msg, 'success')
     return redirect(url_for('projects.project_detail', project_id=project_id))
 
 @bp.route('/<int:project_id>/autotest-results')

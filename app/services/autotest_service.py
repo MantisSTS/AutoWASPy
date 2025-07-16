@@ -119,7 +119,7 @@ class AutoTestService:
         """Test for secure cookie attributes"""
         try:
             headers = {
-                'User-Agent': 'AutoWASPy Security Scanner',
+                'User-Agent': 'AutoWASPy Security Scanner (@MantisSTS)',
                 'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8'
             }
             
@@ -220,6 +220,107 @@ class AutoTestService:
                 'evidence': f'❌ Error testing cookies: {str(e)}',
                 'request': f'GET {url}',
                 'response': 'Request failed - no response received'
+            }
+
+    ## Method for testing cache-control: test_cache_control
+    @staticmethod
+    def test_cache_control(url):
+        """Test Cache-Control headers for security"""
+        try:
+            headers = {
+                'User-Agent': 'AutoWASPy Security Scanner',
+                'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8'
+            }
+            
+            response = requests.get(url, headers=headers, timeout=10, verify=False)
+            cache_control_header = response.headers.get('Cache-Control')
+            
+            full_request = AutoTestService._format_request_details('GET', url, headers)
+            full_response = AutoTestService._format_response_details(response, ['Cache-Control'])
+            
+            if cache_control_header:
+                directives = cache_control_header.split(',')
+                evidence = f"✅ Cache-Control header found: {cache_control_header}\n\n"
+                evidence += f"📊 Directives:\n"
+                
+                for directive in directives:
+                    evidence += f"  • {directive.strip()}\n"
+                
+                if 'no-store' in cache_control_header or 'private' in cache_control_header:
+                    evidence += f"\n⚠️  Sensitive data may not be cached by browsers or proxies\n"
+                    result = 'pass'
+                else:
+                    evidence += f"\n❌ Sensitive data caching detected - should use no-store or private\n"
+                    result = 'fail'
+                
+                return {
+                    'result': result,
+                    'evidence': evidence,
+                    'request': full_request,
+                    'response': full_response
+                }
+            else:
+                evidence = "❌ Cache-Control header not found\n\n"
+                evidence += "🚨 Security Impact:\n"
+                evidence += "  • Sensitive data may be cached by browsers or proxies\n"
+                evidence += "  • Potential information leakage risk\n\n"
+                evidence += "💡 Recommendation: Add Cache-Control header with no-store or private directive"
+                
+                return {
+                    'result': 'fail',
+                    'evidence': evidence,
+                    'request': full_request,
+                    'response': full_response
+                }
+        except Exception as e:
+            return {
+                'result': 'error',
+                'evidence': f'❌ Error testing Cache-Control: {str(e)}',
+                'request': f'GET {url}',
+                'response': 'Request failed - no response received'
+            }
+
+    @staticmethod
+    def test_subdomain_takeover(url):
+        """Test for subdomain takeover vulnerabilities"""
+        try:
+            parsed_url = urlparse(url)
+            domain = parsed_url.netloc
+            
+            # Resolve DNS records for the domain
+            resolver = dns.resolver.Resolver()
+            records = resolver.resolve(domain, 'A')
+            
+            if not records:
+                return {
+                    'result': 'informational',
+                    'evidence': f'ℹ️  No A records found for {domain}\n\nThis may indicate no active subdomains.',
+                    'request': f'DNS lookup for {domain}',
+                    'response': 'No A records found'
+                }
+            
+            # Check each A record for potential takeover
+            takeover_candidates = []
+            for record in records:
+                ip_address = str(record)
+                print(f"Checking IP: {ip_address} for subdomain takeover...")
+                # TODO: Implement subdomain takeover detection logic here
+                # Example: Check if the IP address points to a known cloud provider or unassigned IP
+                # takeover_candidates.append(ip_address)
+            
+            # Placeholder response until implementation is complete
+            return {
+                'result': 'informational',
+                'evidence': 'ℹ️  Subdomain takeover detection not yet implemented.',
+                'request': f'DNS lookup for {domain}',
+                'response': f'A records: {[str(r) for r in records]}'
+            }
+        except dns.resolver.NoAnswer:
+            return {
+                'result': 'error',
+                'evidence': f'❌ DNS resolution failed for {domain}',
+                'request': f'DNS lookup for {domain}',
+                'response': 'No DNS records found'
             }
 
     @staticmethod
@@ -1031,3 +1132,363 @@ class AutoTestService:
                 'request': f'GET {url}',
                 'response': 'Request failed - connection error'
             }
+
+    @staticmethod
+    def test_directory_listing(url):
+        """Test for directory listing vulnerabilities"""
+        try:
+            headers = {
+                'User-Agent': 'AutoWASPy Security Scanner',
+                'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8'
+            }
+            
+            response = requests.get(url, headers=headers, timeout=10, verify=False)
+            full_request = AutoTestService._format_request_details('GET', url, headers)
+            
+            if response.status_code == 200:
+                content = response.text
+                if '<title>Index of' in content or '<h1>Index of' in content:
+                    # Likely a directory listing
+                    evidence = f"🚨 Directory Listing Vulnerability Detected at {url}\n\n"
+                    evidence += "This URL appears to allow directory listing, which can expose sensitive files.\n"
+                    evidence += "💡 Recommendation: Disable directory listing in web server configuration.\n"
+                    result = 'fail'
+                else:
+                    evidence = f"✅ No directory listing found at {url}\n"
+                    result = 'pass'
+            else:
+                evidence = f"ℹ️  Directory listing test returned status {response.status_code} - not accessible.\n"
+                result = 'informational'
+            
+            full_response = AutoTestService._format_response_details(response)
+            
+            return {
+                'result': result,
+                'evidence': evidence,
+                'request': full_request,
+                'response': full_response
+            }
+        except Exception as e:
+            return {
+                'result': 'error',
+                'evidence': f'❌ Error testing directory listing: {str(e)}',
+                'request': f'Directory listing test for {url}',
+                'response': 'Request failed - connection error'
+            }
+        
+
+    @staticmethod
+    def test_error_handling(url):
+        """Test error handling and custom error pages"""
+        try:
+            headers = {
+                'User-Agent': 'AutoWASPy Security Scanner',
+                'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8'
+            }
+            
+            # Test a non-existent page to trigger an error
+            test_url = urljoin(url, '/nonexistent-page')
+            # Append dangerous meta characters to test error handling
+            test_url += '?test=<script>alert(1)</script>'
+            test_url += '&test2=">%c0a0;%><%00%3c!--'
+
+            # Append a random query parameter to avoid caching issues 
+            test_url += f"?rand={random.randint(1000, 9999)}"
+            response = requests.get(test_url, headers=headers, timeout=10, verify=False)
+            full_request = AutoTestService._format_request_details('GET', test_url, headers)
+            
+            full_response = AutoTestService._format_response_details(response)
+            
+            if response.status_code in [404, 500]:
+                content = response.text.lower()
+                
+                if 'not found' in content or 'page not found' in content:
+                    evidence = f"🚨 404 Error Page Detected at {test_url}\n\n"
+                    evidence += "This indicates that the server is returning a standard 404 error page.\n"
+                    evidence += "💡 Recommendation: Implement custom error pages to avoid revealing server details.\n"
+                    result = 'fail'
+                elif 'internal server error' in content or '500' in content:
+                    evidence = f"🚨 500 Error Page Detected at {test_url}\n\n"
+                    evidence += "This indicates that the server encountered an internal error.\n"
+                    evidence += "💡 Recommendation: Review server logs for details and implement custom error handling.\n"
+                    result = 'fail'
+                else:
+                    evidence = f"✅ Custom error handling appears to be implemented at {test_url}\n"
+                    result = 'pass'
+            else:
+                evidence = f"ℹ️  No error page detected (HTTP {response.status_code})\n"
+                result = 'informational'
+            
+            return {
+                'result': result,
+                'evidence': evidence,
+                'request': full_request,
+                'response': full_response
+            }
+        except Exception as e:
+            return {
+                'result': 'error',
+                'evidence': f'❌ Error testing error handling: {str(e)}',
+                'request': f'Error handling test for {url}',
+                'response': 'Request failed - connection error'
+            }
+        
+    @staticmethod
+    def test_http_security_features(url):
+        """Test for common HTTP security features"""
+        try:
+            headers = {
+                'User-Agent': 'AutoWASPy Security Scanner',
+                'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8'
+            }
+            
+            response = requests.get(url, headers=headers, timeout=10, verify=False)
+            full_request = AutoTestService._format_request_details('GET', url, headers)
+            
+            # Check for common security headers
+            security_headers = {
+                'Strict-Transport-Security': response.headers.get('Strict-Transport-Security'),
+                'Content-Security-Policy': response.headers.get('Content-Security-Policy'),
+                'X-Content-Type-Options': response.headers.get('X-Content-Type-Options'),
+                'X-XSS-Protection': response.headers.get('X-XSS-Protection'),
+                'Referrer-Policy': response.headers.get('Referrer-Policy'),
+                'Feature-Policy': response.headers.get('Feature-Policy')
+            }
+            
+            highlight_headers = [h for h in security_headers if security_headers[h]]
+            issues = []
+            protections = []
+            
+            if security_headers['Strict-Transport-Security']:
+                highlight_headers.append('Strict-Transport-Security')
+                protections.append(f"✅ HSTS enabled: {security_headers['Strict-Transport-Security']}")
+            else:
+                issues.append("❌ Missing Strict-Transport-Security header")
+            
+            if security_headers['Content-Security-Policy']:
+                highlight_headers.append('Content-Security-Policy')
+                protections.append(f"✅ CSP enabled: {security_headers['Content-Security-Policy']}")
+            else:
+                issues.append("❌ Missing Content-Security-Policy header")
+            
+            if security_headers['X-Content-Type-Options']:
+                highlight_headers.append('X-Content-Type-Options')
+                if security_headers['X-Content-Type-Options'].lower() == 'nosniff':
+                    protections.append("✅ X-Content-Type-Options: nosniff")
+                else:
+                    issues.append(f"⚠️  Weak X-Content-Type-Options: {security_headers['X-Content-Type-Options']}")
+            else:
+                issues.append("❌ Missing X-Content-Type-Options header")
+            
+            if security_headers['X-XSS-Protection']:
+                highlight_headers.append('X-XSS-Protection')
+                if security_headers['X-XSS-Protection'].lower() == '1; mode=block':
+                    protections.append("✅ XSS Protection enabled")
+                else:
+                    issues.append(f"⚠️  Weak XSS Protection: {security_headers['X-XSS-Protection']}")
+            else:
+                issues.append("❌ Missing X-XSS-Protection header")
+            if security_headers['Referrer-Policy']:
+                highlight_headers.append('Referrer-Policy')
+                if security_headers['Referrer-Policy'].lower() in ['no-referrer', 'strict-origin']:
+                    protections.append(f"✅ Referrer-Policy: {security_headers['Referrer-Policy']}")
+                else:
+                    issues.append(f"⚠️  Weak Referrer-Policy: {security_headers['Referrer-Policy']}")
+            else:
+                issues.append("❌ Missing Referrer-Policy header")
+            if security_headers['Feature-Policy']:
+                highlight_headers.append('Feature-Policy')
+                protections.append(f"✅ Feature-Policy: {security_headers['Feature-Policy']}")
+            else:
+                issues.append("❌ Missing Feature-Policy header")
+            full_response = AutoTestService._format_response_details(response, highlight_headers)
+            evidence = "🔒 HTTP Security Features Analysis\n\n"
+            if protections:
+                evidence += f"Protection Mechanisms:\n"
+                for protection in protections:
+                    evidence += f"  {protection}\n"
+                evidence += "\n"
+            if not any(security_headers.values()):
+                evidence += "ℹ️  No security headers detected\n"
+                evidence += "   • This may be expected for basic applications\n"
+                evidence += "   • Consider implementing security headers"
+                result = 'informational'
+            else:
+                if issues:
+                    evidence += f"🚨 Security Issues Found ({len(issues)}):\n"
+                    for issue in issues:
+                        evidence += f"  {issue}\n"
+                    evidence += "\n"
+                    evidence += f"💡 Recommendation: Improve HTTP security headers\n"
+                    evidence += f"   • Implement HSTS, CSP, X-Content-Type-Options, X-XSS-Protection\n"
+                    evidence += f"   • Set Referrer-Policy and Feature-Policy appropriately"
+                    result = 'fail'
+                else:
+                    evidence += f"✅ HTTP security features appear properly configured"
+                    result = 'pass'
+            return {
+                'result': result,
+                'evidence': evidence,
+                'request': full_request,
+                'response': full_response
+            }
+        except Exception as e:
+            return {
+                'result': 'error',
+                'evidence': f'❌ Error testing HTTP security features: {str(e)}',
+                'request': f'HTTP security features test for {url}',
+                'response': 'Request failed - connection error'
+            }
+        
+
+    @staticmethod
+    def test_admin_panel_detection(url):
+        """Detect common admin panel paths and check for security"""
+        try:
+            headers = {
+                'User-Agent': 'AutoWASPy Security Scanner',
+                'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8'
+            }
+            
+            # Common admin panel paths to check
+            admin_paths = [
+                '/admin', '/administrator', '/wp-admin', '/cpanel', 
+                '/login', '/dashboard', '/controlpanel', '/manage'
+            ]
+            
+            found_admins = []
+            for path in admin_paths:
+                full_url = urljoin(url, path)
+                response = requests.get(full_url, headers=headers, timeout=10, verify=False)
+                
+                if response.status_code == 200:
+                    found_admins.append(full_url)
+            
+            full_request = AutoTestService._format_request_details('GET', url, headers)
+            
+            if found_admins:
+                evidence = f"🚨 Admin Panel Detection\n\n"
+                evidence += f"Found potential admin panels at:\n"
+                for admin_url in found_admins:
+                    evidence += f"  • {admin_url}\n"
+                evidence += "\n💡 Recommendation: Secure admin panels with strong authentication and IP whitelisting."
+                result = 'fail'
+            else:
+                evidence = f"✅ No common admin panels detected at {url}\n"
+                result = 'pass'
+            
+            return {
+                'result': result,
+                'evidence': evidence,
+                'request': full_request,
+                'response': 'Admin panel detection completed'
+            }
+        except Exception as e:
+            return {
+                'result': 'error',
+                'evidence': f'❌ Error testing admin panel detection: {str(e)}',
+                'request': f'Admin panel detection test for {url}',
+                'response': 'Request failed - connection error'
+            }
+        
+    @staticmethod
+    def test_backup_file_detection(url):
+        """Detect common backup file paths and check for security"""
+        try:
+            headers = {
+                'User-Agent': 'AutoWASPy Security Scanner',
+                'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8'
+            }
+            
+            # Common backup file extensions to check
+            backup_extensions = [
+                '.bak', '.backup', '.zip', '.tar.gz', '.tar', 
+                '.sql', '.sql.gz', '.dump', '.tar.bz2'
+            ]
+            
+            found_backups = []
+            for ext in backup_extensions:
+                full_url = urljoin(url, f'backup{ext}')
+                response = requests.get(full_url, headers=headers, timeout=10, verify=False)
+                
+                if response.status_code == 200:
+                    found_backups.append(full_url)
+            
+            full_request = AutoTestService._format_request_details('GET', url, headers)
+            
+            if found_backups:
+                evidence = f"🚨 Backup File Detection\n\n"
+                evidence += f"Found potential backup files at:\n"
+                for backup_url in found_backups:
+                    evidence += f"  • {backup_url}\n"
+                evidence += "\n💡 Recommendation: Remove or secure backup files to prevent unauthorized access."
+                result = 'fail'
+            else:
+                evidence = f"✅ No common backup files detected at {url}\n"
+                result = 'pass'
+            
+            return {
+                'result': result,
+                'evidence': evidence,
+                'request': full_request,
+                'response': 'Backup file detection completed'
+            }
+        except Exception as e:
+            return {
+                'result': 'error',
+                'evidence': f'❌ Error testing backup file detection: {str(e)}',
+                'request': f'Backup file detection test for {url}',
+                'response': 'Request failed - connection error'
+            }   
+        
+
+    @staticmethod
+    def test_version_control_exposure(url):
+        """Detect version control system exposure (e.g., .git, .svn)"""
+        try:
+            headers = {
+                'User-Agent': 'AutoWASPy Security Scanner',
+                'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8'
+            }
+            
+            # Common VCS paths to check
+            vcs_paths = [
+                '/.git/', '/.svn/', '/.hg/', '/.bzr/', '/CVS/'
+            ]
+            
+            found_vcs = []
+            for path in vcs_paths:
+                full_url = urljoin(url, path)
+                response = requests.get(full_url, headers=headers, timeout=10, verify=False)
+                
+                if response.status_code == 200:
+                    found_vcs.append(full_url)
+            
+            full_request = AutoTestService._format_request_details('GET', url, headers)
+            
+            if found_vcs:
+                evidence = f"🚨 Version Control System Exposure\n\n"
+                evidence += f"Found potential VCS directories at:\n"
+                for vcs_url in found_vcs:
+                    evidence += f"  • {vcs_url}\n"
+                evidence += "\n💡 Recommendation: Remove or secure VCS directories to prevent unauthorized access."
+                result = 'fail'
+            else:
+                evidence = f"✅ No version control systems detected at {url}\n"
+                result = 'pass'
+            
+            return {
+                'result': result,
+                'evidence': evidence,
+                'request': full_request,
+                'response': 'Version control exposure detection completed'
+            }
+        except Exception as e:
+            return {
+                'result': 'error',
+                'evidence': f'❌ Error testing version control exposure: {str(e)}',
+                'request': f'Version control exposure test for {url}',
+                'response': 'Request failed - connection error'
+            }
+        
+        
