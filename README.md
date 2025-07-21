@@ -1,13 +1,13 @@
 # AutoWASPy 🛡️
 
-**Professional Penetration Testing Tool for UK CHECK Team Leaders**
+**Professional Penetration Testing Tool To Manage Test Consistency**
 
 [![Python](https://img.shields.io/badge/Python-3.8+-blue.svg)](https://python.org)
 [![Flask](https://img.shields.io/badge/Flask-2.0+-green.svg)](https://flask.palletsprojects.com/)
 [![OWASP](https://img.shields.io/badge/OWASP-Complete%20Framework%20Suite-red.svg)](https://owasp.org)
 [![License](https://img.shields.io/badge/License-GPL--3.0-blue.svg)](LICENSE)
 
-AutoWASPy is a comprehensive Flask web application designed specifically for UK CHECK Team Leaders to manage penetration testing projects using the complete OWASP framework suite including WSTG, MASTG, API Security, IoT Security, ASVS, and Cloud Security guidelines.
+AutoWASPy is a comprehensive Flask web application designed specifically to manage penetration testing projects using the complete OWASP framework suite including WSTG, MASTG, API Security, IoT Security, ASVS, and Cloud Security guidelines.
 
 ## 🚀 Key Features
 
